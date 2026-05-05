@@ -10,6 +10,8 @@ torch.set_num_threads(1)
 
 def predict(text, model_name):
 
+    if model_name not in models:
+        raise ValueError(f"Model '{model_name}' not available in deployment!")
     pipeline=get_model(model_name)
     model_type=models[model_name]["type"]
 

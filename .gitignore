@@ -11,7 +11,9 @@ venv/
 backend/logs/
 
 #Models
-backend/models/
+backend/models/*
+!backend/models/logistic_regression/
+!backend/models/logistic_regression/v1/
 
 #Cache
 app/cache/
