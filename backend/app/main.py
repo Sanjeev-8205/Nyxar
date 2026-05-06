@@ -9,6 +9,9 @@ from app.routes.avg_latency import router as latency_router
 from app.services.warmup_service import preload_models, warmup
 import threading
 
+from app.core.database import Base, engine
+from models.log_models import Log
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     def run():
@@ -20,6 +23,8 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+Base.metadata.create_all(bind=engine)
 
 app.include_router(models_router)
 app.include_router(prediction_router)
