@@ -20,7 +20,7 @@ def get_avg_latency():
         for row in average_latency:
             analytics.append({
                 "model": row[0],
-                "latency": float(row[1])
+                "avg_latency": float(row[1])
             })
 
         return analytics

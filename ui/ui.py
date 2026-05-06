@@ -131,10 +131,6 @@ with r_col:
         st.info("No predictions yet!")
     else:
         counts=pd.Series(preds).value_counts(normalize=True)
-    
-        label_map={0:"Negative", 1:"Neutral", 2:"Positive"}
-
-        counts.index=counts.index.map(label_map)
 
         for k, v in counts.items():
             st.write(f"{k} = {round(100*v, 2)}%")
@@ -160,4 +156,4 @@ with r_col:
         avg_lat = response.json()
 
         df=pd.DataFrame(avg_lat)
-        st.bar_chart(df[["model", "avg_latency"]].set_index("Model"))
+        st.bar_chart(df[["model", "avg_latency"]].set_index("model"))

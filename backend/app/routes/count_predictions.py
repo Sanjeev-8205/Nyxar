@@ -12,8 +12,15 @@ def get_counts():
         prediction = db.query(Log.prediction)
 
         prediction_list = [p[0] for p in prediction]
+        
+        sentiment = {
+            "0": "Negative",
+            "1": "Neutral",
+            "2": "Positive"
+        }
 
-        return prediction_list
+        predictions = [sentiment[p] for p in prediction_list]
+        return predictions
 
     finally:
         db.close()
