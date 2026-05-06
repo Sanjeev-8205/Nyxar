@@ -21,10 +21,16 @@ def get_logs():
             Log.timestamp
         ).order_by(Log.timestamp.desc()).limit(10).all()
     
+        sentiment_map = {
+            "0": "Negative",
+            "1": "Neutral",
+            "2": "Positive"
+        }
+
         analytics = [
             {
                 "text":row[0],
-                "prediction":row[1],
+                "prediction":sentiment_map.get(str(row[1]), "unknown"),
                 "model":row[2],
                 "negative":row[3],
                 "neutral":row[4],

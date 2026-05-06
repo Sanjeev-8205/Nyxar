@@ -81,14 +81,9 @@ with l_col:
         logs=response.json()
 
         df_logs=pd.DataFrame(logs)
-        label_map = {
-            0: "Negative",
-            1: "Neutral",
-            2: "Positive"
-        }
 
         if len(df_logs)>0 and "prediction" in df_logs.columns:
-            df_logs["prediction"] = df_logs["prediction"].map(label_map)
+            df_logs["prediction"] = df_logs["prediction"]
             st.dataframe(df_logs)
         else:
             "No logs yet!"
