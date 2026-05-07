@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.core.database import SessionLocal
-from models.log_models import Log
+from sqlalchemy import text
 
 router = APIRouter()
 
@@ -9,7 +9,7 @@ def db_status_check():
     db = SessionLocal()
 
     try:
-        db.execute(Log.text("SELECT 1"))
+        db.execute(text("SELECT 1"))
 
         return {
             "database": "connected"
