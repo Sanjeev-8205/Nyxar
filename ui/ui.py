@@ -126,7 +126,7 @@ with tab1:
                 
                     prediction = result["prediction"]
                     latency = result["latency"]
-                    confidence_score = result["confidence"]
+                    confidence_score = max(result["confidence_scores"])
                     model_name = result["model_used"]
 
                     st.markdown("## Prediction Result")

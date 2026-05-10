@@ -31,6 +31,7 @@ def predict_route(data: InputData):
         return {
             "prediction":prediction,
             "confidence_scores":prob,
+            "confidence": confidence,
             "latency":latency,
             "model_used": data.model
         }
