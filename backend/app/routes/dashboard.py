@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from backend.app.services.metrics_service.dashboard_metrics_service import dashboard_metrics_aggregator
+from app.services.metrics_service.dashboard_metrics_service import dashboard_metrics_aggregator
 
 router = APIRouter()
 
