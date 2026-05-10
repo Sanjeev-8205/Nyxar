@@ -286,14 +286,14 @@ with tab3:
     with col1:
         p95_latency = advanced["p95_latency"]
 
-        st.metrics(
+        st.metric(
             "p95_latency", f"{p95_latency:.3f}s" 
         )
 
     with col2:
         failure_rate = advanced["failure_rate"]["failure_percent"]
 
-        st.metrics(
+        st.metric(
             "Failure Rate", f"{failure_rate:.2f}"
         )
     
@@ -304,7 +304,11 @@ with tab3:
     df_metrics = df_metrics.rename(columns={"index":"Model"})
 
     st.subheader("Model Performance Comparison")
-    st.dataframe(df_metrics, use_container_width=True)
+
+    if not df_metrics.empty:
+        st.dataframe(df_metrics, use_container_width=True)
+    else:
+        st.info("You have not made any predictions yet. Make predictions to view the results.")
 
     # Columns for latency and accuracy
     col_1, col_2 = st.columns(2)
@@ -316,29 +320,38 @@ with tab3:
 
         avg_latency_per_model = pd.DataFrame(avg_latency)
 
-        fig_avg_latency = px.bar(
-            avg_latency_per_model,
-            x = "model",
-            y = "avg_latency",
-            title = "Average Latency Per Model"
-        )
+        if not avg_latency_per_model.empty:
+            fig_avg_latency = px.bar(
+                avg_latency_per_model,
+                x = "model",
+                y = "avg_latency",
+                title = "Average Latency Per Model"
+            )
 
-        st.plotly_chart(
-            fig_avg_latency, use_container_width=True
-        )
+            st.plotly_chart(
+                fig_avg_latency, width = "stretch"
+            )
+        
+        else:
+            st.info("You have not made any predictions yet. Make predictions to view the results.")
 
     with col_2:
         #Model Accuracy
-        fig_model_accuracy = px.bar(
-            df_metrics,
-            x = "Model",
-            y = "accuracy",
-            title = "Model Accuracy Comparison"
-        )
 
-        st.plotly_chart(
-            fig_model_accuracy, use_container_width=True
-        )
+        if not df_metrics.empty:
+            fig_model_accuracy = px.bar(
+                df_metrics,
+                x = "Model",
+                y = "accuracy",
+                title = "Model Accuracy Comparison"
+            )
+
+            st.plotly_chart(
+                fig_model_accuracy, use_container_width=True
+            )
+
+        else:
+            st.info("You have not made any predictions yet. Make predictions to view the results.")
 
     #Drift indicators
     drift_indicators = advanced["drift_indicators"]
