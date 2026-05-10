@@ -1,5 +1,4 @@
 from models.log_models import Log
-from app.core.database import SessionLocal
 from pathlib import Path
 from sqlalchemy import func
 from collections import Counter

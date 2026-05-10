@@ -1,5 +1,5 @@
 from app.core.database import SessionLocal
-from backend.app.services.metrics_service.inference_metrics_service import get_inference_metrics
+from app.services.metrics_service.inference_metrics_service import get_inference_metrics
 import app.services.metrics_service.analytics_metrics_service as analytics_ms
 import app.services.metrics_service.health_metrics_service as health_ms
 import app.services.metrics_service.advanced_metrics_service as adv_ms
