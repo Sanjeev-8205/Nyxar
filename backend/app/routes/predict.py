@@ -12,7 +12,7 @@ def predict_route(data: InputData):
     prob = None
     confidence = None
     status = "failure"
-
+    
     try:
         if not data.text.strip():
             raise HTTPException(status_code=400, detail="Input text cannot be empty.")
@@ -26,7 +26,7 @@ def predict_route(data: InputData):
         status = "success"
         
         pred_map = {"0":"Negative", "1":"Neutral", "2":"Positive"}
-        prediction = pred_map.get(pred, 0)
+        prediction = pred_map.get(pred, "Unknown")
 
         return {
             "prediction":prediction,

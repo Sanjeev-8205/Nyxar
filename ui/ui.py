@@ -118,7 +118,7 @@ with tab1:
             with st.spinner("Running model inference......."):
                 response = requests.post(
                     f"{BASE_URL}/predict",
-                    json={"text":user_input, "model_name":model_choice}
+                    json={"text":user_input, "model":model_choice}
                 )
 
                 try:

@@ -15,4 +15,4 @@ class Log(Base):
     positive=Column(Float)
     latency=Column(Float)
     status=Column(String)
-    timestamp=Column(DateTime, default=lambda: datetime.now(UTC))
+    timestamp=Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
