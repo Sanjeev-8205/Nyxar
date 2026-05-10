@@ -37,7 +37,7 @@ def get_failure_percent(db):
     }
 
 def get_model_metrics():
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
     logistic_path = BASE_DIR / "metrics" / "logistic_regression.json"
     bilstm_path = BASE_DIR / "metrics" / "bilstm.json"
     bert_path = BASE_DIR/ "metrics" / "bert_base_uncased.json"
