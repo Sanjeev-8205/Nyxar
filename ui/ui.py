@@ -477,7 +477,18 @@ with tab5:
     if logs_df.empty:
         st.info("No logs available yet. Make predictions to populate inference logs.")
     else:
-        st.markdown("### Filters")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("### Filters")
+        with col2:
+            refresh_col1, refresh_col2 = st.columns(2)
+            with refresh_col1:
+                if st.button("🔄 Refresh"):
+                    st.rerun()
+            with refresh_col2:
+                auto_refresh = st.toggle("Auto Refresh", help="Refreshes dashboard every 10 seconds")
+                if auto_refresh:
+                    st_autorefresh(interval=10000, key="refresh")
 
         filter_col1, filter_col2, filter_col3 = st.columns(3)
 
@@ -597,8 +608,3 @@ with tab5:
 
         for event in system_events:
             st.info(event)
-        
-        st_autorefresh(
-            interval = 5000,
-            key = "logs_refresh"
-        )
