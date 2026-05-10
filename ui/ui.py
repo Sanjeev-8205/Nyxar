@@ -199,27 +199,31 @@ with tab2:
             )
 
             st.plotly_chart(
-                fig_predictions, use_container_width = True
+                fig_predictions, width = "stretch"
             )
         
         else:
-            st.info("Predictions are not available yet!")
+            st.info("You have not made any predictions yet. Make predictions to view the results.")
 
         #Model Usage Distribution
         models_ = analytics["model_usage_distribution"]
 
         model_usage_distribution = pd.DataFrame(models_)
 
-        fig_model_usage = px.bar(
-            model_usage_distribution,
-            x = "model",
-            y = "usage",
-            title = "Model Usage Distribution"
-        )
+        if not model_usage_distribution.empty:
+            fig_model_usage = px.bar(
+                model_usage_distribution,
+                x = "model",
+                y = "usage",
+                title = "Model Usage Distribution"
+            )
 
-        st.plotly_chart(
-            fig_model_usage, use_container_width = True
-        )
+            st.plotly_chart(
+                fig_model_usage, width = "stretch"
+            )
+        
+        else:
+            st.info("You have not made any predictions yet. Make predictions to view the results.")
 
     with col2:
         #Latency Trends

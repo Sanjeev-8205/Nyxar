@@ -1,10 +1,10 @@
 from sqlalchemy import func
 from models.log_models import Log
 from app.schemas.request_schema import InputData
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 def get_inference_metrics(db):
-    one_minute_ago = datetime.now() - timedelta(minutes=1)
+    one_minute_ago = datetime.now(UTC) - timedelta(minutes=1)
 
     metrics = db.query(
         func.count(Log.id).label("total_predictions"),
