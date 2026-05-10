@@ -7,7 +7,7 @@ def get_inference_metrics(db):
     one_minute_ago = datetime.now() - timedelta(minutes=1)
 
     metrics = db.query(
-        func.count(Log).label("total_predictions"),
+        func.count(Log.id).label("total_predictions"),
         func.avg(Log.latency).label("average_latency"),
         func.avg(Log.negative).label("negative_avg"),
         func.avg(Log.neutral).label("neutral_avg"),

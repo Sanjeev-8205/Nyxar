@@ -23,7 +23,7 @@ def get_sentiment_distribution(db):
 def get_predictions_over_time(db):
     predictions_over_time = db.query(
         func.extract("day", Log.timestamp).label("day"),
-        func.count(Log).label("count")
+        func.count(Log.id).label("count")
     ).group_by(
         func.extract("day", Log.timestamp)
     ).all()
@@ -62,7 +62,7 @@ def get_latency_trends(db):
         func.date_trunc("hour", Log.timestamp).label("hour"),
         func.avg(Log.latency).label("avg_latency"),
         func.max(Log.latency).label("max_latency"),
-        func.count().label("request_count")
+        func.count(Log.id).label("request_count")
     ).group_by("hour").order_by("bucket").all()
 
     latencies_hour_of_day = []
