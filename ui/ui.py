@@ -270,11 +270,11 @@ with tab2:
         #Recent Activity Feed
         activity_ = analytics["recent_activity"]
 
-        activity_feed = pd.DataFrame(activity_)
+        activity_feed = pd.DataFrame([activity_])
 
         st.subheader("Recent Activity")
         st.dataframe(
-            activity_feed, use_container_width=True
+            activity_feed, width = "stretch"
         )
 
 with tab3:
