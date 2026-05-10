@@ -555,7 +555,7 @@ with tab5:
 
     # Centerpiece - Main Logs
     st.markdown("### Inference Logs")
-
+    
     st.dataframe(
         filtered_logs,
         width="stretch",
