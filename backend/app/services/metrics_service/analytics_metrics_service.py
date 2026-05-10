@@ -1,7 +1,6 @@
 from models.log_models import Log
 from datetime import datetime, UTC
 from sqlalchemy import func, case
-from app.schemas.request_schema import InputData
 
 def get_sentiment_distribution(db):
     sentiment_distribution = db.query(
