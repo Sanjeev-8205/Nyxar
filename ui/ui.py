@@ -189,17 +189,21 @@ with tab2:
 
         prediction_over_time = pd.DataFrame(prediction_)
 
-        fig_predictions = px.line(
-            prediction_over_time,
-            x = "day",
-            y = "count",
-            title = "Predictions Over Time",
-            markers = True
-        )
+        if not prediction_over_time.empty:
+            fig_predictions = px.line(
+                prediction_over_time,
+                x = "day",
+                y = "count",
+                title = "Predictions Over Time",
+                markers = True
+            )
 
-        st.plotly_chart(
-            fig_predictions, use_container_width = True
-        )
+            st.plotly_chart(
+                fig_predictions, use_container_width = True
+            )
+        
+        else:
+            st.info("Predictions are not available yet!")
 
         #Model Usage Distribution
         models_ = analytics["model_usage_distribution"]
