@@ -19,6 +19,7 @@ model_list = get_models()
 #dashboard_metrics
 dashboard_metrics = requests.get(f"{BASE_URL}/dashboard").json()
 
+st.write(dashboard_metrics)
 inference = dashboard_metrics["inference"]
 health = dashboard_metrics["health"]
 analytics = dashboard_metrics["analytics"]
