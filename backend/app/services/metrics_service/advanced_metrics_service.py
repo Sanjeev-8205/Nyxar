@@ -20,7 +20,7 @@ def get_failure_percent(db):
     status_ = db.query(
         Log.status.label("status"),
         func.count(Log.status).label("count")
-    ).groupby(Log.status).all()
+    ).group_by(Log.status).all()
 
     total = sum(count for _, count in status_)
 

@@ -4,6 +4,7 @@ import app.services.metrics_service.analytics_metrics_service as analytics_ms
 import app.services.metrics_service.health_metrics_service as health_ms
 import app.services.metrics_service.advanced_metrics_service as adv_ms
 import app.services.metrics_service.logs_metrics_service as logs_ms
+import traceback
 
 def dashboard_metrics_aggregator():
     db = SessionLocal()
@@ -36,6 +37,8 @@ def dashboard_metrics_aggregator():
         }
     
     except Exception as e:
+        traceback.print_exc()
+        
         return {
             "error":str(e)
         }
