@@ -28,13 +28,7 @@ def get_dashboard_metrics():
 if "dashboard_metrics" not in st.session_state:
     st.session_state.dashboard_metrics = get_dashboard_metrics()
 
-dashboard_metrics = get_dashboard_metrics()
-
-inference = dashboard_metrics["inference"]
-health = dashboard_metrics["health"]
-analytics = dashboard_metrics["analytics"]
-advanced = dashboard_metrics["advanced"]
-logs_data = dashboard_metrics["logs"]
+dashboard_metrics = st.session_state.dashboard_metrics
 
 #setting the page title
 st.set_page_config(
@@ -512,9 +506,13 @@ with tab5:
             st.markdown("### Filters")
         with col2:
             refresh_col1, refresh_col2 = st.columns(2)
+            
             with refresh_col1:
                 if st.button("🔄 Refresh"):
-                    st.rerun()
+                    get_dashboard_metrics.clear()
+                    st.session_state.dashboard_metrics = get_dashboard_metrics()
+                    dashboard_metrics = st.session_state.dashboard_metrics
+
             with refresh_col2:
                 auto_refresh = st.toggle("Auto Refresh", help="Refreshes dashboard every 10 seconds")
                 if auto_refresh:
