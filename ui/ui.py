@@ -65,47 +65,47 @@ with st.sidebar:
     st.markdown("### Health Indicators")
 
     #db_health
-    db_status = health["db_health"]["database"]
+    db_status = dashboard_metrics["health"]["db_health"]["database"]
     if db_status == "connected":
         st.success("Database Connected")
     else:
         st.error("Database Disconnected")
 
     #models loaded
-    st.info(f"Models Loaded : {health["models_count"]}")
+    st.info(f"Models Loaded : {dashboard_metrics["health"]["models_count"]}")
 
     #CPU Usage
     st.metric(
-        f"CPU Usage: {health["cpu_usage"][0]}%",
-        f"CPU Status: {health["cpu_usage"][1]}"
+        f"CPU Usage: {dashboard_metrics["health"]["cpu_usage"][0]}%",
+        f"CPU Status: {dashboard_metrics["health"]["cpu_usage"][1]}"
     )
 
     #Uptime
     st.metric(
-        "Uptime", health["uptime"]
+        "Uptime", dashboard_metrics["health"]["uptime"]
     )
 
 #Metrics KPI
 col1, col2, col3, col4, col5 = st.columns(5)
 
 col1.metric(
-    "Predictions", inference["total_predictions"]
+    "Predictions", dashboard_metrics["inference"]["total_predictions"]
 )
 
 col2.metric(
-    "Avg Latency", inference["average_latency"]
+    "Avg Latency", dashboard_metrics["inference"]["average_latency"]
 )
 
 col3.metric(
-    "RPM", inference["rpm"]
+    "RPM", dashboard_metrics["inference"]["rpm"]
 )
 
 col4.metric(
-    "Uptime", health["uptime"]
+    "Uptime", dashboard_metrics["health"]["uptime"]
 )
 
 col5.metric(
-    "Failure Rate", advanced["failure_rate"]["failure_percent"]
+    "Failure Rate", dashboard_metrics["advanced"]["failure_rate"]["failure_percent"]
 )
 
 #Tab System
@@ -139,6 +139,7 @@ with tab1:
                     #clear old dashboarb cache
                     get_dashboard_metrics.clear()
                     st.session_state.dashboard_metrics = get_dashboard_metrics()
+                    dashboard_metrics = st.session_state.dashboard_metrics
                 
                 except Exception as e:
                     st.error(
@@ -184,7 +185,7 @@ with tab2:
     col1, col2 = st.columns(2)
     with col1:
         #Sentiment Distribution
-        sentiment_distribution = analytics["sentiment_distribution"]
+        sentiment_distribution = dashboard_metrics["analytics"]["sentiment_distribution"]
 
         sentiment_df = pd.DataFrame(
             {
@@ -205,7 +206,7 @@ with tab2:
         )
 
         #Prediction Over Time
-        prediction_ = analytics["predictions_over_time"]
+        prediction_ = dashboard_metrics["analytics"]["predictions_over_time"]
 
         prediction_over_time = pd.DataFrame(prediction_)
 
@@ -226,7 +227,7 @@ with tab2:
             st.info("You have not made any predictions yet. Make predictions to view the results.")
 
         #Model Usage Distribution
-        models_ = analytics["model_usage_distribution"]
+        models_ = dashboard_metrics["analytics"]["model_usage_distribution"]
 
         model_usage_distribution = pd.DataFrame(models_)
 
@@ -247,7 +248,7 @@ with tab2:
 
     with col2:
         #Latency Trends
-        latency = analytics["latency_trends"][1]
+        latency = dashboard_metrics["analytics"]["latency_trends"][1]
 
         latency_trends = pd.DataFrame(latency)
 
@@ -268,7 +269,7 @@ with tab2:
             st.info("You have not made any predictions yet. Make predictions to view the results.")
 
         #Confidence distribution
-        confidence_ = analytics["confidence_distribution"]
+        confidence_ = dashboard_metrics["analytics"]["confidence_distribution"]
 
         confidence_distribution = pd.DataFrame(confidence_)
 
@@ -288,7 +289,7 @@ with tab2:
             st.info("You have not made any predictions yet. Make predictions to view the results.")
 
         #Recent Activity Feed
-        activity_ = analytics["recent_activity"]
+        activity_ = dashboard_metrics["analytics"]["recent_activity"]
 
         activity_feed = pd.DataFrame([activity_])
 
@@ -304,21 +305,21 @@ with tab3:
     col1, col2 = st.columns(2)
 
     with col1:
-        p95_latency = advanced.get("p95_latency", 0) or 0
+        p95_latency = dashboard_metrics["advanced"].get("p95_latency", 0) or 0
 
         st.metric(
             "p95_latency", f"{p95_latency:.3f}s" 
         )
 
     with col2:
-        failure_rate = advanced["failure_rate"]["failure_percent"]
+        failure_rate = dashboard_metrics["advanced"]["failure_rate"]["failure_percent"]
 
         st.metric(
             "Failure Rate", f"{failure_rate:.2f}"
         )
     
     #Model Metrics
-    model_metrics = advanced["model_metrics"]
+    model_metrics = dashboard_metrics["advanced"]["model_metrics"]
 
     df_metrics = pd.DataFrame(model_metrics).T.reset_index()
     df_metrics = df_metrics.rename(columns={"index":"Model"})
@@ -336,7 +337,7 @@ with tab3:
     with col_1:
     #Avg latency per model
 
-        avg_latency = advanced["latency_per_model"]
+        avg_latency = dashboard_metrics["advanced"]["latency_per_model"]
 
         avg_latency_per_model = pd.DataFrame(avg_latency)
 
@@ -374,7 +375,7 @@ with tab3:
             st.info("You have not made any predictions yet. Make predictions to view the results.")
 
     #Drift indicators
-    drift_indicators = advanced["drift_indicators"]
+    drift_indicators = dashboard_metrics["advanced"]["drift_indicators"]
 
     if not drift_indicators:
         st.info("You have not made any predictions yet. Make predictions to view drift data.")
@@ -438,13 +439,13 @@ with tab4:
     with c2:
         st.metric(
             "Model Count",
-            health["models_count"]
+            dashboard_metrics["health"]["models_count"]
         )
     
     with c3:
         st.metric(
             "CPU Usage",
-            f"{health["cpu_usage"][0]:.2f}%"
+            f"{dashboard_metrics["health"]["cpu_usage"][0]:.2f}%"
         )
     
     #columns for infra+CPU and Model+Uptime
@@ -458,22 +459,22 @@ with tab4:
 
         st.subheader("Resource Monitoring")
         st.write("CPU Utilization")
-        st.progress(health["cpu_usage"][0] / 100)
+        st.progress(dashboard_metrics["health"]["cpu_usage"][0] / 100)
 
     with right_col:
         st.subheader("Model Availability")
 
-        if health["models_count"]==0:
+        if dashboard_metrics["health"]["models_count"]==0:
             model_count_info = f"No ML models are currently loaded."
-        elif health["models_count"]==1:
-            model_count_info = f"{health["models_count"]} ML model is currently loaded and ready for inference."
+        elif dashboard_metrics["health"]["models_count"]==1:
+            model_count_info = f"{dashboard_metrics["health"]["models_count"]} ML model is currently loaded and ready for inference."
         else:
-            model_count_info = f"{health["models_count"]} ML models are currently loaded and ready for inference."
+            model_count_info = f"{dashboard_metrics["health"]["models_count"]} ML models are currently loaded and ready for inference."
         st.info(model_count_info)
 
         st.subheader("Uptime")
         st.metric(
-            "Uptime", f"{health["uptime"]}", label_visibility="collapsed"
+            "Uptime", f"{dashboard_metrics["health"]["uptime"]}", label_visibility="collapsed"
         )
 
     #Health table
@@ -484,11 +485,11 @@ with tab4:
             ],
             "Status":[
                 db_status.capitalize(),
-                f"{health["models_count"]} Model Avalilable"
-                if health["models_count"] 
+                f"{dashboard_metrics["health"]["models_count"]} Model Avalilable"
+                if dashboard_metrics["health"]["models_count"] 
                 else "No models available",
-                f"{health["cpu_usage"][0]}%",
-                health["uptime"]
+                f"{dashboard_metrics["health"]["cpu_usage"][0]}%",
+                dashboard_metrics["health"]["uptime"]
             ]
         }
     )
@@ -501,7 +502,7 @@ with tab4:
     st.success("All critical services are operational.")
 
 with tab5:
-    logs_df = pd.DataFrame(logs_data)
+    logs_df = pd.DataFrame(dashboard_metrics["logs"])
 
     if logs_df.empty:
         st.info("No logs available yet. Make predictions to populate inference logs.")
@@ -552,7 +553,7 @@ with tab5:
         
         if search_term:
             filtered_logs = filtered_logs[
-                filtered_logs["text"].str.contains(search_term, case = False, na =n)
+                filtered_logs["text"].str.contains(search_term, case = False, na =False)
             ]
         
         #Log Metrics
