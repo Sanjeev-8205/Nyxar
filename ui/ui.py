@@ -25,6 +25,9 @@ def get_dashboard_metrics():
     except Exception as e:
         return ["Backend not available!"]
 
+if "dashboard_metrics" not in st.session_state:
+    st.session_state.dashboard_metrics = get_dashboard_metrics()
+
 dashboard_metrics = get_dashboard_metrics()
 
 inference = dashboard_metrics["inference"]
@@ -135,6 +138,7 @@ with tab1:
 
                     #clear old dashboarb cache
                     get_dashboard_metrics.clear()
+                    st.session_state.dashboard_metrics = get_dashboard_metrics()
                 
                 except Exception as e:
                     st.error(
@@ -467,8 +471,9 @@ with tab4:
             model_count_info = f"{health["models_count"]} ML models are currently loaded and ready for inference."
         st.info(model_count_info)
 
+        st.subheader("Uptime")
         st.metric(
-            "Uptime", f"Uptime = {health["uptime"]}"
+            "Uptime", f"{health["uptime"]}", label_visibility="collapsed"
         )
 
     #Health table
