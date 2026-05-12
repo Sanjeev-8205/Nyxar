@@ -30,7 +30,7 @@ def process_batch_job(job_id: int, file_path: str):
         start_time = time.perf_counter()
 
         # Process each row, hold till 10 rows and commit
-        BUFFER = 20
+        BUFFER = 5
         results_buffer = []
         for index, row in enumerate(df.itertuples(index=False)):
             text = row.text
