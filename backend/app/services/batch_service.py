@@ -74,8 +74,10 @@ def process_batch_job(job_id: int, file_path: str):
 
         job.status = "completed"
 
-        processing_time = round(end_time - start_time, 2)
+        job.processing_time = round(end_time - start_time, 4)
         job.completed_at = datetime.now(UTC)
+
+        db.commit()
 
     except Exception as e:
         job.status = "failed"
