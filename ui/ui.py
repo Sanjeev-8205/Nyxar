@@ -618,7 +618,6 @@ if page == "Logs":
 
         with metric_col1:
 
-            st.metric
             st.metric(
                 "Total Logs",
                 dashboard_metrics["inference"]["total_predictions"]
@@ -703,58 +702,59 @@ if page=="Batch Jobs":
     )
 
     selected_model = st.selectbox("Choose Model", model_list)
-    upload_button = st.button("Batch Predict")
+    upload_button = st.button("Start Batch Predictions")
 
-    if upload_button:
-        files = {
-            "file":uploaded_file.getvalue()
-        }
+    if uploaded_file is not None:
+        if upload_button:
+            files = {
+                "file":uploaded_file.getvalue()
+            }
 
-        data = {
-            "model": selected_model
-        }
+            data = {
+                "model": selected_model
+            }
 
-    response = requests.post(
-        f"{BASE_URL}/batch/job",
-        params={"model": selected_model},
-        files={
-            "file":(
-                uploaded_file.name,
-                uploaded_file.getvalue(),
-                "text/csv"
-            )
-        }
-    )
+        response = requests.post(
+            f"{BASE_URL}/batch/job",
+            params={"model": selected_model},
+            files={
+                "file":(
+                    uploaded_file.name,
+                    uploaded_file.getvalue(),
+                    "text/csv"
+                )
+            }
+        )
 
-    job_id = response.json()['job_id']
+        job_id = response.json()['job_id']
 
-    st.session_state.job_id = job_id
+        st.session_state.job_id = job_id
 
-    if "job_id" in st.session_state:
-        job_id = st.session_state.job_id
+        if "job_id" in st.session_state:
+            job_id = st.session_state.job_id
 
-        placeholder = st.empty()
-        progress_bar = st.progress(0)
-        status_text = st.empty()
-        row_text = st.empty()
+            placeholder = st.empty()
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            row_text = st.empty()
 
-        while True:
+            while True:
 
-            response = requests.get(
-                f"{BASE_URL}/batch/job/{job_id}"
-            )
-
-            job_data = response.json()
-
-            with placeholder.container():
-                status_text.write(f"Status: {job_data['status']}")
-                progress_bar.write(job_data['progress'] / 100)
-                row_text.write(
-                    f"Processsed rows: {job_data['processed_rows']}",
-                    f"Total rows: {job_data['total_rows']}"
+                response = requests.get(
+                    f"{BASE_URL}/batch/job/{job_id}"
                 )
 
-            if job_data["status"] in ["completed", "failed"]:
-                break
+                job_data = response.json()
 
-            
+                with placeholder.container():
+                    status_text.write(f"Status: {job_data['status']}")
+                    progress_bar.write(job_data['progress'] / 100)
+                    row_text.write(
+                        f"Processsed rows: {job_data['processed_rows']}",
+                        f"Total rows: {job_data['total_rows']}"
+                    )
+
+                if job_data["status"] in ["completed", "failed"]:
+                    break
+
+                
