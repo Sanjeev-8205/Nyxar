@@ -18,3 +18,4 @@ sqlalchemy
 psycopg2-binary
 python-dotenv
 psutil
+python-multipart
