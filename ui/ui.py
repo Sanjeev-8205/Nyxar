@@ -705,7 +705,10 @@ if page=="Batch Jobs":
     selected_model = st.selectbox("Choose Model", model_list)
     upload_button = st.button("Start Batch Predictions")
 
-    if uploaded_file is not None:
+    if "polling_started" in st.session_state:
+        st.session_state.polling_started = False
+
+    if uploaded_file is not None and not st.session.polling_started:
         if upload_button:
             files = {
                 "file":uploaded_file.getvalue()
@@ -715,23 +718,25 @@ if page=="Batch Jobs":
                 "model": selected_model
             }
 
-        response = requests.post(
-            f"{BASE_URL}/batch/upload",
-            params={"model": selected_model},
-            files={
-                "file":(
-                    uploaded_file.name,
-                    uploaded_file.getvalue(),
-                    "text/csv"
-                )
-            }
-        )
+            response = requests.post(
+                f"{BASE_URL}/batch/upload",
+                params={"model": selected_model},
+                files={
+                    "file":(
+                        uploaded_file.name,
+                        uploaded_file.getvalue(),
+                        "text/csv"
+                    )
+                }
+            )
 
-        job_id = response.json()['job_id']
+            job_id = response.json()['job_id']
 
-        st.session_state.job_id = job_id
+            st.session_state.job_id = job_id
+            st.session.polling_started = True
+            time.sleep(1)
 
-        if "job_id" in st.session_state:
+        if "job_id" in st.session_state and st.session_state.polling_started:
             job_id = st.session_state.job_id
 
             placeholder = st.empty()
@@ -767,6 +772,9 @@ if page=="Batch Jobs":
                     )
 
                 if job_data["status"] in ["completed", "failed"]:
+
+                    st.session_state.polling_started = False
+
                     if job_data["status"] == "completed":
                         st.success("Batch job completed!")
                     
