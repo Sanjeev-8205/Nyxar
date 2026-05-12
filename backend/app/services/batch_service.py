@@ -46,7 +46,7 @@ def process_batch_job(job_id: int, file_path: str):
                     "job_id": job.id,
                     "text": text,
                     "prediction": pred,
-                    "confidence": float(prob.max()),
+                    "confidence": float(max(prob)),
                     "model_used": job.model_name,
                     "latency": round(latency, 4)
                 })
@@ -62,7 +62,7 @@ def process_batch_job(job_id: int, file_path: str):
                     "latency": 0
                 })
             
-            if index+1 % BUFFER == 0:
+            if (index+1) % BUFFER == 0:
                 job.processed_rows = index + 1
                 job.progress = round(
                     ((index+1)/total_rows)*100, 2
