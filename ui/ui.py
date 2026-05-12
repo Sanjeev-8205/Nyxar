@@ -715,7 +715,7 @@ if page=="Batch Jobs":
             }
 
         response = requests.post(
-            f"{BASE_URL}/batch/job",
+            f"{BASE_URL}/batch/upload",
             params={"model": selected_model},
             files={
                 "file":(
