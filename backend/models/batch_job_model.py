@@ -16,6 +16,7 @@ class BatchJob(Base):
 
     inference_time = Column(Float, default = 0.0)
     db_time = Column(Float, default = 0.0)
+    overhead_time = Column(Float, default = 0.0)
 
     throughput = Column(Float, default = 0.0)
 
