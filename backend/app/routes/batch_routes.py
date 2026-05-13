@@ -66,9 +66,9 @@ async def upload_batch_file(
     db.refresh(job)
     background_tasks.add_task(
         process_batch_job,
-        model,
         job.id,
-        upload_path
+        upload_path,
+        model
     )
 
     return {
@@ -117,7 +117,7 @@ async def get_batch_job_results(job_id: int):
         )
 
         if not results:
-            raise HTTPException(status=404, detail="No results found for this job.")
+            raise HTTPException(status_code=404, detail="No results found for this job.")
     
         formatted_results = []
 
@@ -126,8 +126,7 @@ async def get_batch_job_results(job_id: int):
                 "text": result.text,
                 "prediction": result.prediction,
                 "confidence": result.confidence,
-                "model_used": result.model_used,
-                "latency": result.latency
+                "model_used": result.model_used
             })
         
         return {

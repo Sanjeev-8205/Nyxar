@@ -21,7 +21,9 @@ async def lifespan(app: FastAPI):
         preload_models()
         warmup()
 
-    threading.Thread(target=run, daemon=True).start()
+    t = threading.Thread(target=run)
+    t.start()
+    t.join()
 
     yield
 
