@@ -24,4 +24,4 @@ ENV TRANSFORMERS_CACHE=/app/cache
 ENV PYTHONUNBUFFERED=1
 
 # Run FastAPI
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
