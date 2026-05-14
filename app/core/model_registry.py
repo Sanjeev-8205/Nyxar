@@ -3,14 +3,14 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import joblib
 import tensorflow as tf
 
-BASE_DIR = Path(__file__).resolve().parent
-MODEL_DIR = BASE_DIR.parent.parent.parent/"models"
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+MODEL_DIR = BASE_DIR/"models"
 
-def load_bert_model():
+def load_RoBERTa_model():
     path = MODEL_DIR/"RoBERTa"/"v1"
 
-    model = AutoModelForSequenceClassification.from_pretrained(path)
-    tokenizer = AutoTokenizer.from_pretrained(path)
+    model = AutoModelForSequenceClassification.from_pretrained(str(path))
+    tokenizer = AutoTokenizer.from_pretrained(str(path))
 
     model.eval()
 
