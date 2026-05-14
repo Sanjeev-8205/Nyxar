@@ -38,6 +38,6 @@ models={
     },
     "BERT Transformer":{
         "type": "transformer",
-        "loader":load_bert_model()
+        "loader":load_RoBERTa_model()
     }
 }
