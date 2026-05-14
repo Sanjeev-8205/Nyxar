@@ -5,7 +5,7 @@ import pandas as pd
 from streamlit_autorefresh import st_autorefresh
 import time
 
-BASE_URL = "https://sentiment-analysis-system-etlx.onrender.com"
+BASE_URL = "https://sanjeev2501-nyxar.hf.space"
 
 #Get the loaded models
 @st.cache_data
