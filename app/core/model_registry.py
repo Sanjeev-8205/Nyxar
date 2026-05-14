@@ -36,8 +36,8 @@ models={
             "maxlen": joblib.load(MODEL_DIR/"bilstm"/"v1"/"max_len_v1.pkl")
         }
     },
-    "BERT Transformer":{
+    "RoBERTa Transformer":{
         "type": "transformer",
-        "loader":load_RoBERTa_model()
+        "loader":load_RoBERTa_model
     }
 }
