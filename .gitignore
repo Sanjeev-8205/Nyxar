@@ -16,7 +16,6 @@ backend/models/bert_base_uncased/v1/
 backend/models/bilstm/
 backend/models/bilstm/v1/
 
-
 #Cache
 app/cache/
 
@@ -25,4 +24,7 @@ app/cache/
 
 #OS
 .DS_Store
+
+#hf_spaces repo
+Nyxar/
 
