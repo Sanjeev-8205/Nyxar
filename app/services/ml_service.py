@@ -1,7 +1,7 @@
 from app.schemas.request_schema import InputData
 from app.core.model_loader import get_model
 from app.core.model_registry import models
-from app.core.preprocessing import textProcess_lr, textProcess_bilstm, textPreprocess_bert, preprocess_batch_lr, preprocess_batch_bilstm, preprocess_batch_bert
+from app.core.preprocessing import textProcess_lr, textProcess_bilstm, textPreprocess_RoBERTa, preprocess_batch_lr, preprocess_batch_bilstm, preprocess_batch_RoBERTa
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import numpy as np
 import torch
@@ -35,7 +35,7 @@ def predict(text, model_name):
             prediction=int(np.argmax(prob))
 
         elif model_type=="transformer":
-            text=textPreprocess_bert(text)
+            text=textPreprocess_RoBERTa(text)
             tokenizer = pipeline["tokenizer"]
             model = pipeline["model"]
             maxlen = pipeline["maxlen"]
@@ -87,7 +87,7 @@ def predict_batch(texts, model_name):
             predictions=np.argmax(probs, axis=1)
 
         elif model_type=="transformer":
-            texts=preprocess_batch_bert(texts)
+            texts=preprocess_batch_RoBERTa(texts)
             tokenizer = pipeline["tokenizer"]
             model = pipeline["model"]
             maxlen = pipeline["maxlen"]
@@ -110,4 +110,4 @@ def predict_batch(texts, model_name):
         return (predictions.tolist(), probs.tolist())
 
     except Exception as e:
-        return {"error": str(e)}
+        raise e

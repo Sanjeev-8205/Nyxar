@@ -15,7 +15,7 @@ def textProcess_bilstm(text):
     text=re.sub(r'[^a-z0-9\s]', "", text)
     return text
 
-def textPreprocess_bert(text):
+def textPreprocess_RoBERTa(text):
     return text.strip()
 
 #Batch Inference
@@ -35,7 +35,8 @@ def preprocess_batch_bilstm(df_texts):
         df_texts.str.lower()
         .str.replace(r'[^a-z0-9\s]', "", df_texts)
     )
-    return df_texts
+    return df_texts.to_list()
 
-def preprocess_batch_bert(df_texts):
-    return df_texts.str.strip()
+def preprocess_batch_RoBERTa(df_texts):
+    df_texts = df_texts.str.strip()
+    return df_texts.to_list()
