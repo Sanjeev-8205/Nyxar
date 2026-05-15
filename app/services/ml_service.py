@@ -87,25 +87,34 @@ def predict_batch(texts, model_name):
             predictions=np.argmax(probs, axis=1)
 
         elif model_type=="transformer":
-            texts=preprocess_batch_RoBERTa(texts)
+            texts = preprocess_batch_RoBERTa(texts)
             tokenizer = pipeline["tokenizer"]
             model = pipeline["model"]
-            maxlen = pipeline["maxlen"]
 
-            inputs=tokenizer(
-                texts,
-                max_length=maxlen,
-                return_tensors="pt",
-                truncation=True,
-                padding=True
-            )
+            BATCH_SIZE = 32
+            all_probs = []
 
-            with torch.no_grad():
-                outputs=model(**inputs)
-            probs=torch.nn.functional.softmax(outputs.logits, dim=1)
+            for i in range(0, len(texts), BATCH_SIZE):
+                batch = texts[i : i + BATCH_SIZE]
 
-            probs=probs.detach().cpu().numpy()
-            predictions=np.argmax(probs, axis=1)
+                inputs = tokenizer(
+                    batch,
+                    max_length=maxlen,
+                    return_tensors="pt",
+                    truncation=True,
+                    padding=True
+                )
+
+                with torch.no_grad():
+                    outputs = model(**inputs)
+
+                batch_probs = torch.nn.functional.softmax(
+                    outputs.logits, dim=1
+                )
+                all_probs.append(batch_probs.detach().cpu().numpy())
+
+            probs = np.concatenate(all_probs, axis=0)
+            predictions = np.argmax(probs, axis=1)
 
         return (predictions.tolist(), probs.tolist())
 
