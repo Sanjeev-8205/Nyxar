@@ -5,6 +5,8 @@ from app.core.preprocessing import textProcess_lr, textProcess_bilstm, textPrepr
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import numpy as np
 import torch
+import onnxruntime as ort
+from scipy.special import softmax
 
 torch.set_num_threads(1)
 
@@ -12,107 +14,115 @@ def predict(text, model_name):
 
     if model_name not in models:
         raise ValueError(f"Model '{model_name}' not available in deployment!")
-    pipeline=get_model(model_name)
-    model_type=models[model_name]["type"]
+    pipeline = get_model(model_name)
+    model_type = models[model_name]["type"]
 
     try:
-        if model_type=="sklearn":
-            text=textProcess_lr(text)
+        if model_type == "sklearn":
+            text = textProcess_lr(text)
             transformed = pipeline["vectorizer"].transform(text)
             prediction = pipeline["model"].predict(transformed)[0]
             prob = pipeline["model"].predict_proba(transformed)[0]
 
-        elif model_type=="keras":
-            text=textProcess_bilstm(text)
+        elif model_type == "keras":
+            text = textProcess_bilstm(text)
             tokenizer = pipeline["tokenizer"]
             model = pipeline["model"]
             maxlen = pipeline["maxlen"]
 
-            seq=tokenizer.texts_to_sequences([text])
-            pad=pad_sequences(seq, maxlen=maxlen, padding="post")
+            seq = tokenizer.texts_to_sequences([text])
+            pad = pad_sequences(seq, maxlen=maxlen, padding="post")
 
-            prob=model.predict(pad, verbose=0)[0]
-            prediction=int(np.argmax(prob))
+            prob = model.predict(pad, verbose=0)[0]
+            prediction = int(np.argmax(prob))
 
-        elif model_type=="transformer":
-            text=textPreprocess_RoBERTa(text)
+        elif model_type == "transformer":
+            text = textPreprocess_RoBERTa(text)
             tokenizer = pipeline["tokenizer"]
-            model = pipeline["model"]
+            session = pipeline["session"]   # ← onnx session instead of model
             maxlen = pipeline["maxlen"]
 
-            inputs=tokenizer(
+            inputs = tokenizer(
                 text,
                 max_length=maxlen,
-                return_tensors="pt",
+                return_tensors="np",        # ← numpy instead of pt
                 truncation=True,
                 padding=True
             )
 
-            with torch.no_grad():
-                outputs=model(**inputs)
-            probs=torch.nn.functional.softmax(outputs.logits, dim=1)
+            outputs = session.run(
+                ["logits"],
+                {
+                    "input_ids": inputs["input_ids"],
+                    "attention_mask": inputs["attention_mask"]
+                }
+            )
 
-            prob=probs.detach().cpu().numpy()[0]
-            prediction=int(np.argmax(prob))
+            prob = softmax(outputs[0][0])   # ← scipy softmax on numpy
+            prediction = int(np.argmax(prob))
 
         return int(prediction), prob.tolist()
 
     except Exception as e:
         return {"error": str(e)}
 
+
 def predict_batch(texts, model_name):
 
     if model_name not in models:
         raise ValueError(f"Model '{model_name}' not available in deployment!")
-    pipeline=get_model(model_name)
-    model_type=models[model_name]["type"]
+    pipeline = get_model(model_name)
+    model_type = models[model_name]["type"]
 
     try:
-        if model_type=="sklearn":
-            texts=preprocess_batch_lr(texts)
+        if model_type == "sklearn":
+            texts = preprocess_batch_lr(texts)
             transformed = pipeline["vectorizer"].transform(texts)
             predictions = pipeline["model"].predict(transformed)
             probs = pipeline["model"].predict_proba(transformed)
 
-        elif model_type=="keras":
-            texts=preprocess_batch_bilstm(texts)
+        elif model_type == "keras":
+            texts = preprocess_batch_bilstm(texts)
             tokenizer = pipeline["tokenizer"]
             model = pipeline["model"]
             maxlen = pipeline["maxlen"]
 
-            seq=tokenizer.texts_to_sequences(texts)
-            pad=pad_sequences(seq, maxlen=maxlen, padding="post")
+            seq = tokenizer.texts_to_sequences(texts)
+            pad = pad_sequences(seq, maxlen=maxlen, padding="post")
 
-            probs=model.predict(pad, verbose=0)
-            predictions=np.argmax(probs, axis=1)
+            probs = model.predict(pad, verbose=0)
+            predictions = np.argmax(probs, axis=1)
 
-        elif model_type=="transformer":
+        elif model_type == "transformer":
             texts = preprocess_batch_RoBERTa(texts)
             tokenizer = pipeline["tokenizer"]
-            model = pipeline["model"]
+            session = pipeline["session"]   # ← onnx session instead of model
             maxlen = pipeline["maxlen"]
 
             BATCH_SIZE = 64
             all_probs = []
 
             for i in range(0, len(texts), BATCH_SIZE):
-                batch = texts[i : i + BATCH_SIZE]
+                batch = texts[i: i + BATCH_SIZE]
 
                 inputs = tokenizer(
                     batch,
                     max_length=maxlen,
-                    return_tensors="pt",
+                    return_tensors="np",    # ← numpy instead of pt
                     truncation=True,
                     padding=True
                 )
 
-                with torch.no_grad():
-                    outputs = model(**inputs)
-
-                batch_probs = torch.nn.functional.softmax(
-                    outputs.logits, dim=1
+                outputs = session.run(
+                    ["logits"],
+                    {
+                        "input_ids": inputs["input_ids"],
+                        "attention_mask": inputs["attention_mask"]
+                    }
                 )
-                all_probs.append(batch_probs.detach().cpu().numpy())
+
+                batch_probs = softmax(outputs[0], axis=1)
+                all_probs.append(batch_probs)
 
             probs = np.concatenate(all_probs, axis=0)
             predictions = np.argmax(probs, axis=1)

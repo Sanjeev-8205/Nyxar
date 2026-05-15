@@ -7,17 +7,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 MODEL_DIR = BASE_DIR/"models"
 
 def load_RoBERTa_model():
-    path = MODEL_DIR/"RoBERTa"/"v1"
+    path = MODEL_DIR/"RoBERTa"/"v1"/"onnx"  # ✅ path is correct
 
-    model = AutoModelForSequenceClassification.from_pretrained(str(path))
+    session = ort.InferenceSession(str(path/"model.onnx"))  # ← onnx session
     tokenizer = AutoTokenizer.from_pretrained(str(path))
 
-    model.eval()
-
     return {
-        "model": model,
+        "session": session,      # ← session not model
         "tokenizer": tokenizer,
-        "maxlen": 100 
+        "maxlen": 100
     }
 
 models={
