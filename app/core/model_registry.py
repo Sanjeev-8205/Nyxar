@@ -1,7 +1,8 @@
 from pathlib import Path
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from transformers import AutoTokenizer
 import joblib
 import tensorflow as tf
+import onnxruntime as ort
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 MODEL_DIR = BASE_DIR/"models"
