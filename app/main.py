@@ -9,7 +9,7 @@ from app.routes.batch_routes import router as batch_router
 from app.routes.dashboard import router as dashboard_router
 from app.services.warmup_service import preload_models, warmup
 import threading
-import subprocess
+import json
 
 from app.core.database import Base, engine
 from models.log_models import Log
@@ -47,6 +47,6 @@ def home():
 
 @app.get("/debug/region")
 async def get_region():
-    result = subprocess.run(['curl', 'https://ipinfo.io'], 
-                          capture_output=True, text=True)
-    return result.stdout
+    import urllib.request
+    with urllib.request.urlopen("https://ipinfo.io/json") as response:
+        return json.loads(response.read().decode())
