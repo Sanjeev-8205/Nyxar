@@ -90,6 +90,7 @@ def predict_batch(texts, model_name):
             texts = preprocess_batch_RoBERTa(texts)
             tokenizer = pipeline["tokenizer"]
             model = pipeline["model"]
+            maxlen = pipeline["maxlen"]
 
             BATCH_SIZE = 32
             all_probs = []
