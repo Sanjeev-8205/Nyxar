@@ -1,7 +1,6 @@
 from app.core.model_loader import get_model
 from app.core.model_registry import models
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-import torch
 
 def preload_models():
     for name in models:
@@ -28,9 +27,20 @@ def warmup():
                 m["model"].predict(pad, verbose=0)
 
             elif t == "transformer":
-                inputs = m["tokenizer"](dummy, return_tensors="pt", max_length=m["maxlen"], truncation=True, padding=True)
-                with torch.no_grad():
-                    m["model"](**inputs)
+                inputs = m["tokenizer"](
+                    dummy,
+                    return_tensors="np",        # ← numpy not pt
+                    max_length=m["maxlen"],
+                    truncation=True,
+                    padding=True
+                )
+                m["session"].run(
+                    ["logits"],
+                    {
+                        "input_ids": inputs["input_ids"],
+                        "attention_mask": inputs["attention_mask"]
+                    }
+                )
 
             print(f"{name} warmed up")
 
