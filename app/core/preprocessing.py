@@ -33,7 +33,7 @@ def preprocess_batch_lr(df_texts):
 def preprocess_batch_bilstm(df_texts):
     df_texts=(
         df_texts.str.lower()
-        .str.replace(r'[^a-z0-9\s]', "", df_texts)
+        .str.replace(r'[^a-z0-9\s]+', "", regex=True)
     )
     return df_texts.to_list()
 
