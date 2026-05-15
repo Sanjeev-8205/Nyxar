@@ -92,7 +92,7 @@ def predict_batch(texts, model_name):
             model = pipeline["model"]
             maxlen = pipeline["maxlen"]
 
-            BATCH_SIZE = 32
+            BATCH_SIZE = 64
             all_probs = []
 
             for i in range(0, len(texts), BATCH_SIZE):
