@@ -9,6 +9,7 @@ from app.routes.batch_routes import router as batch_router
 from app.routes.dashboard import router as dashboard_router
 from app.services.warmup_service import preload_models, warmup
 import threading
+import subprocess
 
 from app.core.database import Base, engine
 from models.log_models import Log
@@ -43,3 +44,9 @@ app.include_router(batch_router)
 @app.get("/")
 def home():
     return {"message": "API Running"}
+
+@app.get("/debug/region")
+async def get_region():
+    result = subprocess.run(['curl', 'https://ipinfo.io'], 
+                          capture_output=True, text=True)
+    return result.stdout
