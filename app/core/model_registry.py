@@ -10,7 +10,7 @@ MODEL_DIR = BASE_DIR/"models"
 def load_RoBERTa_model():
     path = MODEL_DIR/"RoBERTa"/"v1"/"onnx"  # ✅ path is correct
 
-    session = ort.InferenceSession(str(path/"model.onnx"))  # ← onnx session
+    session = ort.InferenceSession(str(path/"model_quantized.onnx"))  # ← onnx session
     tokenizer = AutoTokenizer.from_pretrained(str(path))
 
     return {
