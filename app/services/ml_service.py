@@ -66,7 +66,6 @@ def predict(text, model_name):
     except Exception as e:
         return {"error": str(e)}
 
-
 def predict_batch(texts, model_name):
 
     if model_name not in models:
