@@ -66,7 +66,7 @@ def generate_summary(
         provider = results["provider"],
         fallback_used = results["fallback_used"],
         llm_latency = results["latency"],
-        estimated_token = results["estimated_token"],
+        estimated_token = results["estimated_tokens"],
         prompt_version = results["prompt_version"],
         error = results["error"]
     )
