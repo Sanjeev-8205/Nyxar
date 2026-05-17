@@ -21,3 +21,5 @@ psutil
 python-multipart
 onnxruntime
 scipy
+groq
+google-genai
