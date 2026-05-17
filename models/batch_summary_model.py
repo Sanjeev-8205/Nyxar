@@ -1,5 +1,5 @@
 from app.core.database import Base
-from sqlalchemy import Column, Float, String, Text, DateTime, Boolean, Integer, UniqueConstraint
+from sqlalchemy import Column, Float, String, Text, DateTime, Boolean, Integer, UniqueConstraint, ForeignKey
 from datetime import datetime, UTC
 
 class BatchSummary(Base):
@@ -7,7 +7,7 @@ class BatchSummary(Base):
 
     id = Column(Float, primary_key=True, index=True)
 
-    job_id = Column(Float, ForeignKey=("batch_jobs.id"), unique=True)
+    job_id = Column(Float, ForeignKey("batch_jobs.id"))
 
     summary_type = Column(String, default="full")
 
