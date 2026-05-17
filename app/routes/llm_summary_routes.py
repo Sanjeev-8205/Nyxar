@@ -28,7 +28,7 @@ def get_top(sentiment, job_id, db):
 
     return results
 
-@router.post("/batch/job/{job_id}/summary")
+@router.get("/batch/job/{job_id}/summary")
 def generate_summary(
     job_id: int,
     summary_type: str="full",
