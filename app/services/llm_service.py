@@ -11,176 +11,114 @@ gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 groq_client = Groq(api_key=GROQ_API_KEY)
 
 EXECUTIVE_PROMPT = """
-You are a senior business analyst. Analyze these customer reviews and generate a crisp executive summary that a CEO can read in 30 seconds.
+You are a senior AI business intelligence analyst.
 
-POSITIVE REVIEWS (Top 50 - highest confidence):
+Analyze the following reviews grouped by sentiment.
+The reviews may belong to ANY domain such as:
+products, movies, applications, games, services, platforms, books, restaurants, software, or digital experiences.
+
+Your task is to identify:
+- overall sentiment patterns
+- recurring strengths
+- recurring weaknesses
+- major user experience trends
+- the most important improvement opportunity
+
+POSITIVE REVIEWS:
 {positive_reviews}
 
-NEGATIVE REVIEWS (Top 50 - highest confidence):
+NEGATIVE REVIEWS:
 {negative_reviews}
 
-NEUTRAL REVIEWS (Top 50 - highest confidence):
+NEUTRAL REVIEWS:
 {neutral_reviews}
 
-Generate EXACTLY this structure, no more no less:
+Generate EXACTLY this structure:
 
 ## EXECUTIVE SUMMARY
 
-**Overall Sentiment**
-One sentence describing the overall customer sentiment landscape.
+### Overall Sentiment
+Provide a concise 2-3 sentence overview of the overall sentiment landscape and customer/user perception.
 
-**Key Metrics**
-- Dominant sentiment: (positive/negative/neutral) at X percent of reviews
-- Customer satisfaction signal: (Strong/Moderate/Weak/Critical)
-- Urgency level: (Low/Medium/High/Critical)
+### Key Metrics
+- Dominant sentiment
+- Customer/User satisfaction signal
+- Urgency level
 
-**Top Strength**
-One specific sentence about what customers love most. Reference actual patterns.
+### Top Strength
+Identify the strongest recurring positive theme or experience.
 
-**Top Weakness**
-One specific sentence about the biggest pain point. Reference actual patterns.
+### Top Weakness
+Identify the most critical recurring complaint or negative pattern.
 
-**#1 Priority Action**
-One clear, specific, actionable recommendation for leadership.
+### Strategic Insight
+Provide one important insight about the overall user/customer experience narrative.
 
-Keep every point to one line maximum. No fluff. Business language only.
+### #1 Priority Action
+Provide the single highest-impact recommendation based on review patterns.
+
+Requirements:
+- Be domain-aware based on the reviews themselves
+- Avoid assuming the reviews are about physical products
+- Use professional business language
+- Keep insights concise but meaningful
+- Reference recurring patterns from reviews
 """
 
 DETAILED_PROMPT = """
-You are a senior product analyst preparing a comprehensive business intelligence report for a product team. Analyze these customer reviews carefully.
+You are a senior AI insights analyst preparing a detailed review intelligence report.
 
-POSITIVE REVIEWS (Top 50 - highest confidence):
+Analyze the following reviews grouped by sentiment.
+The reviews may belong to ANY category or domain.
+
+Your task is to identify:
+- recurring positive themes
+- recurring negative themes
+- user/customer expectations
+- major experience patterns
+- actionable improvement opportunities
+
+POSITIVE REVIEWS:
 {positive_reviews}
 
-NEGATIVE REVIEWS (Top 50 - highest confidence):
+NEGATIVE REVIEWS:
 {negative_reviews}
 
-NEUTRAL REVIEWS (Top 50 - highest confidence):
+NEUTRAL REVIEWS:
 {neutral_reviews}
 
 Generate EXACTLY this structure:
 
-## DETAILED REPORT
+# DETAILED REPORT
 
-### Best Product/Aspect
-2-3 sentences identifying what customers are most satisfied with.
-Reference specific features, products, or experiences mentioned repeatedly.
+## Best Performing Aspect
+Describe the strongest recurring positive experience, feature, quality, or theme.
 
-### Pros
-- (specific positive theme with brief example from reviews)
-- (specific positive theme with brief example from reviews)
-- (specific positive theme with brief example from reviews)
-- (specific positive theme with brief example from reviews)
-- (specific positive theme with brief example from reviews)
+## Positive Themes
+Provide 5-7 recurring positive patterns observed in the reviews.
 
-### Cons
-- (specific negative theme with brief example from reviews)
-- (specific negative theme with brief example from reviews)
-- (specific negative theme with brief example from reviews)
-- (specific negative theme with brief example from reviews)
-- (specific negative theme with brief example from reviews)
+## Negative Themes
+Provide 5-7 recurring complaints, frustrations, or negative experiences.
 
-### Worst Product/Aspect
-2-3 sentences identifying what customers are most dissatisfied with.
-Reference specific features, products, or experiences mentioned repeatedly.
+## Biggest Pain Point
+Describe the single most damaging recurring issue affecting user/customer satisfaction.
 
-### How To Improve
-- (specific actionable recommendation tied to a recurring complaint)
-- (specific actionable recommendation tied to a recurring complaint)
-- (specific actionable recommendation tied to a recurring complaint)
-- (specific actionable recommendation tied to a recurring complaint)
-- (specific actionable recommendation tied to a recurring complaint)
+## Improvement Opportunities
+Provide 5 actionable recommendations based on recurring review patterns.
 
-### Where To Focus
-Rank these by business impact:
-1. (highest impact area) — why it matters
-2. (second priority area) — why it matters
-3. (third priority area) — why it matters
+## High Impact Focus Areas
+Rank the top 3 areas that should receive immediate attention based on business/user impact.
 
-### Customer Sentiment Pattern
-One paragraph summarizing the overall narrative — what story do these reviews tell together? What is the customer experience journey?
+## User Experience Narrative
+Write a concise paragraph describing the overall story these reviews tell about the user/customer experience journey.
 
-Be specific throughout. Avoid generic statements like "improve customer service".
-Reference actual themes from the reviews. Every recommendation must be actionable.
-"""
-
-FULL_PROMPT = """
-You are a senior product analyst preparing a complete business intelligence report. Analyze these customer reviews carefully and generate both an executive summary and a detailed report.
-
-POSITIVE REVIEWS (Top 50 - highest confidence):
-{positive_reviews}
-
-NEGATIVE REVIEWS (Top 50 - highest confidence):
-{negative_reviews}
-
-NEUTRAL REVIEWS (Top 50 - highest confidence):
-{neutral_reviews}
-
-Generate EXACTLY this structure:
-
-## EXECUTIVE SUMMARY
-
-**Overall Sentiment**
-One sentence describing the overall customer sentiment landscape.
-
-**Key Metrics**
-- Dominant sentiment: (positive/negative/neutral) at X percent of reviews
-- Customer satisfaction signal: (Strong/Moderate/Weak/Critical)
-- Urgency level: (Low/Medium/High/Critical)
-
-**Top Strength**
-One specific sentence about what customers love most.
-
-**Top Weakness**
-One specific sentence about the biggest pain point.
-
-**#1 Priority Action**
-One clear, specific, actionable recommendation for leadership.
-
----
-
-## DETAILED REPORT
-
-### Best Product/Aspect
-2-3 sentences identifying what customers are most satisfied with.
-Reference specific features, products, or experiences mentioned repeatedly.
-
-### Pros
-- (specific positive theme with brief example from reviews)
-- (specific positive theme with brief example from reviews)
-- (specific positive theme with brief example from reviews)
-- (specific positive theme with brief example from reviews)
-- (specific positive theme with brief example from reviews)
-
-### Cons
-- (specific negative theme with brief example from reviews)
-- (specific negative theme with brief example from reviews)
-- (specific negative theme with brief example from reviews)
-- (specific negative theme with brief example from reviews)
-- (specific negative theme with brief example from reviews)
-
-### Worst Product/Aspect
-2-3 sentences identifying what customers are most dissatisfied with.
-Reference specific features, products, or experiences mentioned repeatedly.
-
-### How To Improve
-- (specific actionable recommendation tied to a recurring complaint)
-- (specific actionable recommendation tied to a recurring complaint)
-- (specific actionable recommendation tied to a recurring complaint)
-- (specific actionable recommendation tied to a recurring complaint)
-- (specific actionable recommendation tied to a recurring complaint)
-
-### Where To Focus
-Rank these by business impact:
-1. (highest impact area) — why it matters
-2. (second priority area) — why it matters
-3. (third priority area) — why it matters
-
-### Customer Sentiment Pattern
-One paragraph summarizing the overall narrative — what story do these reviews tell together?
-
-Be specific throughout. Avoid generic statements.
-Reference actual themes from the reviews. Every recommendation must be actionable.
+Requirements:
+- Adapt dynamically to the review domain
+- Avoid generic statements
+- Do not assume reviews are about physical products
+- Be analytical and insight-driven
+- Reference recurring patterns from reviews
+- Keep recommendations actionable and specific
 """
 
 def truncate_reviews(text, max_words=120):
@@ -215,11 +153,11 @@ def build_prompt(positive_reviews, neutral_reviews, negative_reviews, summary_ty
 
 def generate_with_gemini(prompt, summary_type):
     if summary_type=="executive":
-        max_tok = 700
+        max_tok = 1000
     elif summary_type=="detailed":
-        max_tok = 1800
+        max_tok = 2800
     else:
-        max_tok = 2600
+        max_tok = 4200
 
     response = gemini_client.models.generate_content(
         model = "gemini-2.5-flash",
@@ -249,11 +187,11 @@ def generate_with_gemini(prompt, summary_type):
 
 def generate_with_groq(prompt, summary_type):
     if summary_type=="executive":
-        max_tok = 700
+        max_tok = 900
     elif summary_type=="detailed":
-        max_tok = 1800
-    else:
         max_tok = 2600
+    else:
+        max_tok = 3800
 
     response = groq_client.chat.completions.create(
         model = "meta-llama/llama-4-scout-17b-16e-instruct",
