@@ -19,7 +19,7 @@ class BatchSummary(Base):
 
     llm_latency = Column(Float, nullable=True)
 
-    estimated_token = Column(Integer, nullabel=True)
+    estimated_token = Column(Integer, nullable=True)
 
     prompt_version = Column(String, default="v1")
 
