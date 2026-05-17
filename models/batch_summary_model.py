@@ -27,6 +27,4 @@ class BatchSummary(Base):
 
     created_at = Column(DateTime, default = lambda: datetime.now(UTC))
 
-    __table_args__ = UniqueConstraint(
-        "job_id", "summary_type", name="unique_job_summary_type"
-    )
+    __table_args__ = (UniqueConstraint("job_id", "summary_type", name="unique_job_summary_type"), )
