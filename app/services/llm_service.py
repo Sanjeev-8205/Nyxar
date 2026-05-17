@@ -215,14 +215,14 @@ def build_prompt(positive_reviews, neutral_reviews, negative_reviews, summary_ty
 
 def generate_with_gemini(prompt, summary_type):
     if summary_type=="executive":
-        max_tok = 300
+        max_tok = 700
     elif summary_type=="detailed":
-        max_tok = 800
+        max_tok = 1800
     else:
-        max_tok = 1200
+        max_tok = 2600
 
     response = gemini_client.models.generate_content(
-        model = "gemini-2.5-flash",
+        model = "gemini-3-flash",
         contents = prompt,
         config = types.GenerateContentConfig(
             max_output_tokens=max_tok
@@ -236,11 +236,11 @@ def generate_with_gemini(prompt, summary_type):
 
 def generate_with_groq(prompt, summary_type):
     if summary_type=="executive":
-        max_tok = 300
+        max_tok = 700
     elif summary_type=="detailed":
-        max_tok = 800
+        max_tok = 1800
     else:
-        max_tok = 1200
+        max_tok = 2600
 
     response = groq_client.chat.completions.create(
         model = "meta-llama/llama-4-scout-17b-16e-instruct",
