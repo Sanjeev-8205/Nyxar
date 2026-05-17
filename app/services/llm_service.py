@@ -1,5 +1,6 @@
 import os
 from google import genai
+from google.genai import types
 from groq import Groq
 import time
 
@@ -191,7 +192,7 @@ def truncate_reviews(text, max_words=120):
     return " ".join(words[:max_words])+"..."
 
 def format_reviews(reviews):
-    return "\n".join([f"-{review}" for review in reviews])
+    return "\n".join([f"- {review}" for review in reviews])
 
 def estimate_tokens(text):
     words = len(text.split())
@@ -213,19 +214,34 @@ def build_prompt(positive_reviews, neutral_reviews, negative_reviews, summary_ty
     )
 
 def generate_with_gemini(prompt, summary_type):
+    if summary_type=="executive":
+        max_tok = 300
+    elif summary_type=="detailed":
+        max_tok = 800
+    else:
+        max_tok = 1200
+
     response = gemini_client.models.generate_content(
         model = "gemini-2.5-flash",
         contents = prompt,
-        config = {
-            "max_output_tokens": 300 if "Executive" in summary_type else
-                                1000 if "Detailed" in summary_type else
-                                1200
-        }
+        config = types.GenerateContentConfig(
+            max_output_tokens=max_tok
+        )
     )
+    
+    print(response.text)
+    print(len(response.text))
 
-    return (response.text, f"gemini/gemini-2.5-flash")
+    return (response.text.strip(), f"gemini/gemini-2.5-flash")
 
 def generate_with_groq(prompt, summary_type):
+    if summary_type=="executive":
+        max_tok = 300
+    elif summary_type=="detailed":
+        max_tok = 800
+    else:
+        max_tok = 1200
+
     response = groq_client.chat.completions.create(
         model = "meta-llama/llama-4-scout-17b-16e-instruct",
         messages = [
@@ -234,9 +250,7 @@ def generate_with_groq(prompt, summary_type):
                 "content":prompt
             }
         ],
-        max_tokens = 300 if "Executive" in summary_type else
-                    1000 if "Detailed" in summary_type else
-                    1200
+        max_tokens = max_tok
     )
 
     return (response.choices[0].message.content, f"groq/{response.model}")
