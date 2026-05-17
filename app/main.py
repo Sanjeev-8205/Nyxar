@@ -7,6 +7,7 @@ from app.routes.system.db_status import router as db_status_router
 from app.routes.system.model_status import router as model_status_router
 from app.routes.batch_routes import router as batch_router
 from app.routes.dashboard import router as dashboard_router
+from app.routes.llm_summary_routes import router as llm_router
 from app.services.warmup_service import preload_models, warmup
 import threading
 import json
@@ -40,6 +41,7 @@ app.include_router(db_status_router)
 app.include_router(model_status_router)
 app.include_router(dashboard_router)
 app.include_router(batch_router)
+app.include_router(llm_router)
 
 @app.get("/")
 def home():
