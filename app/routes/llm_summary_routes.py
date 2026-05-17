@@ -44,7 +44,7 @@ def generate_summary(
             "cached": True,
             "summary": existing_summary.summary,
             "provider": existing_summary.provider,
-            "latency": existing_summary.latency,
+            "latency": existing_summary.llm_latency,
             "summary_type":existing_summary.summary_type
         }
 
