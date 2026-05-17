@@ -274,7 +274,8 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
             "latency": latency,
             "estimated_tokens": estimated_tokens,
             "summary_type": summary_type,
-            "prompt_version": "v1"
+            "prompt_version": "v1",
+            "error": None
         }
     
     except Exception as gemini_error:
@@ -292,7 +293,8 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
                 "latency": latency,
                 "estimated_tokens": estimated_tokens,
                 "summary_type": summary_type,
-                "prompt_version": "v1"
+                "prompt_version": "v1",
+                "error": None
             }
     
         except Exception as groq_error:
