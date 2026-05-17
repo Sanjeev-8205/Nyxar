@@ -7,7 +7,7 @@ class BatchSummary(Base):
 
     id = Column(Float, primary_key=True, index=True)
 
-    job_id = Column(Float, ForeignKey("batch_jobs.id"))
+    job_id = Column(Integer, ForeignKey("batch_jobs.id"))
 
     summary_type = Column(String, default="full")
 
