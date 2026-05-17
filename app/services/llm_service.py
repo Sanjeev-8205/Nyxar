@@ -222,7 +222,7 @@ def generate_with_gemini(prompt, summary_type):
         max_tok = 2600
 
     response = gemini_client.models.generate_content(
-        model = "gemini-3-flash",
+        model = "gemini-2.5-flash",
         contents = prompt,
         config = types.GenerateContentConfig(
             max_output_tokens=max_tok

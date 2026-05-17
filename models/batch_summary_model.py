@@ -5,7 +5,7 @@ from datetime import datetime, UTC
 class BatchSummary(Base):
     __tablename__ = "batch_summaries"
 
-    id = Column(Float, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
 
     job_id = Column(Integer, ForeignKey("batch_jobs.id"))
 
@@ -27,6 +27,6 @@ class BatchSummary(Base):
 
     created_at = Column(DateTime, default = lambda: datetime.now(UTC))
 
-    __tableargs__ = UniqueConstraint(
+    __table_args__ = UniqueConstraint(
         "job_id", "summary_type", name="unique_job_summary_type"
     )
