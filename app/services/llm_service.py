@@ -246,9 +246,9 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
     neutral_reviews = neutral_reviews[:50]
     negative_reviews = negative_reviews[:50]
 
-    positive_reviews = [truncate_reviews(review) for review in positive_reviews]
-    neutral_reviews = [truncate_reviews(review) for review in neutral_reviews]
-    negative_reviews = [truncate_reviews(review) for review in negative_reviews] 
+    positive_reviews = [truncate_reviews(review.text) for review in positive_reviews]
+    neutral_reviews = [truncate_reviews(review.text) for review in neutral_reviews]
+    negative_reviews = [truncate_reviews(review.text) for review in negative_reviews] 
 
     prompt = build_prompt(
         positive_reviews=positive_reviews,
