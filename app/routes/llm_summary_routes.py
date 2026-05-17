@@ -67,6 +67,9 @@ def generate_summary(
         fallback_used = results["fallback_used"],
         llm_latency = results["latency"],
         estimated_token = results["estimated_tokens"],
+        input_tokens = results["input_tokens"],
+        output_tokens = results["output_tokens"],
+        total_tokens = results["total_tokens"],
         prompt_version = results["prompt_version"],
         error = results["error"]
     )

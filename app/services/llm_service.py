@@ -229,10 +229,23 @@ def generate_with_gemini(prompt, summary_type):
         )
     )
     
-    print(response.text)
     print(len(response.text))
+    usage = response.usage_metadata
+    print(usage)
 
-    return (response.text.strip(), f"gemini/gemini-2.5-flash")
+    input_tokens = usage.prompt_token_count
+
+    output_tokens = usage.candidates_token_count
+
+    total_tokens = usage.total_token_count
+
+    return {
+        "summary": response.text.strip(), 
+        "provider":f"gemini/gemini-2.5-flash", 
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "total_tokens": total_tokens
+    }
 
 def generate_with_groq(prompt, summary_type):
     if summary_type=="executive":
@@ -253,7 +266,14 @@ def generate_with_groq(prompt, summary_type):
         max_tokens = max_tok
     )
 
-    return (response.choices[0].message.content, f"groq/{response.model}")
+    print(response.usage)
+    return {
+        "summary": response.choices[0].message.content, 
+        "provider": f"groq/{response.model}",
+        "output_tokens": response.usage.completion_tokens,
+        "input_tokens": response.usage.prompt_tokens,
+        "total_tokens": response.usage.total_tokens
+    }
 
 def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, summary_type="full"):
     positive_reviews = positive_reviews[:50]
@@ -277,16 +297,19 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
     start_time = time.perf_counter()
 
     try:
-        summary, provider = generate_with_gemini(prompt, summary_type)
+        gemini_results = generate_with_gemini(prompt, summary_type)
 
         latency = round(time.perf_counter() - start_time, 2)
 
         return {
-            "summary": summary,
-            "provider": provider,
+            "summary": gemini_results["summary"],
+            "provider": gemini_results["provider"],
             "fallback_used": False,
             "latency": latency,
             "estimated_tokens": estimated_tokens,
+            "input_tokens": gemini_results["input_tokens"],
+            "output_tokens": gemini_results["output_tokens"],
+            "total_tokens": gemini_results["total_tokens"],
             "summary_type": summary_type,
             "prompt_version": "v1",
             "error": None
@@ -296,16 +319,19 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
         print(f"Gemini Failed - {gemini_error}")
 
         try:
-            summary, provider = generate_with_groq(prompt, summary_type)
+            groq_results = generate_with_groq(prompt, summary_type)
             
             latency = round(time.perf_counter() - start_time, 2)
 
             return {
-                "summary": summary,
-                "provider": provider,
+                "summary": groq_results["summary"],
+                "provider": groq_results["provider"],
                 "fallback_used": True,
                 "latency": latency,
                 "estimated_tokens": estimated_tokens,
+                "input_tokens": groq_results["input_tokens"],
+                "output_tokens": groq_results["output_tokens"],
+                "total_tokens": groq_results["total_tokens"],
                 "summary_type": summary_type,
                 "prompt_version": "v1",
                 "error": None
@@ -320,6 +346,9 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
                 "fallback_used": True,
                 "latency": None,
                 "estimated_tokens": estimated_tokens,
+                "input_tokens": None,
+                "output_tokens": None,
+                "total_tokens": None,
                 "summary_type": summary_type,
                 "prompt_version": "v1",
                 "error": "Both Gemini and Groq failed."

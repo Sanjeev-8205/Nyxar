@@ -21,6 +21,12 @@ class BatchSummary(Base):
 
     estimated_token = Column(Integer, nullable=True)
 
+    input_tokens = Column(Integer, nullable=True)
+
+    output_tokens = Column(Integer, nullable=True)
+    
+    total_tokens = Column(Integer, nullable=True)
+
     prompt_version = Column(String, default="v1")
 
     error = Column(Text, nullable=True)
