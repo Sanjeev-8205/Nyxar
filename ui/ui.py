@@ -808,7 +808,7 @@ if page=="Batch Jobs":
         if st.button("Generate AI Insights"):
             with st.spinner("Analyzing reviews with AI..."):
                 response = requests.get(
-                    f"{BASE_URL}/batch/job/{job_id}/summary",
+                    f"{BASE_URL}/batch/job/{st.session_state.job_id}/summary",
                     params={"summary_type":summary_type},
                     timeout=120
                 )
