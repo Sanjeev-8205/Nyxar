@@ -122,10 +122,10 @@ Generate this structure exactly:
 Summarize the overall customer/user sentiment in 2-3 concise paragraphs.
 
 ## Key Positive Themes
-Provide 3-5 recurring positive themes observed in reviews.
+Provide 4-6 recurring positive themes observed in reviews.
 
 ## Key Negative Themes
-Provide 3-5 recurring complaints or frustrations.
+Provide 4-6 recurring complaints or frustrations.
 
 ## Most Significant Strength
 Describe the strongest positive recurring pattern.
@@ -134,10 +134,16 @@ Describe the strongest positive recurring pattern.
 Describe the most damaging recurring issue.
 
 ## Recommended Improvements
-Provide 3 practical improvement recommendations.
+Provide 4 practical improvement recommendations.
 
 ## Priority Focus Areas
 Rank the top 3 areas needing immediate attention.
+
+## Customer/User Behavior Pattern
+Describe the major behavioral or expectation trends reflected in the reviews.
+
+## Risk Assessment
+Identify the biggest long-term risk or concern suggested by the review patterns.
 
 Requirements:
 - Be concise but analytical
