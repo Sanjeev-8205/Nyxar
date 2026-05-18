@@ -11,18 +11,10 @@ gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 groq_client = Groq(api_key=GROQ_API_KEY)
 
 EXECUTIVE_PROMPT = """
-You are a senior AI business intelligence analyst.
+You are an AI review intelligence analyst.
 
 Analyze the following reviews grouped by sentiment.
-The reviews may belong to ANY domain such as:
-products, movies, applications, games, services, platforms, books, restaurants, software, or digital experiences.
-
-Your task is to identify:
-- overall sentiment patterns
-- recurring strengths
-- recurring weaknesses
-- major user experience trends
-- the most important improvement opportunity
+The reviews may belong to any domain such as products, apps, movies, games, services, software, restaurants, books, or digital platforms.
 
 POSITIVE REVIEWS:
 {positive_reviews}
@@ -33,50 +25,40 @@ NEGATIVE REVIEWS:
 NEUTRAL REVIEWS:
 {neutral_reviews}
 
-Generate EXACTLY this structure:
+Generate this structure exactly:
 
-## EXECUTIVE SUMMARY
+# EXECUTIVE SUMMARY
 
-### Overall Sentiment
-Provide a concise 2-3 sentence overview of the overall sentiment landscape and customer/user perception.
+## Overall Sentiment
+Summarize the overall sentiment in 2 concise sentences.
 
-### Key Metrics
+## Key Signals
 - Dominant sentiment
-- Customer/User satisfaction signal
+- Satisfaction level
 - Urgency level
 
-### Top Strength
-Identify the strongest recurring positive theme or experience.
+## Top Positive Theme
+Identify the strongest recurring positive pattern.
 
-### Top Weakness
-Identify the most critical recurring complaint or negative pattern.
+## Top Negative Theme
+Identify the most common complaint or issue.
 
-### Strategic Insight
-Provide one important insight about the overall user/customer experience narrative.
-
-### #1 Priority Action
-Provide the single highest-impact recommendation based on review patterns.
+## Recommended Action
+Provide the single most important improvement recommendation.
 
 Requirements:
-- Be domain-aware based on the reviews themselves
-- Avoid assuming the reviews are about physical products
-- Use professional business language
-- Keep insights concise but meaningful
-- Reference recurring patterns from reviews
+- Be concise and insight-focused
+- Use professional language
+- Reference recurring review patterns
+- Adapt naturally to the review domain
+- Avoid unnecessary explanation
 """
 
 DETAILED_PROMPT = """
-You are a senior AI insights analyst preparing a detailed review intelligence report.
+You are an AI review intelligence analyst.
 
 Analyze the following reviews grouped by sentiment.
-The reviews may belong to ANY category or domain.
-
-Your task is to identify:
-- recurring positive themes
-- recurring negative themes
-- user/customer expectations
-- major experience patterns
-- actionable improvement opportunities
+The reviews may belong to any domain or category.
 
 POSITIVE REVIEWS:
 {positive_reviews}
@@ -87,38 +69,83 @@ NEGATIVE REVIEWS:
 NEUTRAL REVIEWS:
 {neutral_reviews}
 
-Generate EXACTLY this structure:
+Generate this structure exactly:
 
 # DETAILED REPORT
 
 ## Best Performing Aspect
-Describe the strongest recurring positive experience, feature, quality, or theme.
+Describe the strongest recurring positive experience or feature.
 
 ## Positive Themes
-Provide 5-7 recurring positive patterns observed in the reviews.
+Provide 3-5 recurring positive patterns.
 
 ## Negative Themes
-Provide 5-7 recurring complaints, frustrations, or negative experiences.
+Provide 3-5 recurring complaints or frustrations.
 
 ## Biggest Pain Point
-Describe the single most damaging recurring issue affecting user/customer satisfaction.
+Describe the most damaging recurring issue.
 
 ## Improvement Opportunities
-Provide 5 actionable recommendations based on recurring review patterns.
+Provide 3 actionable recommendations.
 
-## High Impact Focus Areas
-Rank the top 3 areas that should receive immediate attention based on business/user impact.
-
-## User Experience Narrative
-Write a concise paragraph describing the overall story these reviews tell about the user/customer experience journey.
+## Priority Focus Areas
+Rank the top 3 improvement areas by impact.
 
 Requirements:
-- Adapt dynamically to the review domain
+- Be concise but analytical
 - Avoid generic statements
-- Do not assume reviews are about physical products
-- Be analytical and insight-driven
+- Adapt naturally to the review domain
 - Reference recurring patterns from reviews
-- Keep recommendations actionable and specific
+- Keep recommendations practical and specific
+"""
+
+FULL_PROMPT = """
+You are an AI review intelligence analyst.
+
+Analyze the following reviews grouped by sentiment.
+The reviews may belong to any domain such as products, apps, movies, games, software, services, restaurants, books, or digital platforms.
+
+POSITIVE REVIEWS:
+{positive_reviews}
+
+NEGATIVE REVIEWS:
+{negative_reviews}
+
+NEUTRAL REVIEWS:
+{neutral_reviews}
+
+Generate this structure exactly:
+
+# FULL REVIEW REPORT
+
+## Overall Sentiment
+Summarize the overall customer/user sentiment in 2-3 concise paragraphs.
+
+## Key Positive Themes
+Provide 3-5 recurring positive themes observed in reviews.
+
+## Key Negative Themes
+Provide 3-5 recurring complaints or frustrations.
+
+## Most Significant Strength
+Describe the strongest positive recurring pattern.
+
+## Biggest Pain Point
+Describe the most damaging recurring issue.
+
+## Recommended Improvements
+Provide 3 practical improvement recommendations.
+
+## Priority Focus Areas
+Rank the top 3 areas needing immediate attention.
+
+Requirements:
+- Be concise but analytical
+- Adapt naturally to the review domain
+- Avoid repetitive wording
+- Reference recurring review patterns
+- Keep insights practical and actionable
+- Avoid unnecessary explanation
 """
 
 def truncate_reviews(text, max_words=120):
@@ -155,9 +182,9 @@ def generate_with_gemini(prompt, summary_type):
     if summary_type=="executive":
         max_tok = 1000
     elif summary_type=="detailed":
-        max_tok = 2800
+        max_tok = 2600
     else:
-        max_tok = 4200
+        max_tok = 3800
 
     response = gemini_client.models.generate_content(
         model = "gemini-2.5-flash",
@@ -187,11 +214,11 @@ def generate_with_gemini(prompt, summary_type):
 
 def generate_with_groq(prompt, summary_type):
     if summary_type=="executive":
-        max_tok = 900
+        max_tok = 1000
     elif summary_type=="detailed":
-        max_tok = 2600
+        max_tok = 3000
     else:
-        max_tok = 3800
+        max_tok = 4200
 
     response = groq_client.chat.completions.create(
         model = "meta-llama/llama-4-scout-17b-16e-instruct",
