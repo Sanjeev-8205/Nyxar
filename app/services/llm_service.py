@@ -187,7 +187,7 @@ def generate_with_gemini(prompt, summary_type):
         max_tok = 3800
 
     response = gemini_client.models.generate_content(
-        model = "gemini-2.5-flash",
+        model = "gemini-3.1-flash-lite",
         contents = prompt,
         config = types.GenerateContentConfig(
             max_output_tokens=max_tok
@@ -206,7 +206,7 @@ def generate_with_gemini(prompt, summary_type):
 
     return {
         "summary": response.text.strip(), 
-        "provider":f"gemini/gemini-2.5-flash", 
+        "provider":f"gemini/gemini-3.1-flash-lite", 
         "input_tokens": input_tokens,
         "output_tokens": output_tokens,
         "total_tokens": total_tokens
