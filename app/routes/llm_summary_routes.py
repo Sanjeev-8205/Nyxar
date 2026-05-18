@@ -70,6 +70,7 @@ def generate_summary(
         input_tokens = results["input_tokens"],
         output_tokens = results["output_tokens"],
         total_tokens = results["total_tokens"],
+        thoughts_tokens= results["thoughts_tokens"],
         prompt_version = results["prompt_version"],
         error = results["error"]
     )

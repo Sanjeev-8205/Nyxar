@@ -210,12 +210,15 @@ def generate_with_gemini(prompt, summary_type):
 
     total_tokens = usage.total_token_count
 
+    thought_tokens = usage.thoughts_token_count
+
     return {
         "summary": response.text.strip(), 
         "provider":f"gemini/gemini-3.1-flash-lite", 
         "input_tokens": input_tokens,
         "output_tokens": output_tokens,
-        "total_tokens": total_tokens
+        "total_tokens": total_tokens,
+        "thoughts_tokens": thought_tokens
     }
 
 def generate_with_groq(prompt, summary_type):
@@ -243,7 +246,8 @@ def generate_with_groq(prompt, summary_type):
         "provider": f"groq/{response.model}",
         "output_tokens": response.usage.completion_tokens,
         "input_tokens": response.usage.prompt_tokens,
-        "total_tokens": response.usage.total_tokens
+        "total_tokens": response.usage.total_tokens,
+        "thoughts_tokens": None
     }
 
 def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, summary_type="full"):
@@ -276,11 +280,13 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
             "summary": gemini_results["summary"],
             "provider": gemini_results["provider"],
             "fallback_used": False,
+            "fallback_reason": None,
             "latency": latency,
             "estimated_tokens": estimated_tokens,
             "input_tokens": gemini_results["input_tokens"],
             "output_tokens": gemini_results["output_tokens"],
             "total_tokens": gemini_results["total_tokens"],
+            "thoughts_tokens": gemini_results["thoughts_tokens"],
             "summary_type": summary_type,
             "prompt_version": "v1",
             "error": None
@@ -298,11 +304,13 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
                 "summary": groq_results["summary"],
                 "provider": groq_results["provider"],
                 "fallback_used": True,
+                "fallback_reason": str(gemini_error),
                 "latency": latency,
                 "estimated_tokens": estimated_tokens,
                 "input_tokens": groq_results["input_tokens"],
                 "output_tokens": groq_results["output_tokens"],
                 "total_tokens": groq_results["total_tokens"],
+                "thoughts_tokens": None,
                 "summary_type": summary_type,
                 "prompt_version": "v1",
                 "error": None
@@ -315,11 +323,13 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
                 "summary": None,
                 "provider": None,
                 "fallback_used": True,
+                "fallback_reason": str(groq_error),
                 "latency": None,
                 "estimated_tokens": estimated_tokens,
                 "input_tokens": None,
                 "output_tokens": None,
                 "total_tokens": None,
+                "thoughts_tokens": None,
                 "summary_type": summary_type,
                 "prompt_version": "v1",
                 "error": "Both Gemini and Groq failed."

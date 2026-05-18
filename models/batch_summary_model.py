@@ -17,11 +17,15 @@ class BatchSummary(Base):
 
     fallback_used = Column(Boolean, default=False)
 
+    fallback_reason = Column(String, nullable=True)
+
     llm_latency = Column(Float, nullable=True)
 
     estimated_token = Column(Integer, nullable=True)
 
     input_tokens = Column(Integer, nullable=True)
+
+    thoughts_tokens = Column(Integer, nullable=True)
 
     output_tokens = Column(Integer, nullable=True)
     
