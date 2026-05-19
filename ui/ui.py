@@ -753,21 +753,28 @@ def render_observability():
 
         db_status = dashboard_metrics["health"]["db_health"]["database"]
 
-        c1, c2 = st.columns(2)
+        c1, c2, c3 = st.columns(3)
         
         with c1:
-            metric_card(
-                "Model Count",
-                dashboard_metrics["health"]["models_count"]
-            )
+            if dashboard_metrics["health"]["models_count"]==0:
+                model_count_info = f"No Active Models"
+            elif dashboard_metrics["health"]["models_count"]==1:
+                model_count_info = f"{dashboard_metrics["health"]["models_count"]} Active Model"
+            else:
+                model_count_info = f"{dashboard_metrics["health"]["models_count"]} Active Models"
+
+            metric_card("Model Availability", model_count_info)
         
         with c2:
+            metric_card(
+                "Uptime", f"{dashboard_metrics["health"]["uptime"]}"
+            )
+
+        with c3:
             metric_card(
                 "CPU Usage",
                 f"{dashboard_metrics["health"]["cpu_usage"][0]:.2f}%"
             )
-        
-        #columns for infra+CPU and Model+Uptime
         
         left_col, right_col = st.columns(2)
         with left_col:
@@ -778,23 +785,8 @@ def render_observability():
                 status_card("Database", "Connection issue", "red")
 
         with right_col:
-            if dashboard_metrics["health"]["models_count"]==0:
-                model_count_info = f"No Active Models."
-            elif dashboard_metrics["health"]["models_count"]==1:
-                model_count_info = f"{dashboard_metrics["health"]["models_count"]} Active Model."
-            else:
-                model_count_info = f"{dashboard_metrics["health"]["models_count"]} Active Models."
-            mini_card("Model Avalilability", model_count_info)
-
-        l_col, r_col = st.columns(2)
-        with l_col:
             st.write("CPU Utilization")
             st.progress(dashboard_metrics["health"]["cpu_usage"][0] / 100)
-
-        with r_col:
-            mini_card(
-                "Uptime", f"{dashboard_metrics["health"]["uptime"]}"
-            )
 
         #Health table
         health_table =pd.DataFrame(
