@@ -379,6 +379,9 @@ def render_ai_intelligence():
                 with st.expander("View AI Summary", expanded=True, help="Click to expand or hide the summary."):
                     st.markdown(st.session_state.ai_summary)
 
+    if not st.session_state.completed_job_data:
+        st.markdown("### Perform batch prediction in the Batch Intelligence Page to enable insights generation.")
+
 def render_observability():
 
     dashboard_metrics = st.session_state.dashboard_metrics
