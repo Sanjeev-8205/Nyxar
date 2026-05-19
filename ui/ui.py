@@ -355,8 +355,6 @@ def render_ai_intelligence():
 
         summary_type = SUMMARY_MAPPING[selected_option]
 
-        summary_container = st.empty()
-
         if st.button("Generate AI Insights"):
 
             with st.spinner("Analyzing reviews with AI..."):
@@ -375,10 +373,10 @@ def render_ai_intelligence():
                     st.error("Failed to generate insights. Try again.")
 
         if st.session_state.ai_summary:
-
+            summary_container = st.empty()
             with summary_container.container(height=500):
                 st.caption("AI Summary")
-                with st.expander("View AI Summary", expanded=True):
+                with st.expander("View AI Summary", expanded=True, help="Click to expand or hide the summary."):
                     st.markdown(st.session_state.ai_summary)
 
 def render_observability():
