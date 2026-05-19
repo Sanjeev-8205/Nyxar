@@ -91,7 +91,7 @@ def subtitle_subtext(text):
         </div>
     """, unsafe_allow_html=True)
 
-def chart_container(title, fig, subtitle=None):
+def chart_container(fig, title, subtitle=None):
 
     with st.container():
 
