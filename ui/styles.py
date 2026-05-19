@@ -52,6 +52,27 @@ def load_global_styles():
         margin-top: 0.5rem !important;
         margin-bottom: 0.5rem !important;
     }
+                
+    /* Mini Card Title */
+    div[data-testid="stMarkdownContainer"] .mini-card-title {
+
+        color: #9CA3AF !important;
+
+        font-size: 0.9rem !important;
+
+        margin-bottom: 0.35rem !important;
+    }
+
+
+    /* Mini Card Value */
+    div[data-testid="stMarkdownContainer"] .mini-card-value {
+
+        font-size: 1.8rem !important;
+
+        font-weight: 700 !important;
+
+        color: #F3F4F6 !important;
+    }
 
     /* Section Headers */
     .section-header {

@@ -667,7 +667,7 @@ def render_observability():
             #Log Metrics
             st.markdown("### 📈 Log Metrics")
 
-            metric_col1, metric_col2, metric_col3, metric_col4 = st.columns(4)
+            metric_col1, metric_col2, metric_col3, metric_col4 = st.columns([1,1,1,2])
 
             with metric_col1:
 
@@ -707,7 +707,7 @@ def render_observability():
 
                 metric_card(
                     "Most Used Model",
-                    most_used_model.upper()
+                    most_used_model
                 )
 
             # Centerpiece - Main Logs
