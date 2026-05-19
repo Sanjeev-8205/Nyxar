@@ -171,9 +171,9 @@ def estimate_tokens(text):
     return int(words*1.3)
 
 def build_prompt(positive_reviews, neutral_reviews, negative_reviews, summary_type):
-    if summary_type == "Executive Summary":
+    if summary_type == "executive":
         template = EXECUTIVE_PROMPT
-    elif summary_type == "Detailed Report":
+    elif summary_type == "detailed":
         template = DETAILED_PROMPT
     else:
         template = FULL_PROMPT
