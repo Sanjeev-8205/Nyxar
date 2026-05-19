@@ -18,6 +18,16 @@ def load_global_styles():
         padding-right: 3rem;
         max-width: 1450px;
     }
+                
+    /* Streamlit Containers */
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        background: rgba(17,24,39,0.88) !important;
+        border: 1px solid rgba(255,255,255,0.06) !important;
+        border-radius: 18px !important;
+        padding: 1rem !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25) !important;
+        backdrop-filter: blur(12px) !important;
+    }
 
     /* Sidebar */
     [data-testid="stSidebar"] {

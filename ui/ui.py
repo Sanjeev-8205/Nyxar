@@ -778,15 +778,16 @@ def render_observability():
         
         left_col, right_col = st.columns(2)
         with left_col:
-            st.subheader("Infrastructure Health")
             if db_status == "connected":
                 status_card("Database", "Connected", "green")
             else:
                 status_card("Database", "Connection issue", "red")
 
         with right_col:
-            st.write("CPU Utilization")
-            st.progress(dashboard_metrics["health"]["cpu_usage"][0] / 100)
+            with st.container(border=True):
+                st.write("CPU Utilization")
+                st.progress(dashboard_metrics["health"]["cpu_usage"][0] / 100)
+                st.caption(f"{dashboard_metrics["health"]["cpu_usage"][0]}% utilization")
 
         #Health table
         health_table =pd.DataFrame(
