@@ -190,7 +190,7 @@ def render_live_inference():
                             f"Prediction failed: {str(e)}"
                         )
                     
-        if "prediction_result" in st.session_state:
+        if st.session_state.prediction_result is not None:
 
             result = st.session_state.prediction_result
             
