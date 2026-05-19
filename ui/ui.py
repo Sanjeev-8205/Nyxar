@@ -102,6 +102,9 @@ st.title("✨ AI Observability and Intelligence Platform")
 st.caption("Real-time monitoring, inference analytics, and AI-driven operational intelligence for production-scale ML systems.")
 
 def render_overview():
+
+    dashboard_metrics = st.session_state.dashboard_metrics
+
     hero_header("Overview")
     hero_subtext("Real-time AI inference, observability, and intelligence monitoring for production-scale ML workflows.")
 
@@ -131,6 +134,9 @@ def render_overview():
     )
 
 def render_live_inference():
+        
+        dashboard_metrics = st.session_state.dashboard_metrics
+
         hero_header("Live Inference")
         hero_subtext("Live inference using production ML models")
 
@@ -196,6 +202,9 @@ def render_live_inference():
                 )
 
 def render_batch_intelligence():
+
+    dashboard_metrics = st.session_state.dashboard_metrics
+
     hero_header("Batch Intelligence")
     hero_subtext("Track large-scale dataset processing, asynchronous AI workflows, job analytics, and batch inference performance.")
 
@@ -293,6 +302,8 @@ def render_batch_intelligence():
 
 def render_ai_intelligence():
 
+    dashboard_metrics = st.session_state.dashboard_metrics
+
     hero_header("AI Intelligence")
     hero_subtext("Generate LLM-powered summaries, topic insights, anomaly detection, and enterprise-scale feedback intelligence.")
 
@@ -341,6 +352,9 @@ def render_ai_intelligence():
                     st.error("Failed to generate insights. Try again.")
 
 def render_observability():
+
+    dashboard_metrics = st.session_state.dashboard_metrics
+
     obs_tab1, obs_tab2, obs_tab3, obs_tab4 = st.tabs([
         "Overview",
         "Performance",

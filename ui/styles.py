@@ -16,7 +16,7 @@ def load_global_styles():
         padding-bottom: 2rem;
         padding-left: 3rem;
         padding-right: 3rem;
-        max-width: 1600px;
+        max-width: 1450px;
     }
 
     /* Sidebar */

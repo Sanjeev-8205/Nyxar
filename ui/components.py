@@ -75,7 +75,7 @@ def hero_subtext(text):
     <div class="section-subtext">
         {text}
     </div>
-    """)
+    """, unsafe_allow_html=True)
 
 def subtitle(title):
     st.markdown(f"""
@@ -93,35 +93,29 @@ def subtitle_subtext(text):
 
 def chart_container(title, fig, subtitle=None):
 
-    st.markdown(f"""
-    <div class="metric-card">
+    with st.container():
 
-        <div style="
-            margin-bottom: 1rem;
-        ">
-
+        st.markdown(f"""
+        <div class="metric-card">
             <div style="
-                font-size: 1.1rem;
-                font-weight: 700;
-                color: white;
+                font-size:1.1rem;
+                font-weight:700;
+                margin-bottom:0.3rem;
             ">
                 {title}
             </div>
 
             <div style="
-                color: #9CA3AF;
-                font-size: 0.92rem;
-                margin-top: 0.25rem;
+                color:#9CA3AF;
+                font-size:0.92rem;
+                margin-bottom:1rem;
             ">
                 {subtitle if subtitle else ""}
             </div>
-
         </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
-
-    st.markdown("</div>", unsafe_allow_html=True)
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
