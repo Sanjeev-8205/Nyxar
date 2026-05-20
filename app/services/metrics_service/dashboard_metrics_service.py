@@ -24,7 +24,8 @@ def dashboard_metrics_aggregator():
                 "model_usage_distribution": analytics_ms.get_model_usage_distribution(db),
                 "latency_trends": analytics_ms.get_latency_trends(db),
                 "confidence_distribution": analytics_ms.get_confidence_distribution(db),
-                "recent_activity": analytics_ms.get_recent_activity_feed(db)
+                "recent_activity": analytics_ms.get_recent_activity_feed(db),
+                "throughput_per_hour": analytics_ms.get_throughput_per_hour(db)
             },
             "advanced":{
                 "p95_latency": adv_ms.get_p95_latency(db),

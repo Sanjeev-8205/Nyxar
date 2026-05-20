@@ -20,21 +20,38 @@ def get_sentiment_distribution(db):
     }
 
 def get_predictions_over_time(db):
-    predictions_over_time = db.query(
-        func.extract("day", Log.timestamp).label("day"),
+    predictions_per_day = db.query(
+        func.date_trunc("day", Log.timestamp).label("day"),
         func.count(Log.id).label("count")
-    ).group_by(
-        func.extract("day", Log.timestamp)
+    ).group_by(func.date_trunc("day", Log.timestamp)).order_by(
+        func.date_trunc("day", Log.timestamp)
     ).all()
 
-    prediction_over_hour = []
-    for row in predictions_over_time:
-        prediction_over_hour.append({
+    predictions_per_hour_each_day = db.query(
+        func.date_trunc("hour", Log.timestamp).label("hour"),
+        func.count(Log.id).label("count")
+    ).group_by(func.date_trunc("hour", Log.timestamp)).order_by(
+        func.date_trunc("hour", Log.timestamp)
+    ).all()
+
+    prediction_per_day = []
+    for row in predictions_per_day:
+        prediction_per_day.append({
             "day": row[0],
             "count": row[1]
         })
     
-    return prediction_over_hour
+    prediction_per_hour_each_day = []
+    for row in predictions_per_hour_each_day:
+        prediction_per_hour_each_day.append({
+            "hour": row[0],
+            "count": row[1]
+        })
+
+    prediction_per_day.sort(key = lambda x: x["day"], reverse=False)
+    prediction_per_hour_each_day.sort(key = lambda x: x["hour"], reverse=False)
+
+    return [prediction_per_day, prediction_per_hour_each_day]
 
 def get_model_usage_distribution(db):
     model_usage = db.query(
@@ -55,14 +72,14 @@ def get_latency_trends(db):
     latency_per_hour = db.query(
         func.extract("hour", Log.timestamp).label("bucket"),
         func.avg(Log.latency).label("latency")
-    ).group_by(func.extract("hour", Log.timestamp)).all()
+    ).group_by(func.extract("hour", Log.timestamp)).order_by(func.extract("hour", Log.timestamp)).all()
 
     latencies_trend = db.query(
         func.date_trunc("hour", Log.timestamp).label("hour"),
         func.avg(Log.latency).label("avg_latency"),
         func.max(Log.latency).label("max_latency"),
         func.count(Log.id).label("request_count")
-    ).group_by("hour").all()
+    ).group_by("hour").order_by("hour").all()
 
     latencies_hour_of_day = []
     for row in latency_per_hour:
@@ -79,6 +96,8 @@ def get_latency_trends(db):
             "max_latency": float(row[2]) if row[2] is not None else 0,
             "requests": int(row[3]) if row[3] is not None else 0
         })
+
+    latencies_over_time.sort(key = lambda x: x["time"], reverse=False)
 
     return [latencies_hour_of_day, latencies_over_time] 
 
@@ -147,3 +166,24 @@ def get_recent_activity_feed(db):
         "recent_activity": res,
         "Latency": round(recent_activity[3],3)
     }
+
+def get_throughput_per_hour(db):
+    throughput = db.query(
+        func.date_trunc("hour", Log.timestamp).label("hour"),
+        case((func.avg(Log.latency) > 0, 1 / func.avg(Log.latency)), else_=0).label("throughput")
+    ).group_by(
+        func.date_trunc("hour", Log.timestamp)
+    ).order_by(
+        func.date_trunc("hour", Log.timestamp)
+    ).all()
+
+    tph = []
+    for row in throughput:
+        tph.append({
+            "hour": row[0],
+            "throughput": row[1]
+        })
+
+    tph.sort(key = lambda x: x["hour"], reverse=False)
+
+    return tph
