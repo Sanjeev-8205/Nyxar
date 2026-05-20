@@ -203,7 +203,7 @@ def render_overview():
 
             if not tph.empty:
                 fig_tph = px.line(
-                    rph,
+                    tph,
                     x = "hour",
                     y = "count",
                     markers = True
