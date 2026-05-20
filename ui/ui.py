@@ -178,7 +178,7 @@ def render_overview():
         
         with t2:
             #Requests Per Hour
-            requests_per_hour = dashboard_metrics["analytics"]["predictions_over_time"][0]
+            requests_per_hour = dashboard_metrics["analytics"]["predictions_over_time"][1]
 
             rph = pd.DataFrame(requests_per_hour)
 
