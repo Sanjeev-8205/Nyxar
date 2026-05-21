@@ -1,5 +1,5 @@
 from app.core.database import Base
-from sqlalchemy import Column, Integer, Float, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, Float, String, DateTime, Boolean, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, UTC
 
@@ -14,15 +14,11 @@ class OverviewInsights(Base):
 
     provider = Column(String, default='gemini-3.1-flash-lite')
 
-    latency = Column(Float, default=0.0)
-
     fallback_used = Column(Boolean, default=False)
 
     fallback_reason = Column(String, nullable=True)
 
     llm_latency = Column(Float, nullable=True)
-
-    estimated_token = Column(Integer, nullable=True)
 
     input_tokens = Column(Integer, nullable=True)
 
@@ -31,3 +27,7 @@ class OverviewInsights(Base):
     output_tokens = Column(Integer, nullable=True)
     
     total_tokens = Column(Integer, nullable=True)
+
+    prompt_version = Column(String)
+
+    error = Column(Text, nullable=True)

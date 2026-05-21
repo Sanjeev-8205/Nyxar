@@ -25,7 +25,7 @@ def get_insights(
 
     if results:
         return {
-            "ai_insights": results["insights"]
+            "ai_insights": results.insights
         }
     
     else:

@@ -20,7 +20,7 @@ from models.batch_result_model import BatchResult
 from models.overview_insights_model import OverviewInsights
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from app.services.insights_service.overview_insights import get_insights
+from app.services.insights_service.overview_insights import generate_and_save_insights
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -33,9 +33,9 @@ async def lifespan(app: FastAPI):
     t.join()
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(get_insights, "interval", minutes=30)
+    scheduler.add_job(generate_and_save_insights, "interval", minutes=30)
     scheduler.start()
-    get_insights()
+    generate_and_save_insights()
 
     yield
 

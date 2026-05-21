@@ -11,6 +11,7 @@ from app.services.metrics_service.advanced_metrics_service import get_latency_an
 from app.services.metrics_service.health_metrics_service import get_ram_usage, get_cpu_usage, get_uptime, db_health_check
 
 from app.core.database import SessionLocal
+from models.overview_insights_model import OverviewInsights
 
 db=SessionLocal()
 
@@ -120,8 +121,8 @@ telemetry_payload = {
 }
 #------------------------------------------------------------------------------------#
 
-def get_insights():
-    insights_prompt = build_prompt(SYSTEM_INSIGHTS_PROMPT, telemetry_payload)
+def get_insights(prompt):
+    insights_prompt = build_prompt(prompt, telemetry_payload)
 
     start_time = time.perf_counter()
 
@@ -183,3 +184,32 @@ def get_insights():
                 "prompt_version": "v1",
                 "error": "Both Gemini and Groq failed."
             }
+        
+def generate_and_save_insights():
+    try:
+        result = get_insights(SYSTEM_INSIGHTS_PROMPT)
+
+        insight = OverviewInsights(
+            ai_insights=result["ai_insights"],
+            provider=result["provider"],
+            fallback_used=result["fallback_used"],
+            fallback_reason=result["fallback_reason"],
+            llm_latency=result["latency"],
+            input_tokens=result["input_tokens"],
+            output_tokens=result["output_tokens"],
+            thoughts_tokens=result["thoughts_tokens"],
+            total_tokens=result["total_tokens"],
+            prompt_version=result["prompt_version"],
+            error=result["error"]
+        )
+
+        db.add(insight)
+        db.commit()
+        print("Insights saved successfully.")
+
+    except Exception as e:
+        db.rollback()
+        print(f"Failed to save insights: {e}")
+
+    finally:
+        db.close()
