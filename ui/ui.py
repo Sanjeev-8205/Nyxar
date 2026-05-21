@@ -212,8 +212,25 @@ def render_overview():
                 chart_container(fig_tph, "Throughput Per Hour")
 
     with ri_col:
-        #Insights
-        insights_card("AI Insights",f"Latency increased 12% during recent BERT batch jobs.<br>Bi-LSTM currently provides best latency/accuracy balance.")
+
+        response = requests.get(f"{BASE_URL}/overview_insights")
+
+        if response.status_code == 200:
+            data = response.json()
+            insights = data.get("ai_insights", {})
+
+            inference = insights.get("inference_insights") or "Insights not available yet."
+            activity = insights.get("recent_activity") or "Insights not available yet."
+            anomaly = insights.get("anomaly_detection") or "Insights not available yet."
+            health = insights.get("health_metrics") or "Insights not available yet."
+
+            insights_card("Inference", inference)
+            insights_card("Recent Activity", activity)
+            insights_card("Anomaly Detection", anomaly)
+            insights_card("Health", health)
+
+        else:
+            insights_card("AI Insights", "Unable to load insights. Please try again later.")
 
 def render_live_inference():
         
