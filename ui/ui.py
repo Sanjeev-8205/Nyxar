@@ -137,7 +137,7 @@ def render_overview():
         metric_card("Total Predictions", dashboard_metrics["inference"]["total_predictions"])
 
     with col2:
-        metric_card("Avg Latency", dashboard_metrics["inference"]["average_latency"])
+        metric_card("Avg Latency", f"{dashboard_metrics["inference"]["average_latency"]}ms")
     
     with col3:
         metric_card("RPM", dashboard_metrics["inference"]["rpm"])
