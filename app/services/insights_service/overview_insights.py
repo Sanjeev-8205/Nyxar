@@ -73,7 +73,7 @@ def gen_with_gemini(prompt):
         config=types.GenerateContentConfig(response_mime_type="application/json")
     )
 
-    print(response.usage)
+    print(response.usage_metadata)
     usage = response.usage_metadata
     return {
         "insights": json.loads(response.text),
@@ -97,9 +97,11 @@ def gen_with_groq(prompt):
         response_format={"type": "json_object"}
     )
 
+    content = response.choices[0].message.content
+
     print(response.usage)
     return {
-        "insights": json.loads(response.choices[0].message.content),
+        "insights": json.loads(content) if isinstance(content, str) else content,
         "provider": "groq/llama-3.1-8b-instant",
         "input_tokens": response.usage.prompt_tokens,
         "output_tokens": response.usage.completion_tokens,
@@ -185,6 +187,7 @@ def get_insights(prompt):
             }
         
         except Exception as groq_error:
+            print(f"Groq failed with: {type(groq_error).__name__}: {groq_error}")
             print("Both gemini and groq failed.")
             return {
                 "ai_insights": None,
