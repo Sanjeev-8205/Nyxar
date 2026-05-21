@@ -189,3 +189,43 @@ def get_drift_indicators(db):
         "confidence_shift": confidence_shift,
         "timestamp": drift_metrics["timestamp"]
     }
+
+def get_latency_and_throughput_shifts(db):
+    metrics = db.query(
+        Log.latency.label("latency"),
+        (1/Log.latency).label("throughput")
+    ).all()
+
+    shift_metrics = {
+        "latencies": [],
+        "throughput": []
+    }
+
+    for row in metrics:
+        shift_metrics["latencies"].append(row[0])
+        shift_metrics["throughput"].append(row[1])
+
+    shift_window = min(10, len(shift_metrics["latencies"]))
+
+    if shift_window==0:
+        return {
+            "latency_shift": 0,
+            "throughput_shift": 0
+        }
+
+    recent_latencies = shift_metrics["latencies"][-shift_window:]
+    previous_latencies = shift_metrics["latencies"][-2*shift_window:-shift_window]
+    latency_shift = (
+        np.mean(recent_latencies) - np.mean(previous_latencies)
+    )
+
+    recent_throughput = shift_metrics["throughput"][-shift_window:]
+    previous_throughput = shift_metrics["throughput"][-2*shift_window:-shift_window]
+    throughput_shift = (
+        np.mean(recent_throughput) - np.mean(previous_throughput)
+    )
+
+    return {
+        "latency_shift": latency_shift,
+        "throughput_shift": throughput_shift
+    }

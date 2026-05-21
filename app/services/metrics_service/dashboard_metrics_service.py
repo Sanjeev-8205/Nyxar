@@ -16,7 +16,8 @@ def dashboard_metrics_aggregator():
                 "db_health": health_ms.db_health_check(db),
                 "models_count": health_ms.loaded_models_count(),
                 "uptime": health_ms.get_uptime(),
-                "cpu_usage": health_ms.get_cpu_usage()
+                "cpu_usage": health_ms.get_cpu_usage(),
+                "ram_usage": health_ms.get_ram_usage()
             },
             "analytics":{
                 "sentiment_distribution": analytics_ms.get_sentiment_distribution(db),

@@ -1,4 +1,5 @@
 from models.log_models import Log
+from models.batch_job_model import BatchJob
 from datetime import datetime, UTC
 from sqlalchemy import func, case
 
@@ -136,6 +137,11 @@ def get_recent_activity_feed(db):
         Log.latency
     ).order_by(Log.timestamp.desc()).first()
 
+    recent_batch_job = db.query(
+        BatchJob.id.label("id"), BatchJob.status.label("status"),
+        BatchJob.processed_rows.label("processed_rows"), BatchJob.model_name.label("model_name")
+    ).order_by(BatchJob.created_at.desc()).first()
+
     if not recent_activity:
         return {
             "prediction": "No activity",
@@ -161,11 +167,21 @@ def get_recent_activity_feed(db):
     else:
         res = f"{days} day{'s' if days!=1 else ''} ago"
 
-    return {
-        "prediction": f"{recent_activity.model} predicted {predicted_sentiment}",
-        "recent_activity": res,
-        "Latency": round(recent_activity[3],3)
+    results = {
+        "single_inference":{
+            "prediction": f"{recent_activity.model} predicted {predicted_sentiment}",
+            "recent_activity": res,
+            "Latency": round(recent_activity[3],3)
+        },
+        "batch_jobs":{
+            "id": recent_batch_job.id if recent_batch_job.id else "No batch jobs yet",
+            "status": recent_batch_job.status if recent_batch_job.status else "No batch jobs yet",
+            "rows_processed": recent_batch_job.processed_rows if recent_batch_job.processed_rows else "No batch jobs yet",
+            "model_used": recent_batch_job.model_name if recent_batch_job.model_name else "No batch jobs yet"
+        }
     }
+
+    return results
 
 def get_throughput_per_hour(db):
     throughput = db.query(

@@ -1,4 +1,4 @@
-from sqlalchemy import func
+from sqlalchemy import func, case
 from models.log_models import Log
 from app.schemas.request_schema import InputData
 from datetime import datetime, timedelta, UTC
@@ -11,7 +11,9 @@ def get_inference_metrics(db):
         func.avg(Log.latency).label("average_latency"),
         func.avg(Log.negative).label("negative_avg"),
         func.avg(Log.neutral).label("neutral_avg"),
-        func.avg(Log.positive).label("positive_avg")
+        func.avg(Log.positive).label("positive_avg"),
+        (func.count(case((Log.status == "success", 1))) * 100.0 / func.count(Log.id)).label("success_rate"),
+        (func.count(case((Log.status == "error", 1))) * 100.0 / func.count(Log.id)).label("failure_rate")
         ).first()
 
     rpm = db.query(Log).filter(
@@ -20,9 +22,10 @@ def get_inference_metrics(db):
 
     return {
         "total_predictions": metrics.total_predictions,
-        "average_latency": round(metrics.average_latency or 0, 3),
-        "negative_avg": round(metrics.negative_avg or 0, 3),
-        "neutral_avg": round(metrics.neutral_avg or 0, 3),
-        "positive_avg": round(metrics.positive_avg or 0, 3),
-        "rpm": rpm
+        "average_latency": round(metrics.average_latency or 0, 3)*1000,
+        "rpm": rpm,
+        "throughput": int(1/metrics.average_latency) if metrics.average_latency>0 else 0,
+        "best_model": "RoBERTa Transformer",
+        "success_rate": metrics.success_rate,
+        "failure-rate": metrics.failure_rate
     }

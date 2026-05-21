@@ -8,6 +8,7 @@ from app.routes.system.model_status import router as model_status_router
 from app.routes.batch_routes import router as batch_router
 from app.routes.dashboard import router as dashboard_router
 from app.routes.llm_summary_routes import router as llm_router
+from app.routes.overview_insights_routes import router as overview_insights_router
 from app.services.warmup_service import preload_models, warmup
 import threading
 import json
@@ -16,6 +17,10 @@ from app.core.database import Base, engine
 from models.log_models import Log
 from models.batch_job_model import BatchJob
 from models.batch_result_model import BatchResult
+from models.overview_insights_model import OverviewInsights
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from app.services.insights_service.overview_insights import get_insights
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -27,7 +32,14 @@ async def lifespan(app: FastAPI):
     t.start()
     t.join()
 
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(get_insights, "interval", minutes=30)
+    scheduler.start()
+    get_insights()
+
     yield
+
+    scheduler.shutdown()
 
 app = FastAPI(lifespan=lifespan)
 
@@ -42,6 +54,7 @@ app.include_router(model_status_router)
 app.include_router(dashboard_router)
 app.include_router(batch_router)
 app.include_router(llm_router)
+app.include_router(overview_insights_router)
 
 @app.get("/")
 def home():
@@ -52,3 +65,4 @@ async def get_region():
     import urllib.request
     with urllib.request.urlopen("https://ipinfo.io/json") as response:
         return json.loads(response.read().decode())
+    

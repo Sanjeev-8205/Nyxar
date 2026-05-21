@@ -41,3 +41,15 @@ def get_cpu_usage():
         status = "Critical"
     
     return [cpu_usage, status]
+
+def get_ram_usage():
+    ram_usage = psutil.virtual_memory().percent
+
+    if ram_usage<70:
+        status = "Safe"
+    elif ram_usage<90:
+        status = "Warning"
+    else:
+        status = "Critical"
+    
+    return [ram_usage, status]
