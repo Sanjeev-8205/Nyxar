@@ -30,5 +30,10 @@ def get_insights(
     
     else:
         return {
-            "ai_insights": {}
+        "ai_insights": {
+            "inference_insights": None,
+            "recent_activity": None,
+            "anomaly_detection": None,
+            "health_metrics": None
         }
+    }

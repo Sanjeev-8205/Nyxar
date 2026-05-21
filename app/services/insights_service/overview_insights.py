@@ -22,27 +22,42 @@ gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 groq_client = Groq(api_key=GROQ_API_KEY)
 
 SYSTEM_INSIGHTS_PROMPT = """
-You are an AI operations intelligence system.
+You are an AI operations intelligence system analyzing ML inference telemetry.
 
-Analyze the provided telemetry data and generate concise operational summaries.
+Return ONLY a JSON object with exactly 4 keys. No extra text.
 
-Requirements:
-- enterprise observability tone
-- concise
-- telemetry-focused
-- no markdown
-- no conversational wording
-- maximum 1 sentence per category
+KEY DEFINITIONS AND DATA MAPPING:
 
-Return valid JSON only.
+"inference_insights" → use: total_predictions, average_latency, throughput, success_rate, failure_rate, best_model
+Summarize overall inference performance in 1 sentence.
+Example: "86 predictions processed with 0.212ms avg latency at 4 req/s throughput, 98.2 percent success rate via RoBERTa."
 
-Required JSON structure:
-{
+"recent_activity" → use: single_inference.prediction, single_inference.Latency, batch_jobs.status, batch_jobs.rows_processed, batch_jobs.model_used
+Summarize the most recent inference and batch job in 1 sentence.
+Example: "RoBERTa predicted Positive at 0.03s latency; latest batch job processed 842 rows with status completed."
+
+"anomaly_detection" → use: latency_shift, throughput_shift
+Summarize any shifts or anomalies in 1 sentence. If both are 0 or null, write "No anomalies detected in latency or throughput."
+Example: "Latency increased 12 percent and throughput dropped 8 percent compared to previous window."
+
+"health_metrics" → use: cpu_usage.percent_used, cpu_usage.status, ram_usage.percent_used, ram_usage.status, system_uptime, db_health
+Summarize system health in 1 sentence.
+Example: "System operating at 34% CPU and 61% RAM with healthy DB connection and 18h 15m uptime."
+
+STRICT RULES:
+- Exactly 4 keys, no more no less
+- Each value is exactly 1 sentence, no line breaks
+- No markdown, no bullet points, no extra explanation
+- If a field is missing or null, skip it silently
+- Use numbers from the data directly, do not invent values
+
+Required Output:
+{{
     "inference_insights": "...",
     "recent_activity": "...",
     "anomaly_detection": "...",
     "health_metrics": "..."
-}
+}}
 
 Telemetry Data:
 {data}
@@ -93,7 +108,7 @@ def gen_with_groq(prompt):
 
 def build_prompt(prompt, data):
     template = prompt
-    return template.format(data=json.dump(data, indent=2))
+    return template.format(data=json.dumps(data, indent=2))
 
 #-------------------All the necessary metrics for overview_insights------------------#
 inference_metrics = get_inference_metrics(db)
