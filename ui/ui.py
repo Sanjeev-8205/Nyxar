@@ -212,6 +212,19 @@ def render_overview():
                 chart_container(fig_tph, "Throughput Per Hour")
 
     with ri_col:
+        
+        left_col, right_col = st.columns([1.5, 0.5])
+        with left_col:
+            subtitle("System Insights")
+
+        with right_col:
+            if st.button("🔄", help="Click to refresh insights."):
+                response = requests.post(f"{BASE_URL}/overview_insights/refresh")
+                if response.status_code == 200:
+                    st.toast("Insights refreshed!", icon="✅")
+                    st.rerun()
+                else:
+                    st.toast("Failed to refresh insights.", icon="❌")
 
         response = requests.get(f"{BASE_URL}/overview_insights")
 
