@@ -112,33 +112,33 @@ def build_prompt(prompt, data):
     template = prompt
     return template.format(data=json.dumps(data, indent=2))
 
-#-------------------All the necessary metrics for overview_insights------------------#
-inference_metrics = get_inference_metrics(db)
-recent_activity = get_recent_activity_feed(db)
-anomaly = get_latency_and_throughput_shifts(db)
-health_metrics = {
-    "cpu_usage":{
-        "percent_used": get_cpu_usage()[0],
-        "status": get_cpu_usage()[1]
-    },
-    "ram_usage": {
-        "percent_used": get_ram_usage()[0],
-        "status": get_ram_usage()[1]
-    },
-    "system_uptime": get_uptime(),
-    "db_health": db_health_check(db)
-
-}
-
-telemetry_payload = {
-    "inference_metrics": inference_metrics,
-    "recent_activity": recent_activity,
-    "anomaly_detection": anomaly,
-    "health_metrics": health_metrics
-}
-#------------------------------------------------------------------------------------#
-
 def get_insights(prompt):
+
+    #-------------------All the necessary metrics for overview_insights------------------#
+    inference_metrics = get_inference_metrics(db)
+    recent_activity = get_recent_activity_feed(db)
+    anomaly = get_latency_and_throughput_shifts(db)
+    health_metrics = {
+        "cpu_usage":{
+            "percent_used": get_cpu_usage()[0],
+            "status": get_cpu_usage()[1]
+        },
+        "ram_usage": {
+            "percent_used": get_ram_usage()[0],
+            "status": get_ram_usage()[1]
+        },
+        "system_uptime": get_uptime(),
+        "db_health": db_health_check(db)
+    }
+
+    telemetry_payload = {
+        "inference_metrics": inference_metrics,
+        "recent_activity": recent_activity,
+        "anomaly_detection": anomaly,
+        "health_metrics": health_metrics
+    }
+    #------------------------------------------------------------------------------------#
+
     insights_prompt = build_prompt(prompt, telemetry_payload)
 
     start_time = time.perf_counter()
