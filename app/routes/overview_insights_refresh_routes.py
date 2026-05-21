@@ -20,4 +20,5 @@ def refresh_insights(db: Session = Depends(get_db)):
         generate_and_save_insights()
         return {"message": "Insights refreshed successfully."}
     except Exception as e:
+        print(f"Refresh failed: {type(e).__name__}: {e}")
         return {"message": f"Failed to refresh: {e}"}
