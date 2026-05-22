@@ -47,19 +47,20 @@ def status_card(title, status, color):
     </div>
     """, unsafe_allow_html=True)
 
-def insights_card(title, content, level="neutral"):
-    
+#'def insights_card(title, content): st.markdown(f""" <div style=" background: rgba(17,24,39,0.88); border: 1px solid rgba(255,255,255,0.06); border-radius: 18px; padding: 1.4rem; margin-bottom: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.25); "> <h4 style="margin-bottom:0.5rem; color:#F9FAFB;"> {title} </h4> <p style="color:#D1D5DB; line-height:1.6; margin:0;"> {content} </p> </div> """, unsafe_allow_html=True)'
+
+def insights_card(title, content, level="activity"):
+
     severity_styles = {
-        "inference": "#3B82F6",   # Blue
-        "activity": "#6B7280",    # Neutral Gray
-        "anomaly": "#F59E0B",     # Amber
-        "health": "#10B981",      # Green
-        "neutral": "#374151"
+        "inference": "#3B82F6",   # blue
+        "activity": "#6B7280",    # neutral
+        "anomaly": "#F59E0B",     # amber
+        "health": "#10B981",      # green
     }
 
-    accent = severity_styles.get(level, "#374151")
+    accent = severity_styles.get(level, "#6B7280")
 
-    st.markdown(f"""
+    card_html = f"""
     <div style="
         background: rgba(17,24,39,0.88);
         border: 1px solid rgba(255,255,255,0.06);
@@ -69,8 +70,9 @@ def insights_card(title, content, level="neutral"):
         margin-bottom: 1.2rem;
         box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     ">
+
         <h4 style="
-            margin: 0 0 0.9rem 0;
+            margin: 0 0 0.85rem 0;
             color: #F9FAFB;
             font-size: 1.05rem;
             font-weight: 700;
@@ -89,8 +91,11 @@ def insights_card(title, content, level="neutral"):
         ">
             {content}
         </p>
+
     </div>
-    """, unsafe_allow_html=True)
+    """
+
+    st.markdown(card_html, unsafe_allow_html=True)
 
 def hero_header(title):
     st.markdown(f"""
