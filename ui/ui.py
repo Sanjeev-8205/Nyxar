@@ -215,7 +215,7 @@ def render_overview():
         
         left_col, right_col = st.columns([1.5, 0.5])
         with left_col:
-            subtitle("System Insights")
+            st.subheader("System Insights")
 
         with right_col:
             if st.button("🔄", help="Click to refresh insights."):
@@ -237,10 +237,10 @@ def render_overview():
             anomaly = insights.get("anomaly_detection") or "Insights not available yet."
             health = insights.get("health_metrics") or "Insights not available yet."
 
-            insights_card("Inference", inference)
-            insights_card("Recent Activity", activity)
-            insights_card("Anomaly Detection", anomaly)
-            insights_card("Health", health)
+            insights_card("Inference", inference, level="inference")
+            insights_card("Recent Activity", activity, level="activity")
+            insights_card("Anomaly Detection", anomaly, level="anomaly")
+            insights_card("Health", health, level="health")
 
         else:
             insights_card("AI Insights", "Unable to load insights. Please try again later.")

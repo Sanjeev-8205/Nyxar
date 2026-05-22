@@ -12,6 +12,7 @@ def metric_card(title, value, delta=None):
         margin-bottom: 1rem;
         box-shadow: 0 4px 20px rgba(0,0,0,0.25);
         min-height: 120px;
+        background: linear-gradient(180deg, rgba(17,24,39,1), rgba(8,12,24,1));
     ">
         <p style="color:#9CA3AF; font-size:0.9rem; margin:0 0 8px 0;">
             {title}
@@ -46,20 +47,46 @@ def status_card(title, status, color):
     </div>
     """, unsafe_allow_html=True)
 
-def insights_card(title, content):
+def insights_card(title, content, level="neutral"):
+    
+    severity_styles = {
+        "inference": "#3B82F6",   # Blue
+        "activity": "#6B7280",    # Neutral Gray
+        "anomaly": "#F59E0B",     # Amber
+        "health": "#10B981",      # Green
+        "neutral": "#374151"
+    }
+
+    accent = severity_styles.get(level, "#374151")
+
     st.markdown(f"""
     <div style="
         background: rgba(17,24,39,0.88);
         border: 1px solid rgba(255,255,255,0.06);
+        border-left: 3px solid {accent};
         border-radius: 18px;
-        padding: 1.4rem;
-        margin-bottom: 1rem;
+        padding: 1.6rem 1.5rem;
+        margin-bottom: 1.2rem;
         box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     ">
-        <h4 style="margin-bottom:0.5rem; color:#F9FAFB;">
+        <h4 style="
+            margin: 0 0 0.9rem 0;
+            color: #F9FAFB;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.3;
+        ">
             {title}
         </h4>
-        <p style="color:#D1D5DB; line-height:1.6; margin:0;">
+
+        <p style="
+            color: #D1D5DB;
+            line-height: 1.85;
+            font-size: 0.95rem;
+            margin: 0;
+            font-weight: 400;
+        ">
             {content}
         </p>
     </div>
@@ -82,6 +109,7 @@ def hero_subtext(text):
     <div style="
         color: #9CA3AF;
         margin-bottom: 2rem;
+        max-width: 950px;
     ">
         {text}
     </div>
