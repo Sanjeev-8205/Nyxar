@@ -60,41 +60,7 @@ def insights_card(title, content, level="activity"):
 
     accent = severity_styles.get(level, "#6B7280")
 
-    card_html = f"""
-    <div style="
-        background: rgba(17,24,39,0.88);
-        border: 1px solid rgba(255,255,255,0.06);
-        border-left: 3px solid {accent};
-        border-radius: 18px;
-        padding: 1.6rem 1.5rem;
-        margin-bottom: 1.2rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-    ">
-
-        <h4 style="
-            margin: 0 0 0.85rem 0;
-            color: #F9FAFB;
-            font-size: 1.05rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.3;
-        ">
-            {title}
-        </h4>
-
-        <p style="
-            color: #D1D5DB;
-            line-height: 1.85;
-            font-size: 0.95rem;
-            margin: 0;
-            font-weight: 400;
-        ">
-            {content}
-        </p>
-
-    </div>
-    """
-
+    card_html = f"""<div style="background:rgba(17,24,39,0.88);border:1px solid rgba(255,255,255,0.06);border-left:3px solid {accent};border-radius:18px;padding:1.6rem 1.5rem;margin-bottom:1.2rem;box-shadow:0 4px 20px rgba(0,0,0,0.25);"><h4 style="margin:0 0 0.85rem 0;color:#F9FAFB;font-size:1.05rem;font-weight:700;">{title}</h4><p style="color:#D1D5DB;line-height:1.85;font-size:0.95rem;margin:0;">{content}</p></div>"""
     st.markdown(card_html, unsafe_allow_html=True)
 
 def hero_header(title):
