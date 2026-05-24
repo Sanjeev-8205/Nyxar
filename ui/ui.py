@@ -26,7 +26,7 @@ BASE_URL = "https://sanjeev2501-nyxar.hf.space"
 @st.cache_data
 def get_models():
     try:
-        return requests.get(f"{BASE_URL}/models", timeout=5).json()
+        return requests.get(f"{BASE_URL}/models", timeout=30).json()
     except:
         return ["Backend not available!"]
     
