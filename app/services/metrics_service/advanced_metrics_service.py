@@ -226,6 +226,6 @@ def get_latency_and_throughput_shifts(db):
     ) if np.mean(previous_throughput) > 0 else 0
 
     return {
-        "latency_shift": latency_shift,
-        "throughput_shift": throughput_shift
+        "latency_shift_percentage": latency_shift,
+        "throughput_shift_percentage": throughput_shift
     }

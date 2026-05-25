@@ -34,7 +34,7 @@ Summarize overall inference performance in 1 sentence.
 "recent_activity" → use: single_inference.prediction, single_inference.Latency, batch_jobs.status, batch_jobs.rows_processed, batch_jobs.model_used
 Summarize the most recent inference and batch job in 1 sentence.
 
-"anomaly_detection" → use: latency_shift, throughput_shift
+"anomaly_detection" → use: latency_shift_percentage, throughput_shift_percentage
 Summarize any shifts or anomalies in 1 sentence. If both are 0 or null, write "No anomalies detected in latency or throughput."
 
 "health_metrics" → use: cpu_usage.percent_used, cpu_usage.status, ram_usage.percent_used, ram_usage.status, system_uptime, db_health
