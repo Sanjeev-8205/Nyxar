@@ -216,14 +216,14 @@ def get_latency_and_throughput_shifts(db):
     recent_latencies = shift_metrics["latencies"][-shift_window:]
     previous_latencies = shift_metrics["latencies"][-2*shift_window:-shift_window]
     latency_shift = (
-        np.mean(recent_latencies) - np.mean(previous_latencies)
-    )
+        (np.mean(recent_latencies) - np.mean(previous_latencies)) / np.mean(previous_latencies) * 100
+    ) if np.mean(previous_latencies) > 0 else 0
 
     recent_throughput = shift_metrics["throughput"][-shift_window:]
     previous_throughput = shift_metrics["throughput"][-2*shift_window:-shift_window]
     throughput_shift = (
-        np.mean(recent_throughput) - np.mean(previous_throughput)
-    )
+        (np.mean(recent_throughput) - np.mean(previous_throughput)) / np.mean(previous_throughput) * 100
+    ) if np.mean(previous_throughput) > 0 else 0
 
     return {
         "latency_shift": latency_shift,
