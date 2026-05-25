@@ -30,19 +30,15 @@ KEY DEFINITIONS AND DATA MAPPING:
 
 "inference_insights" → use: total_predictions, average_latency, throughput, success_rate, failure_rate, best_model
 Summarize overall inference performance in 1 sentence.
-Example: "86 predictions processed with 0.212ms avg latency at 4 req/s throughput, 98.2 percent success rate via RoBERTa."
 
 "recent_activity" → use: single_inference.prediction, single_inference.Latency, batch_jobs.status, batch_jobs.rows_processed, batch_jobs.model_used
 Summarize the most recent inference and batch job in 1 sentence.
-Example: "RoBERTa predicted Positive at 0.03s latency; latest batch job processed 842 rows with status completed."
 
 "anomaly_detection" → use: latency_shift, throughput_shift
 Summarize any shifts or anomalies in 1 sentence. If both are 0 or null, write "No anomalies detected in latency or throughput."
-Example: "Latency increased 12 percent and throughput dropped 8 percent compared to previous window."
 
 "health_metrics" → use: cpu_usage.percent_used, cpu_usage.status, ram_usage.percent_used, ram_usage.status, system_uptime, db_health
 Summarize system health in 1 sentence.
-Example: "System operating at 34% CPU and 61% RAM with healthy DB connection and 18h 15m uptime."
 
 STRICT RULES:
 - Exactly 4 keys, no more no less
