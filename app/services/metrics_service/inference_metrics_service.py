@@ -25,7 +25,6 @@ def get_inference_metrics(db):
         "average_latency": round(metrics.average_latency or 0, 3)*1000,
         "rpm": rpm,
         "throughput": int(1/metrics.average_latency) if metrics.average_latency>0 else 0,
-        "best_model": "RoBERTa Transformer",
         "success_rate": metrics.success_rate,
         "failure-rate": metrics.failure_rate
     }

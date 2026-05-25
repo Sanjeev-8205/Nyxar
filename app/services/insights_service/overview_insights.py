@@ -28,7 +28,7 @@ Return ONLY a JSON object with exactly 4 keys. No extra text.
 
 KEY DEFINITIONS AND DATA MAPPING:
 
-"inference_insights" → use: total_predictions, average_latency, throughput, success_rate, failure_rate, best_model
+"inference_insights" → use: total_predictions, average_latency, throughput, success_rate, failure_rate
 Summarize overall inference performance in 1 sentence.
 
 "recent_activity" → use: single_inference.prediction, single_inference.Latency, batch_jobs.status, batch_jobs.rows_processed, batch_jobs.model_used
