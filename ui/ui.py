@@ -176,18 +176,18 @@ def render_overview():
             else:
                 st.info("No data yet.")
 
-            platform_status = requests.get(f"{BASE_URL}/platform_status")
+        platform_status = requests.get(f"{BASE_URL}/platform_status")
 
-            if platform_status.status_code == 200:
-                data = platform_status.json()
-                platform_status_card(data)
-            
-            else:
-                platform_status_card({
-                    "status": "DATA UNAVAILABLE",
-                    "message": "Platform status could not be retrieved. Service may be temporarily unavailable.",
-                    "color": "#EF4444"
-                })
+        if platform_status.status_code == 200:
+            data = platform_status.json()
+            platform_status_card(data)
+        
+        else:
+            platform_status_card({
+                "status": "DATA UNAVAILABLE",
+                "message": "Platform status could not be retrieved. Service may be temporarily unavailable.",
+                "color": "#EF4444"
+            })
         
         with t2:
             #Requests Per Hour
