@@ -270,6 +270,8 @@ def render_live_inference():
             st.markdown("### Inference Control Center")
 
             user_input = st.text_area("Enter review text for live inference...", height=200, placeholder="Type review text here......")
+            st.markdown("##### &nbsp;")
+            
             c1, c2 = st.columns([1.5,0.5])
             with c1:
                 model_choice = st.selectbox("Inference Engine", model_list)
