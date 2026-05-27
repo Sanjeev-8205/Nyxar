@@ -178,7 +178,7 @@ def render_overview():
 
             platform_status = requests.get(f"{BASE_URL}/platform_status")
 
-            if platform_status.status_response == 200:
+            if platform_status.status_code == 200:
                 data = platform_status.json()
                 platform_status_card(data)
             
