@@ -272,10 +272,8 @@ def render_live_inference():
             user_input = st.text_area("Enter review text for live inference...", height=200, placeholder="Type review text here......")
             c1, c2 = st.columns([1.5,0.5])
             with c1:
-                st.markdown("##### Inference Engine")
-                model_choice = st.selectbox("", model_list, label_visibility="collapsed")
+                model_choice = st.selectbox("Inference Engine", model_list)
             with c2:
-                st.markdown("##### &nbsp;")
                 predict_btn = st.button("Run Inference", width="stretch")
 
         if predict_btn:
