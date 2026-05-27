@@ -123,7 +123,7 @@ def identify_platform_status(
         }
     
 def get_overview_status(db):
-    failure_rate = get_failure_percent(db)[0]
+    failure_rate = get_failure_percent(db)["failure_percent"]
     cpu_usage_perc = get_cpu_usage()[0]
     latency_shift_perc = get_latency_and_throughput_shifts(db)["latency_shift_percentage"]
     throughput_shift_perc = get_latency_and_throughput_shifts(db)["throughput_shift_percentage"]
