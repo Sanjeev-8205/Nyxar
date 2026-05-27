@@ -173,3 +173,6 @@ def mini_card(title, value):
 def platform_status_card(status_data):
     card_html = f"""<div style="background:linear-gradient(135deg,rgba(17,24,39,0.96),rgba(10,15,30,0.96));border:1px solid rgba(255,255,255,0.06);border-left:4px solid {status_data['color']};border-radius:20px;padding:1.5rem;margin-top:1rem;box-shadow:0 8px 30px rgba(0,0,0,0.35);"><div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;"><div style="width:14px;height:14px;border-radius:50%;background:{status_data['color']};box-shadow:0 0 12px {status_data['color']};"></div><span style="color:#F9FAFB;font-size:1rem;font-weight:700;">{status_data['status']}</span></div><p style="color:#D1D5DB;line-height:1.7;font-size:0.93rem;margin:0;">{status_data['message']}</p></div>"""
     st.markdown(card_html, unsafe_allow_html=True)
+
+def apply_button_style():
+    st.markdown(f"""<style>div.stButton > button {{height: 4.1rem; margin-top: 1.75rem; border-radius: 14px; font-size: 1.2rem; font-weight: 600;}}</style>""", unsafe_allow_html=True)
