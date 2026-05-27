@@ -261,15 +261,19 @@ def render_overview():
 def render_live_inference():
         
         dashboard_metrics = st.session_state.dashboard_metrics
-
         hero_header("Live Inference")
         hero_subtext("Live inference using production ML models")
 
-        st.markdown("### Prediction Controls")
+        with st.container(border=True):
 
-        user_input = st.text_area("Enter your text", height=200, placeholder="Type review text here......")
-        model_choice = st.selectbox("Select Model", model_list)
-        predict_btn = st.button("Predict Sentiment", width="stretch")
+            st.markdown("### Inference Control Center")
+
+            user_input = st.text_area("Enter review text for live inference...", height=200, placeholder="Type review text here......")
+            c1, c2 = st.columns([1.5,0.5])
+            with c1:
+                model_choice = st.selectbox("Inference Engine", model_list)
+            with c2:
+                predict_btn = st.button("Run Inference", width="stretch")
 
         if predict_btn:
             if not user_input.strip():
