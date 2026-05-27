@@ -6,7 +6,7 @@ from streamlit_autorefresh import st_autorefresh
 import time
 
 from styles import load_global_styles
-from components import (metric_card, status_card, insights_card, mini_card,
+from components import (metric_card, status_card, insights_card, mini_card, platform_status_card,
                         hero_header, subtitle, hero_subtext, subtitle_subtext, 
                         chart_container)
 
@@ -175,6 +175,19 @@ def render_overview():
             
             else:
                 st.info("No data yet.")
+
+            platform_status = requests.get(f"{BASE_URL}/platform_status")
+
+            if platform_status.status_response == 200:
+                data = platform_status.json()
+                platform_status_card(data)
+            
+            else:
+                platform_status_card({
+                    "status": "DATA UNAVAILABLE",
+                    "message": "Platform status could not be retrieved. Service may be temporarily unavailable.",
+                    "color": "#EF4444"
+                })
         
         with t2:
             #Requests Per Hour
