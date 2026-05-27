@@ -175,4 +175,4 @@ def platform_status_card(status_data):
     st.markdown(card_html, unsafe_allow_html=True)
 
 def apply_button_style():
-    st.markdown(f"""<style>div.stButton > button {{height: 4.1rem; margin-top: 1.75rem; border-radius: 14px; font-size: 1.2rem; font-weight: 600;}}</style>""", unsafe_allow_html=True)
+    st.markdown(f"""<style>div.stButton > button {{height: 3.2rem; margin-top: 1.75rem; border-radius: 14px; font-size: 1.2rem; font-weight: 600;}}</style>""", unsafe_allow_html=True)
