@@ -179,3 +179,75 @@ def apply_button_style():
 
 def render_model_info(model_name, model_info):
     st.markdown(f"""<div style="display:inline-flex;align-items:center;gap:0.4rem;margin-top:0.2rem;margin-bottom:0.8rem;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:0.35rem 0.75rem;color:#93C5FD;font-size:0.85rem;font-weight:500;">⚡ {model_info[model_name]}</div>""", unsafe_allow_html=True)
+
+def inference_output_card(
+    sentiment=None,
+    confidence=None,
+    severity=None,
+    model=None,
+    runtime=None,
+    certainty=None
+):
+
+    if sentiment is None:
+
+        with st.container(border=True):
+
+            st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Inference Output</div>""", unsafe_allow_html=True)
+
+            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Prediction intelligence unavailable</div>""", unsafe_allow_html=True)
+
+            st.markdown("""<div style="min-height:320px;display:flex;flex-direction:column;justify-content:center;"><div style="color:#F3F4F6;font-size:2.2rem;font-weight:800;margin-bottom:1rem;">Awaiting Inference</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.7;">Run inference to generate<br>prediction intelligence.</div></div>""", unsafe_allow_html=True)
+
+    else:
+
+        sentiment_color = {
+            "POSITIVE": "#10B981",
+            "NEGATIVE": "#EF4444",
+            "NEUTRAL": "#F59E0B"
+        }.get(sentiment.upper(), "#F3F4F6")
+
+        certainty_bg = {
+            "HIGH CERTAINTY": "rgba(16,185,129,0.15)",
+            "MODERATE CERTAINTY": "rgba(245,158,11,0.15)",
+            "LOW CONFIDENCE": "rgba(239,68,68,0.15)"
+        }.get(certainty, "rgba(255,255,255,0.08)")
+
+        certainty_color = {
+            "HIGH CERTAINTY": "#10B981",
+            "MODERATE CERTAINTY": "#F59E0B",
+            "LOW CONFIDENCE": "#EF4444"
+        }.get(certainty, "#E5E7EB")
+
+        with st.container(border=True):
+
+            st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Inference Output</div>""", unsafe_allow_html=True)
+
+            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Live prediction intelligence</div>""", unsafe_allow_html=True)
+
+            st.markdown(f"""<div style="color:{sentiment_color};font-size:3rem;font-weight:800;letter-spacing:0.03em;margin-bottom:1.5rem;">{sentiment.upper()}</div>""", unsafe_allow_html=True)
+
+            st.markdown(f"""<div style="display:inline-block;background:{certainty_bg};color:{certainty_color};padding:0.45rem 0.9rem;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:2rem;">{certainty}</div>""", unsafe_allow_html=True)
+
+            st.markdown(f"""<div style="color:#D1D5DB;font-size:1rem;line-height:2;">Confidence : {confidence}%<br>Severity&nbsp;&nbsp;&nbsp;&nbsp;: {severity}<br>Model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {model}<br>Runtime&nbsp;&nbsp;&nbsp;&nbsp;: {runtime} ms</div>""", unsafe_allow_html=True)
+
+def render_confidence_analysis_card(fig=None, confidence=None, certainty=None):
+
+    if fig is None:
+        with st.container(border=True):
+            st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Confidence Analysis</div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Probability distribution unavailable</div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="min-height:320px;display:flex;flex-direction:column;justify-content:center;"><div style="color:#F3F4F6;font-size:1.8rem;font-weight:700;margin-bottom:1rem;">Analysis Unavailable</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.7;">Probability distribution will appear<br>after inference execution.</div></div>""", unsafe_allow_html=True)
+
+    else:
+        fig.update_layout(
+            height=250,
+            margin=dict(l=10, r=10, t=10, b=10),
+            xaxis_title=None,
+            yaxis_title=None,
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)"
+        )
+        fig.update_traces(textposition="outside")
+        chart_container(fig=fig, title="Confidence Analysis", subtitle="Probability Distribution")
+        st.markdown(f"""<div style="margin-top:0.8rem;padding:1rem 1.2rem;border:1px solid rgba(255,255,255,0.08);border-radius:14px;background-color:#081028;"><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:0.5rem;">Confidence Gauge</div><div style="color:#F3F4F6;font-size:2rem;font-weight:800;line-height:1;">{confidence}%</div><div style="color:#10B981;font-size:0.9rem;font-weight:600;margin-top:0.5rem;">{certainty}</div></div>""", unsafe_allow_html=True)

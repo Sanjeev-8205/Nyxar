@@ -8,7 +8,7 @@ import time
 from styles import load_global_styles
 from components import (metric_card, status_card, insights_card, mini_card, platform_status_card,
                         hero_header, subtitle, hero_subtext, subtitle_subtext, 
-                        chart_container, apply_button_style, render_model_info)
+                        chart_container, apply_button_style, render_model_info, inference_output_card, render_confidence_analysis_card)
 
 #setting the page title
 st.set_page_config(
@@ -314,6 +314,7 @@ def render_live_inference():
                             f"Prediction failed: {str(e)}"
                         )
                     
+        col1, col2 = st.columns(2)
         if st.session_state.prediction_result is not None:
 
             result = st.session_state.prediction_result
@@ -322,27 +323,34 @@ def render_live_inference():
             latency = result["latency"]
             confidence_score = max(result["confidence_scores"])
             model_name = result["model_used"]
-
-            st.markdown("## Prediction Result")
-
-            st.success(
-                f"Sentiment: {prediction}"
-            )
-            
-            st.progress(confidence_score)
-            st.write(f"Confidence Score: {confidence_score:.2%}")
-
-            col1, col2 = st.columns(2)
+            probability_scores = result["confidence_scores"]
+            severity = result["severity"]
+            certainty = result["certainty"]
 
             with col1:
-                metric_card(
-                    "Latency", f"{latency:.3f}"
+                inference_output_card(
+                    sentiment=prediction, confidence=confidence_score, severity=severity, 
+                    model=model_name, runtime=latency, certainty=certainty
                 )
             
             with col2:
-                metric_card(
-                    "Model", f"{model_name.upper()}"
+
+                fig = px.bar(
+                    x=probability_scores,
+                    y=["Negative", "Neutral", "Positive"],
+                    orientation="h",
+                    text=probability_scores
                 )
+
+                render_confidence_analysis_card(
+                    fig=fig, confidence=confidence_score, certainty=certainty
+                )
+        
+        else:
+            with col1:
+                inference_output_card()
+            with col2:
+                render_confidence_analysis_card()            
 
 def render_batch_intelligence():
 
