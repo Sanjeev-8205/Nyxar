@@ -42,7 +42,7 @@ def predict_route(data: InputData):
             "prediction":prediction,
             "confidence_scores":prob,
             "confidence": conf_score,
-            "latency": f"{round(latency,3)*1000}ms",
+            "latency": f"{round(latency,3)*1000} ms",
             "model_used": data.model,
             "severity": severity,
             "certainty": certainty
