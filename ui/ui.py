@@ -275,17 +275,19 @@ def render_live_inference():
             c1, c2 = st.columns([1.5,0.5])
             with c1:
                 model_choice = st.selectbox("Inference Engine", model_list)
+
+                MODEL_INFO = {
+                    "RoBERTa Transformer": "High Quality • Low Single-Inference Latency",
+                    "Bi-LSTM": "Moderate Quality • Higher Inference Latency",
+                    "Logistic Regression": "Fastest Inference • Lightweight Model"
+                }
+
+                #render _model_info
+                render_model_info(model_choice, MODEL_INFO)
+                
             with c2:
                 predict_btn = st.button("Run Inference", width="stretch")
             
-            MODEL_INFO = {
-                "RoBERTa Transformer": "High Quality • Low Single-Inference Latency",
-                "Bi-LSTM": "Moderate Quality • Higher Inference Latency",
-                "Logistic Regression": "Fastest Inference • Lightweight Model"
-            }
-
-            #render _model_info
-            render_model_info(model_choice, MODEL_INFO)
 
         if predict_btn:
             if not user_input.strip():
