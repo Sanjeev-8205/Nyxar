@@ -229,9 +229,23 @@ def inference_output_card(
 
             st.markdown(f"""<div style="display:inline-block;background:{certainty_bg};color:{certainty_color};padding:0.45rem 0.9rem;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:2rem;">{certainty}</div>""", unsafe_allow_html=True)
 
-            st.markdown(f"""<div style="color:#D1D5DB;font-size:1rem;line-height:2;">Confidence : {confidence}%<br>Severity&nbsp;&nbsp;&nbsp;&nbsp;: {severity}<br>Model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {model}<br>Runtime&nbsp;&nbsp;&nbsp;&nbsp;: {runtime} ms</div>""", unsafe_allow_html=True)
+            c1, c2 = st.columns(2)
 
-def render_confidence_analysis_card(fig=None, confidence=None, certainty=None):
+            with c1:
+                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;margin-bottom:1rem;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Confidence</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{confidence:.2%}</div></div>""", unsafe_allow_html=True)
+
+            with c2:
+                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;margin-bottom:1rem;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Runtime</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{runtime}</div></div>""", unsafe_allow_html=True)
+
+            c3, c4 = st.columns(2)
+
+            with c3:
+                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Severity</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{severity}</div></div>""", unsafe_allow_html=True)
+
+            with c4:
+                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Model</div><div style="color:#F3F4F6;font-size:1.1rem;font-weight:700;">{model}</div></div>""", unsafe_allow_html=True)
+                
+def render_confidence_analysis_card(fig=None):
 
     if fig is None:
         with st.container(border=True):
@@ -241,13 +255,19 @@ def render_confidence_analysis_card(fig=None, confidence=None, certainty=None):
 
     else:
         fig.update_layout(
-            height=250,
+            height=180,
             margin=dict(l=10, r=10, t=10, b=10),
             xaxis_title=None,
             yaxis_title=None,
             plot_bgcolor="rgba(0,0,0,0)",
-            paper_bgcolor="rgba(0,0,0,0)"
+            paper_bgcolor="rgba(0,0,0,0)",
+            showlegend=False,
+            bargap=0.55
         )
-        fig.update_traces(textposition="outside")
+
+        fig.update_traces(
+            textposition="outside",
+            marker_line_width=0
+        )
+
         chart_container(fig=fig, title="Confidence Analysis", subtitle="Probability Distribution")
-        st.markdown(f"""<div style="margin-top:0.8rem;padding:1rem 1.2rem;border:1px solid rgba(255,255,255,0.08);border-radius:14px;background-color:#081028;"><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:0.5rem;">Confidence Gauge</div><div style="color:#F3F4F6;font-size:2rem;font-weight:800;line-height:1;">{confidence}%</div><div style="color:#10B981;font-size:0.9rem;font-weight:600;margin-top:0.5rem;">{certainty}</div></div>""", unsafe_allow_html=True)

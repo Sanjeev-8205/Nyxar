@@ -339,7 +339,13 @@ def render_live_inference():
                     x=probability_scores,
                     y=["Negative", "Neutral", "Positive"],
                     orientation="h",
-                    text=probability_scores
+                    text=[f"{score:.2%}" for score in probability_scores],
+                    color=["Negative", "Neutral", "Positive"],
+                    color_discrete_map={
+                        "Negative": "#EF4444",
+                        "Neutral": "#F59E0B",
+                        "Positive": "#10B981"
+                    }
                 )
 
                 render_confidence_analysis_card(
