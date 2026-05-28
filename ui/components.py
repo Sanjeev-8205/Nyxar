@@ -262,7 +262,8 @@ def render_confidence_analysis_card(fig=None):
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)",
             showlegend=False,
-            bargap=0.55
+            bargap=0.55,
+            xaxis=dict(range=[0, 100])
         )
 
         fig.update_traces(
