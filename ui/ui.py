@@ -323,7 +323,7 @@ def render_live_inference():
             latency = result["latency"]
             confidence_score = max(result["confidence_scores"])
             model_name = result["model_used"]
-            probability_scores = result["confidence_scores"]
+            probability_scores = [f"{score:.2f}" for score in result["confidence_scores"]]
             severity = result["severity"]
             certainty = result["certainty"]
 
@@ -339,7 +339,7 @@ def render_live_inference():
                     x=probability_scores,
                     y=["Negative", "Neutral", "Positive"],
                     orientation="h",
-                    text=[f"{score:.2%}" for score in probability_scores],
+                    text=[f"{score}" for score in probability_scores],
                     color=["Negative", "Neutral", "Positive"],
                     color_discrete_map={
                         "Negative": "#EF4444",
