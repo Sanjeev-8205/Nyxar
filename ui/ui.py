@@ -323,7 +323,7 @@ def render_live_inference():
             latency = result["latency"]
             confidence_score = max(result["confidence_scores"])
             model_name = result["model_used"]
-            probability_scores = [f"{score:.2f}" for score in result["confidence_scores"]]
+            probability_scores = [f"{score:.2%}" for score in result["confidence_scores"]]
             severity = result["severity"]
             certainty = result["certainty"]
 
