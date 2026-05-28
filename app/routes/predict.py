@@ -21,19 +21,31 @@ def predict_route(data: InputData):
         pred, prob = predict(data.text, data.model)
         latency = time.perf_counter() - start
 
-        confidence = max(prob)
+        conf_score = max(prob)
 
         status = "success"
         
         pred_map = {"0":"Negative", "1":"Neutral", "2":"Positive"}
         prediction = pred_map.get(str(pred), "Unknown")
 
+        if conf_score<40:
+            severity = "Low"
+            certainty = "HIGH CERTAINTY"
+        elif conf_score<70:
+            severity = "Medium"
+            certainty = "MODERATE CERTAINTY"
+        else:
+            severity = "High"
+            certainty = "LOW CONFIDENCE"
+
         return {
             "prediction":prediction,
             "confidence_scores":prob,
-            "confidence": confidence,
-            "latency":latency,
-            "model_used": data.model
+            "confidence": conf_score,
+            "latency": f"{round(latency,3)*1000}ms",
+            "model_used": data.model,
+            "severity": severity,
+            "certainty": certainty
         }
 
     finally:

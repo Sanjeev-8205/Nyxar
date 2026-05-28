@@ -28,3 +28,44 @@ def get_inference_metrics(db):
         "success_rate": metrics.success_rate,
         "failure-rate": metrics.failure_rate
     }
+
+def get_inference_row_metrics(db):
+    metrics = db.query(
+        Log.prediction.label("sentiment"),
+        func.greatest(Log.negative, Log.neutral, Log.positive).label("confidence_score"),
+        Log.model.label("model"),
+        Log.latency.label("latency")
+    ).order_by(Log.timestamp.desc()).first()
+    
+    if not metrics:
+        return {
+            "sentiment": "No data available",
+            "confidence": "No data available",
+            "certainty": "No data available",
+            "severity": "No data available",
+            "model": "No data available",
+            "runtime": "No data available"
+        }
+
+    map_sentiment = {'0': "Negative", "1": "Neutral", "2": "Positive"}
+    inference_sentiment = map_sentiment.get(metrics.sentiment, "No data available.")
+
+    conf_score = metrics.confidence_score
+    if conf_score<40:
+        severity = "Low"
+        certainty = "HIGH CERTAINTY"
+    elif conf_score<70:
+        severity = "Medium"
+        certainty = "MODERATE CERTAINTY"
+    else:
+        severity = "High"
+        certainty = "LOW CONFIDENCE"
+
+    return {
+        "sentiment": inference_sentiment,
+        "confidence": metrics.confidence_score,
+        "severity": severity,
+        "certainty": certainty,
+        "model": metrics.model,
+        "runtime": f"{round(metrics.latency, 2)*1000}ms"
+    }
