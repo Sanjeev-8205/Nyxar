@@ -178,4 +178,4 @@ def apply_button_style():
     st.markdown(f"""<style>div.stButton > button {{height: 2.2rem; margin-top: 1.75rem; border-radius: 14px; font-size: 1.2rem; font-weight: 600;}}</style>""", unsafe_allow_html=True)
 
 def render_model_info(model_name, model_info):
-    st.markdown(f"""<div style="margin-top: 0.2rem; color: #9CA3AF; font-size: 0.92rem; font-weight: 500; padding-left: 0.15rem; margin-bottom: 0.8rem; border-left:2px solid #3B82F6;">{model_info[model_name]}</div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div style="display:inline-flex;align-items:center;gap:0.4rem;margin-top:0.2rem;margin-bottom:0.8rem;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:0.35rem 0.75rem;color:#93C5FD;font-size:0.85rem;font-weight:500;">⚡ {model_info[model_name]}</div>""", unsafe_allow_html=True)
