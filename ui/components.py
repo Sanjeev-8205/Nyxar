@@ -243,7 +243,7 @@ def inference_output_card(
                 st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Severity</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{severity}</div></div>""", unsafe_allow_html=True)
 
             with c4:
-                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Model</div><div style="color:#F3F4F6;font-size:1.1rem;font-weight:700;">{model}</div></div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Model</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{model}</div></div>""", unsafe_allow_html=True)
                 
 def render_confidence_analysis_card(fig=None):
 

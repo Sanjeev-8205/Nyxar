@@ -323,7 +323,7 @@ def render_live_inference():
             latency = result["latency"]
             confidence_score = max(result["confidence_scores"])
             model_name = result["model_used"]
-            probability_scores = [score * 100 for score in result["confidence_scores"]]
+            probability_scores = result["confidence_scores"]
             severity = result["severity"]
             certainty = result["certainty"]
 
@@ -345,7 +345,8 @@ def render_live_inference():
                         "Negative": "#EF4444",
                         "Neutral": "#F59E0B",
                         "Positive": "#10B981"
-                    }
+                    },
+                    xaxis=dict(range=[0, 100])
                 )
 
                 render_confidence_analysis_card(fig=fig)
