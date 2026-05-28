@@ -345,8 +345,7 @@ def render_live_inference():
                         "Negative": "#EF4444",
                         "Neutral": "#F59E0B",
                         "Positive": "#10B981"
-                    },
-                    xaxis=dict(range=[0, 100])
+                    }
                 )
 
                 render_confidence_analysis_card(fig=fig)
