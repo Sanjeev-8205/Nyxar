@@ -223,16 +223,16 @@ def inference_output_card(
 
             st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Inference Output</div>""", unsafe_allow_html=True)
 
-            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Live prediction intelligence</div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Live prediction intelligence</div>""", unsafe_allow_html=True)
 
-            st.markdown(f"""<div style="color:{sentiment_color};font-size:3rem;font-weight:800;letter-spacing:0.03em;margin-bottom:1.5rem;">{sentiment.upper()}</div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div style="color:{sentiment_color};font-size:3rem;font-weight:800;letter-spacing:0.03em;margin-bottom:1rem;">{sentiment.upper()}</div>""", unsafe_allow_html=True)
 
             st.markdown(f"""<div style="display:inline-block;background:{certainty_bg};color:{certainty_color};padding:0.45rem 0.9rem;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:2rem;">{certainty}</div>""", unsafe_allow_html=True)
 
             c1, c2 = st.columns(2)
 
             with c1:
-                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;margin-bottom:1rem;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Confidence</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{confidence}</div></div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;margin-bottom:1rem;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Confidence</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{confidence:.2%}</div></div>""", unsafe_allow_html=True)
 
             with c2:
                 st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;margin-bottom:1rem;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Runtime</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{runtime}</div></div>""", unsafe_allow_html=True)
