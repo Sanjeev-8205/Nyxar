@@ -8,7 +8,7 @@ import time
 from styles import load_global_styles
 from components import (metric_card, status_card, insights_card, mini_card, platform_status_card,
                         hero_header, subtitle, hero_subtext, subtitle_subtext, 
-                        chart_container, apply_button_style)
+                        chart_container, apply_button_style, render_model_info)
 
 #setting the page title
 st.set_page_config(
@@ -263,7 +263,7 @@ def render_live_inference():
         
         dashboard_metrics = st.session_state.dashboard_metrics
         hero_header("Live Inference")
-        hero_subtext("Live inference using production ML models")
+        hero_subtext("Live inference using ML models")
 
         with st.container(border=True):
 
@@ -271,12 +271,21 @@ def render_live_inference():
 
             user_input = st.text_area("Enter review text for live inference...", height=200, placeholder="Type review text here......")
             st.markdown("##### &nbsp;")
-            
+
             c1, c2 = st.columns([1.5,0.5])
             with c1:
                 model_choice = st.selectbox("Inference Engine", model_list)
             with c2:
                 predict_btn = st.button("Run Inference", width="stretch")
+            
+            MODEL_INFO = {
+                "RoBERTa Transformer": "High Quality • Low Single-Inference Latency",
+                "Bi-LSTM": "Moderate Quality • Higher Inference Latency",
+                "Logistic Regression": "Fastest Inference • Lightweight Model"
+            }
+
+            #render _model_info
+            render_model_info(model_choice, MODEL_INFO)
 
         if predict_btn:
             if not user_input.strip():
