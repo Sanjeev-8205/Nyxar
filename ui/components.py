@@ -262,10 +262,10 @@ def render_confidence_analysis_card(fig=None):
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)",
             showlegend=False,
-            bargap=0.4,
+            bargap=0.5,
             xaxis=dict(range=[0, 100]),
             yaxis=dict(
-                tickfont=dict(size=18)
+                tickfont=dict(size=14)
             )
         )
 
