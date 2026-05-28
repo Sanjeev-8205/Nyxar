@@ -223,11 +223,11 @@ def inference_output_card(
 
             st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Inference Output</div>""", unsafe_allow_html=True)
 
-            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Live prediction intelligence</div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:0.8rem;">Live prediction intelligence</div>""", unsafe_allow_html=True)
 
-            st.markdown(f"""<div style="color:{sentiment_color};font-size:3rem;font-weight:800;letter-spacing:0.03em;margin-bottom:1rem;">{sentiment.upper()}</div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div style="color:{sentiment_color};font-size:3rem;font-weight:800;letter-spacing:0.03em;margin-bottom:0.8rem;">{sentiment.upper()}</div>""", unsafe_allow_html=True)
 
-            st.markdown(f"""<div style="display:inline-block;background:{certainty_bg};color:{certainty_color};padding:0.45rem 0.9rem;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:2rem;">{certainty}</div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div style="display:inline-block;background:{certainty_bg};color:{certainty_color};padding:0.45rem 0.9rem;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:1.5rem;">{certainty}</div>""", unsafe_allow_html=True)
 
             c1, c2 = st.columns(2)
 
