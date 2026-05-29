@@ -310,7 +310,5 @@ def telemetry_card(
 
     st.markdown(card_html, unsafe_allow_html=True)
 
-def apply_container_background(
-    background_color="#0F1725"
-):
-    st.markdown(f"""<style>div[data-testid="stVerticalBlockBorderWrapper"]{{background-color:{background_color}!important;border:1px solid rgba(255,255,255,0.06)!important;border-radius:18px!important;box-shadow:0 4px 20px rgba(0,0,0,0.25)!important;}}</style>""", unsafe_allow_html=True)
+def apply_container_background(background_color="#0F1725"):
+    st.markdown(f"""<style>div[class*="st-emotion-cache"][style*="overflow: visible"]{{background-color:{background_color}!important;border:1px solid rgba(255,255,255,0.06)!important;border-radius:18px!important;box-shadow:0 4px 20px rgba(0,0,0,0.25)!important;}}</style>""", unsafe_allow_html=True)
