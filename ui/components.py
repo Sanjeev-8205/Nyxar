@@ -277,3 +277,35 @@ def render_confidence_analysis_card(fig=None):
         )
 
         chart_container(fig=fig, title="Confidence Analysis", subtitle="Probability Distribution")
+
+def telemetry_card(
+    title=None,
+    primary=None,
+    secondary=None,
+    tertiary=None,
+    accent="#3B82F6"
+):
+
+    if primary is None:
+
+        card_html = """
+        <div style="background:linear-gradient(180deg,rgba(17,24,39,0.96),rgba(8,12,24,0.96));border:1px solid rgba(255,255,255,0.06);border-left:4px solid #374151;border-radius:18px;padding:1.35rem 1.4rem;min-height:180px;box-shadow:0 4px 20px rgba(0,0,0,0.25);">
+            <div style="color:#9CA3AF;font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;">Telemetry Unavailable</div>
+            <div style="color:#F9FAFB;font-size:2rem;font-weight:800;line-height:1.1;margin-bottom:1.2rem;">--</div>
+            <div style="color:#D1D5DB;font-size:0.9rem;margin-bottom:0.45rem;">Awaiting Inference</div>
+            <div style="color:#9CA3AF;font-size:0.85rem;">No telemetry available</div>
+        </div>
+        """
+        
+    else:
+
+        card_html = f"""
+        <div style="background:linear-gradient(180deg,rgba(17,24,39,0.96),rgba(8,12,24,0.96));border:1px solid rgba(255,255,255,0.06);border-left:4px solid {accent};border-radius:18px;padding:1.35rem 1.4rem;min-height:180px;box-shadow:0 4px 20px rgba(0,0,0,0.25);">
+            <div style="color:#9CA3AF;font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;">{title}</div>
+            <div style="color:#F9FAFB;font-size:2rem;font-weight:800;line-height:1.1;margin-bottom:1.2rem;">{primary}</div>
+            <div style="color:#D1D5DB;font-size:0.9rem;margin-bottom:0.45rem;">{secondary}</div>
+            <div style="color:#9CA3AF;font-size:0.85rem;">{tertiary}</div>
+        </div>
+        """
+
+    st.markdown(card_html, unsafe_allow_html=True)

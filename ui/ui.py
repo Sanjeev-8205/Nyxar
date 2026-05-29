@@ -8,7 +8,8 @@ import time
 from styles import load_global_styles
 from components import (metric_card, status_card, insights_card, mini_card, platform_status_card,
                         hero_header, subtitle, hero_subtext, subtitle_subtext, 
-                        chart_container, apply_button_style, render_model_info, inference_output_card, render_confidence_analysis_card)
+                        chart_container, apply_button_style, render_model_info, 
+                        inference_output_card, render_confidence_analysis_card, telemetry_card)
 
 #setting the page title
 st.set_page_config(
@@ -135,13 +136,13 @@ def render_overview():
 
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        metric_card("Total Predictions", dashboard_metrics["inference"]["total_predictions"])
+        metric_card("Total Predictions", dashboard_metrics["inference"]["inference_metrics"]["total_predictions"])
 
     with col2:
-        metric_card("Avg Latency", f"{dashboard_metrics["inference"]["average_latency"]}ms")
+        metric_card("Avg Latency", f"{dashboard_metrics["inference"]["inference_metrics"]["average_latency"]}ms")
     
     with col3:
-        metric_card("RPM", dashboard_metrics["inference"]["rpm"])
+        metric_card("RPM", dashboard_metrics["inference"]["inference_metrics"]["rpm"])
     
     with col4:
         metric_card("Active Models", dashboard_metrics["health"]["models_count"])
@@ -354,7 +355,46 @@ def render_live_inference():
             with col1:
                 inference_output_card()
             with col2:
-                render_confidence_analysis_card()            
+                render_confidence_analysis_card()  
+
+        col1, col2, col3 = st.columns([1,1,1.2])
+        if st.session_state.prediction_result is not None:
+            all_metrics = dashboard_metrics["inference"]["inference_row_metrics"]
+            
+            with col1:
+                telemetry_card(
+                    title="Latency",
+                    primary=f"{all_metrics["latency_ms"]} ms",
+                    secondary=f"p95: {(dashboard_metrics["advanced"]["p95_latency"])*1000} ms",
+                    tertiary=all_metrics["latency_label"],
+                    accent="#3B82F6"
+                )
+            
+            with col2:
+                telemetry_card(
+                    title="Throughput",
+                    primary=f"{all_metrics["rpm"]} RPM",
+                    secondary=all_metrics["throughput_label"],
+                    tertiary=all_metrics["processing_time"],
+                    accent="#10B981"
+                )
+            
+            with col3:
+                telemetry_card(
+                    title="Model Metadata",
+                    primary=f"{all_metrics["model_name"]}",
+                    secondary=all_metrics["model_family"],
+                    tertiary=all_metrics["model_runtime"],
+                    accent="#8B5CF6"
+                )
+
+        else:
+            with col1:
+                telemetry_card(title="Latency")
+            with col2:
+                telemetry_card(title="Throughput")
+            with col3:
+                telemetry_card(title="Model Metadata")
 
 def render_batch_intelligence():
 
@@ -796,7 +836,7 @@ def render_observability():
 
                 metric_card(
                     "Total Logs",
-                    dashboard_metrics["inference"]["total_predictions"]
+                    dashboard_metrics["inference"]["inference_metrics"]["total_predictions"]
                 )
 
             with metric_col2:
