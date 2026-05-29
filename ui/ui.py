@@ -21,7 +21,7 @@ st.set_page_config(
 
 load_global_styles()
 apply_button_style()
-apply_container_background()
+apply_container_background("#ff0000")
 
 BASE_URL = "https://sanjeev2501-nyxar.hf.space"
 
