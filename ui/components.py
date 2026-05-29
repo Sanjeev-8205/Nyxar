@@ -232,18 +232,18 @@ def inference_output_card(
             c1, c2 = st.columns(2)
 
             with c1:
-                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;margin-bottom:1rem;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Confidence</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{confidence:.2%}</div></div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background:linear-gradient(180deg,rgba(17,24,39,0.96),rgba(8,12,24,0.96));margin-bottom:1rem;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Confidence</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{confidence:.2%}</div></div>""", unsafe_allow_html=True)
 
             with c2:
-                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;margin-bottom:1rem;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Runtime</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{runtime}</div></div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background:linear-gradient(180deg,rgba(17,24,39,0.96),rgba(8,12,24,0.96));margin-bottom:1rem;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Runtime</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{runtime}</div></div>""", unsafe_allow_html=True)
 
             c3, c4 = st.columns(2)
 
             with c3:
-                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Severity</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{severity}</div></div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background:linear-gradient(180deg,rgba(17,24,39,0.96),rgba(8,12,24,0.96));"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Severity</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{severity}</div></div>""", unsafe_allow_html=True)
 
             with c4:
-                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background-color:#081028;"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Model</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{model}</div></div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1rem;background:linear-gradient(180deg,rgba(17,24,39,0.96),rgba(8,12,24,0.96));"><div style="color:#9CA3AF;font-size:0.82rem;margin-bottom:0.35rem;">Model</div><div style="color:#F3F4F6;font-size:1.35rem;font-weight:700;">{model}</div></div>""", unsafe_allow_html=True)
                 
             st.markdown("""<div style="height:1.2rem;"></div>""", unsafe_allow_html=True)
 
