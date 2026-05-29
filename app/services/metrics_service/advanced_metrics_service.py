@@ -41,6 +41,7 @@ def get_model_metrics():
     logistic_path = BASE_DIR / "metrics" / "logistic_regression.json"
     bilstm_path = BASE_DIR / "metrics" / "bilstm.json"
     bert_path = BASE_DIR/ "metrics" / "bert_base_uncased.json"
+    roberta_path = BASE_DIR/ "metrics" / "roberta.json"
 
     with open(logistic_path, 'r') as f:
         logistic_metrics = json.load(f)
@@ -48,13 +49,13 @@ def get_model_metrics():
     with open(bilstm_path, 'r') as f:
         bilstm_metrics = json.load(f)
     
-    with open(bert_path, 'r') as f:
-        bert_metrics = json.load(f)
+    with open(roberta_path, 'r') as f:
+        roberta_metrics = json.load(f)
 
     models = {
         "Logistic Regression":logistic_metrics, 
-        "Bi-LSTM":bilstm_metrics, 
-        "BERT Transformer":bert_metrics
+        "Bi-LSTM":bilstm_metrics,
+        "RoBERTa Transformer": roberta_metrics
     }
 
     filtered_models = {

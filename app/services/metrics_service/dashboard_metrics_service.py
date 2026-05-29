@@ -1,5 +1,5 @@
 from app.core.database import SessionLocal
-from app.services.metrics_service.inference_metrics_service import get_inference_metrics
+from app.services.metrics_service.inference_metrics_service import get_inference_metrics, get_inference_row_metrics
 import app.services.metrics_service.analytics_metrics_service as analytics_ms
 import app.services.metrics_service.health_metrics_service as health_ms
 import app.services.metrics_service.advanced_metrics_service as adv_ms
@@ -11,7 +11,10 @@ def dashboard_metrics_aggregator():
 
     try:
         return {
-            "inference": get_inference_metrics(db),
+            "inference": {
+                "inference_metrics": get_inference_metrics(db),
+                "inference_row_metrics": get_inference_row_metrics(db)
+            },
             "health":{
                 "db_health": health_ms.db_health_check(db),
                 "models_count": health_ms.loaded_models_count(),
