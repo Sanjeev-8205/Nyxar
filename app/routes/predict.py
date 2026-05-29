@@ -28,15 +28,15 @@ def predict_route(data: InputData):
         pred_map = {"0":"Negative", "1":"Neutral", "2":"Positive"}
         prediction = pred_map.get(str(pred), "Unknown")
 
-        if conf_score<40:
-            severity = "Low"
-            certainty = "HIGH CERTAINTY"
-        elif conf_score<70:
+        if conf_score<0.4:
+            severity = "High"
+            certainty = "LOW CONFIDENCE"
+        elif conf_score<0.7:
             severity = "Medium"
             certainty = "MODERATE CERTAINTY"
         else:
-            severity = "High"
-            certainty = "LOW CONFIDENCE"
+            severity = "Low"
+            certainty = "HIGH CERTAINTY"
 
         return {
             "prediction":prediction,
