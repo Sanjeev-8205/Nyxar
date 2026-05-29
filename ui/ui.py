@@ -331,8 +331,7 @@ def render_live_inference():
 
             with col1:
                 inference_output_card(
-                    sentiment=prediction, confidence=confidence_score, severity=severity, 
-                    model=model_name, runtime=latency, certainty=certainty
+                    sentiment=prediction, confidence=confidence_score, certainty=certainty
                 )
             
             with col2:
