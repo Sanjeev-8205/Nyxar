@@ -252,14 +252,14 @@ def render_confidence_analysis_card(fig=None):
 
     else:
         fig.update_layout(
-            height=160,
+            height=140,
             margin=dict(l=10, r=10, t=10, b=10),
             xaxis_title="Confidence Score (%)",
             yaxis_title=None,
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)",
             showlegend=False,
-            bargap=0.65,
+            bargap=0.55,
             xaxis=dict(range=[0, 100]),
             yaxis=dict(
                 tickfont=dict(size=14)
