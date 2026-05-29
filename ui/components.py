@@ -252,7 +252,7 @@ def render_confidence_analysis_card(fig=None):
 
     else:
         fig.update_layout(
-            height=180,
+            height=160,
             margin=dict(l=10, r=10, t=10, b=10),
             xaxis_title="Confidence Score (%)",
             yaxis_title=None,
