@@ -8,7 +8,7 @@ import time
 from styles import load_global_styles
 from components import (metric_card, status_card, insights_card, mini_card, platform_status_card,
                         hero_header, subtitle, hero_subtext, subtitle_subtext, 
-                        chart_container, apply_button_style, render_model_info, 
+                        chart_container, apply_button_style, render_model_info, apply_container_background, 
                         inference_output_card, render_confidence_analysis_card, telemetry_card)
 
 #setting the page title
@@ -21,6 +21,7 @@ st.set_page_config(
 
 load_global_styles()
 apply_button_style()
+apply_container_background()
 
 BASE_URL = "https://sanjeev2501-nyxar.hf.space"
 
