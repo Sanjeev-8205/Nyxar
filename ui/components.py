@@ -197,7 +197,7 @@ def inference_output_card(
 
             st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Prediction intelligence unavailable</div>""", unsafe_allow_html=True)
 
-            st.markdown("""<div style="min-height:320px;display:flex;flex-direction:column;justify-content:center;"><div style="color:#F3F4F6;font-size:2.2rem;font-weight:800;margin-bottom:1rem;">Awaiting Inference</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.7;">Run inference to generate<br>prediction intelligence.</div></div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="min-height:320px;display:flex;flex-direction:column;justify-content:center;"><div style="color:#F3F4F6;font-size:1.8rem;font-weight:700;margin-bottom:1rem;">Awaiting Inference</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.7;">Run inference to generate<br>prediction intelligence.</div></div>""", unsafe_allow_html=True)
 
     else:
 
