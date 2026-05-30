@@ -227,7 +227,7 @@ def inference_output_card(
             with col1:
                 st.markdown(f"""<div style="color:{sentiment_color};font-size:3rem;font-weight:800;letter-spacing:0.03em;margin-bottom:0.65rem;">{sentiment.upper()}</div>""", unsafe_allow_html=True)
 
-                st.markdown(f"""<div style="display:inline-block;background:{certainty_bg};color:{certainty_color};padding:0.45rem 0.9rem;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:0.8rem;">{certainty}</div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="display:inline-block;background:{certainty_bg};color:{certainty_color};padding:0.45rem 0.9rem;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:0.6rem;">{certainty}</div>""", unsafe_allow_html=True)
 
             with col2:
                 confidence_color = (
@@ -238,7 +238,7 @@ def inference_output_card(
 
                 st.markdown(f"""<div style="text-align:right;"><div style="color:{confidence_color};font-size:3rem;font-weight:800;line-height:0.9; margin-top:1.1rem">{confidence:.0%}</div><div style="color:#9CA3AF;font-size:0.75rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-top:0.6rem;">Confidence</div></div>""", unsafe_allow_html=True)
 
-            st.markdown(f"""<div style="text-align:center;margin-top:0.8rem;margin-bottom:1rem;"><svg width="220" height="120" viewBox="0 0 180 100"><path d="M20 90 A70 70 0 0 1 160 90" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="12" stroke-linecap="round"/><path d="M20 90 A70 70 0 0 1 160 90" fill="none" stroke="{'#10B981' if confidence>=0.7 else '#F59E0B' if confidence>=0.4 else '#EF4444'}" stroke-width="12" stroke-linecap="round" pathLength="100" stroke-dasharray="{confidence*100} 100"/><text x="90" y="70" text-anchor="middle" fill="#F3F4F6" font-size="24" font-weight="700">{confidence:.0%}</text></svg></div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div style="text-align:center;margin-top:0.4rem;margin-bottom:1rem;"><svg width="220" height="120" viewBox="0 0 180 100"><path d="M20 90 A70 70 0 0 1 160 90" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="12" stroke-linecap="round"/><path d="M20 90 A70 70 0 0 1 160 90" fill="none" stroke="{'#10B981' if confidence>=0.7 else '#F59E0B' if confidence>=0.4 else '#EF4444'}" stroke-width="12" stroke-linecap="round" pathLength="100" stroke-dasharray="{confidence*100} 100"/><text x="90" y="70" text-anchor="middle" fill="#F3F4F6" font-size="24" font-weight="700">{confidence:.0%}</text></svg></div>""", unsafe_allow_html=True)
             
             st.markdown("""<div style="height:1.2rem;"></div>""", unsafe_allow_html=True)
 
