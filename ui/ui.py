@@ -327,7 +327,6 @@ def render_live_inference():
             confidence_score = max(result["confidence_scores"])
             model_name = result["model_used"]
             probability_scores = [f"{score:.2%}" for score in result["confidence_scores"]]
-            severity = result["severity"]
             certainty = result["certainty"]
 
             with col1:
