@@ -271,7 +271,7 @@ def render_confidence_analysis_card(fig=None):
             marker_line_width=0
         )
 
-        chart_container(fig=fig, title="Confidence Analysis", subtitle="Probability Distribution", height=160)
+        chart_container(fig=fig, title="Confidence Analysis", subtitle="Probability Distribution", height=240)
 
 def telemetry_card(
     title=None,
