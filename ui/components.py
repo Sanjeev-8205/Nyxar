@@ -111,8 +111,8 @@ def subtitle_subtext(text):
     </div>
     """, unsafe_allow_html=True)
 
-def chart_container(fig, title, subtitle=None):
-    fig.update_layout(height=350)
+def chart_container(fig, title, subtitle=None, height=350):
+    fig.update_layout(height = height)
 
     with st.container(border=True):
 
@@ -271,7 +271,7 @@ def render_confidence_analysis_card(fig=None):
             marker_line_width=0
         )
 
-        chart_container(fig=fig, title="Confidence Analysis", subtitle="Probability Distribution")
+        chart_container(fig=fig, title="Confidence Analysis", subtitle="Probability Distribution", hright=160)
 
 def telemetry_card(
     title=None,
