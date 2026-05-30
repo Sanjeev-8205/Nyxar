@@ -27,7 +27,7 @@ def predict(text, model_name):
             #Preprocessing
             start = time.perf_counter()
             text = textProcess_lr(text)
-            trace["logistic"].append(
+            trace.append(
                 {
                     "step": "Text Preprocessing",
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
@@ -37,7 +37,7 @@ def predict(text, model_name):
             #Vectorization
             start = time.perf_counter()
             transformed = pipeline["vectorizer"].transform(text)
-            trace["logistic"].append(
+            trace.append(
                 {
                     "step": "TF-IDF Vectorization",
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
@@ -48,14 +48,14 @@ def predict(text, model_name):
             start = time.perf_counter()
             prediction = pipeline["model"].predict(transformed)[0]
             prob = pipeline["model"].predict_proba(transformed)[0]
-            trace["logistic"].append(
+            trace.append(
                 {
                     "step": "Logistic Prediction",
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
                 }
             )
 
-            total_time = time.perf_counter() - pipeline_start
+            total_time = round((time.perf_counter() - pipeline_start)*1000, 1)
 
         elif model_type == "keras":
             pipeline_start = time.perf_counter()
@@ -63,7 +63,7 @@ def predict(text, model_name):
             #Preprocessing
             start = time.perf_counter()
             text = textProcess_bilstm(text)
-            trace["bilstm"].append(
+            trace.append(
                 {
                     "step": "Text Prerocessing",
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
@@ -77,7 +77,7 @@ def predict(text, model_name):
             #Tokenization
             start = time.perf_counter()
             seq = tokenizer.texts_to_sequences([text])
-            trace["bilstm"].append(
+            trace.append(
                 {
                     "step": "Tokenization",
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
@@ -87,7 +87,7 @@ def predict(text, model_name):
             #Sequence Padding
             start = time.perf_counter()
             pad = pad_sequences(seq, maxlen=maxlen, padding="post")
-            trace["bilstm"].append(
+            trace.append(
                 {
                     "step": "Sequence Padding",
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
@@ -98,7 +98,7 @@ def predict(text, model_name):
             start = time.perf_counter()
             prob = model.predict(pad, verbose=0)[0]
             prediction = int(np.argmax(prob))
-            trace["bilstm"].append(
+            trace.append(
                 {
                     "step": "Bi-LSTM Inference",
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
@@ -112,7 +112,7 @@ def predict(text, model_name):
 
             start = time.perf_counter()
             text = textPreprocess_RoBERTa(text)
-            trace["roberta"].append(
+            trace.append(
                 {
                     "step": "Text Prerocessing",
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
@@ -131,24 +131,9 @@ def predict(text, model_name):
                 truncation=True,
                 padding=True
             )
-            trace["roberta"].append(
+            trace.append(
                 {
                     "step": "Tokenization",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
-            )
-
-            start = time.perf_counter()
-            outputs = session.run(
-                ["logits"],
-                {
-                    "input_ids": inputs["input_ids"],
-                    "attention_mask": inputs["attention_mask"]
-                }
-            )
-            trace["roberta"].append(
-                {
-                    "step": "Onnx Inference",
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
                 }
             )
@@ -165,7 +150,7 @@ def predict(text, model_name):
             prob = softmax(outputs[0][0])   # ← scipy softmax on numpy
             prediction = int(np.argmax(prob))
 
-            trace["roberta"].append(
+            trace.append(
                 {
                     "step": "Onnx Inference",
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
@@ -177,7 +162,7 @@ def predict(text, model_name):
         return int(prediction), prob.tolist(), trace, total_time
 
     except Exception as e:
-        return {"error": str(e)}
+        raise RuntimeError(str(e))
 
 def predict_batch(texts, model_name):
 
