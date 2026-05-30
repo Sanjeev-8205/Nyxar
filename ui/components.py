@@ -308,10 +308,10 @@ def telemetry_card(
 def apply_container_background():
     st.markdown(f"""<style>.st-emotion-cache-1gz5zxc,div[data-testid="stVerticalBlockBorderWrapper"]{{background:linear-gradient(180deg,rgba(17,24,39,0.96),rgba(8,12,24,0.96))!important;border:1px solid rgba(255,255,255,0.06)!important;border-radius:18px!important;box-shadow:0 4px 20px rgba(0,0,0,0.25)!important;}}</style>""", unsafe_allow_html=True)
 
-def render_trace_step(step: str, duration_ms: float):
+def render_trace_step(step, duration_ms):
     st.markdown(f"""<div style="text-align:center;"><div>✅ <b>{step}</b></div><div style="font-size:1.2rem;">{duration_ms:.1f} ms</div></div>""", unsafe_allow_html=True)
 
-def render_total_time(total_time_ms: float):
+def render_total_time(total_time_ms):
     st.markdown(f'<div style="font-size:1.1rem;"><b>Total Pipeline Time:</b> {total_time_ms:.1f} ms</div>', unsafe_allow_html=True)
 
 def render_trace_placeholder():
