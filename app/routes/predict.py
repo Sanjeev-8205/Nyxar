@@ -18,7 +18,7 @@ def predict_route(data: InputData):
             raise HTTPException(status_code=400, detail="Input text cannot be empty.")
         
         start = time.perf_counter()
-        pred, prob = predict(data.text, data.model)
+        pred, prob, trace, total_time = predict(data.text, data.model)
         latency = time.perf_counter() - start
 
         conf_score = max(prob)
@@ -29,13 +29,10 @@ def predict_route(data: InputData):
         prediction = pred_map.get(str(pred), "Unknown")
 
         if conf_score<0.4:
-            severity = "High"
             certainty = "LOW CONFIDENCE"
         elif conf_score<0.7:
-            severity = "Medium"
             certainty = "MODERATE CERTAINTY"
         else:
-            severity = "Low"
             certainty = "HIGH CERTAINTY"
 
         return {
@@ -44,8 +41,9 @@ def predict_route(data: InputData):
             "confidence": conf_score,
             "latency": f"{round(latency,3)*1000} ms",
             "model_used": data.model,
-            "severity": severity,
-            "certainty": certainty
+            "certainty": certainty,
+            "total_time": total_time,
+            "trace": trace
         }
 
     finally:

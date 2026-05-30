@@ -7,6 +7,7 @@ import numpy as np
 import torch
 import onnxruntime as ort
 from scipy.special import softmax
+import time
 
 torch.set_num_threads(1)
 
@@ -17,31 +18,112 @@ def predict(text, model_name):
     pipeline = get_model(model_name)
     model_type = models[model_name]["type"]
 
+    trace = []
+
     try:
         if model_type == "sklearn":
+            pipeline_start = time.perf_counter()
+
+            #Preprocessing
+            start = time.perf_counter()
             text = textProcess_lr(text)
+            trace["logistic"].append(
+                {
+                    "step": "Text Preprocessing",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
+
+            #Vectorization
+            start = time.perf_counter()
             transformed = pipeline["vectorizer"].transform(text)
+            trace["logistic"].append(
+                {
+                    "step": "TF-IDF Vectorization",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
+
+            #Prediciton
+            start = time.perf_counter()
             prediction = pipeline["model"].predict(transformed)[0]
             prob = pipeline["model"].predict_proba(transformed)[0]
+            trace["logistic"].append(
+                {
+                    "step": "Logistic Prediction",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
+
+            total_time = time.perf_counter() - pipeline_start
 
         elif model_type == "keras":
+            pipeline_start = time.perf_counter()
+
+            #Preprocessing
+            start = time.perf_counter()
             text = textProcess_bilstm(text)
+            trace["bilstm"].append(
+                {
+                    "step": "Text Prerocessing",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
+            
             tokenizer = pipeline["tokenizer"]
             model = pipeline["model"]
             maxlen = pipeline["maxlen"]
 
+            #Tokenization
+            start = time.perf_counter()
             seq = tokenizer.texts_to_sequences([text])
-            pad = pad_sequences(seq, maxlen=maxlen, padding="post")
+            trace["bilstm"].append(
+                {
+                    "step": "Tokenization",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
 
+            #Sequence Padding
+            start = time.perf_counter()
+            pad = pad_sequences(seq, maxlen=maxlen, padding="post")
+            trace["bilstm"].append(
+                {
+                    "step": "Sequence Padding",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
+
+            #Prediction
+            start = time.perf_counter()
             prob = model.predict(pad, verbose=0)[0]
             prediction = int(np.argmax(prob))
+            trace["bilstm"].append(
+                {
+                    "step": "Bi-LSTM Inference",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
+
+            total_time = round((time.perf_counter() - pipeline_start)*1000, 1)
 
         elif model_type == "transformer":
+            pipeline_start = time.perf_counter()
+
+            start = time.perf_counter()
             text = textPreprocess_RoBERTa(text)
+            trace["roberta"].append(
+                {
+                    "step": "Text Prerocessing",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
+
             tokenizer = pipeline["tokenizer"]
             session = pipeline["session"]   # ← onnx session instead of model
             maxlen = pipeline["maxlen"]
 
+            start = time.perf_counter()
             inputs = tokenizer(
                 text,
                 max_length=maxlen,
@@ -49,7 +131,29 @@ def predict(text, model_name):
                 truncation=True,
                 padding=True
             )
+            trace["roberta"].append(
+                {
+                    "step": "Tokenization",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
 
+            start = time.perf_counter()
+            outputs = session.run(
+                ["logits"],
+                {
+                    "input_ids": inputs["input_ids"],
+                    "attention_mask": inputs["attention_mask"]
+                }
+            )
+            trace["roberta"].append(
+                {
+                    "step": "Onnx Inference",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
+
+            start = time.perf_counter()
             outputs = session.run(
                 ["logits"],
                 {
@@ -61,7 +165,16 @@ def predict(text, model_name):
             prob = softmax(outputs[0][0])   # ← scipy softmax on numpy
             prediction = int(np.argmax(prob))
 
-        return int(prediction), prob.tolist()
+            trace["roberta"].append(
+                {
+                    "step": "Onnx Inference",
+                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
+                }
+            )
+
+            total_time = round((time.perf_counter() - pipeline_start)*1000, 1)
+
+        return int(prediction), prob.tolist(), trace, total_time
 
     except Exception as e:
         return {"error": str(e)}
