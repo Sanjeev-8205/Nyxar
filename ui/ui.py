@@ -405,8 +405,10 @@ def render_live_inference():
                 trace = result["trace"]
                 
                 if model == "Bi-LSTM":
+                    stages=4
                     cols = st.columns([4,1,4,1,4,1,4])
                 else:
+                    stages=3
                     cols = st.columns([4,1,4,1,4])
 
                 for i, item in enumerate(trace):
@@ -423,7 +425,7 @@ def render_live_inference():
                         with cols[i * 2 + 1]:
                             st.markdown('<div style="text-align:center;font-size:2rem;color:#64748B;margin-top:55px;">→</div>', unsafe_allow_html=True)
 
-                render_pipeline_summary(result["total_time"])
+                render_pipeline_summary(result["total_time"], stages=stages)
 
         else:
             render_trace_placeholder()
