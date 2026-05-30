@@ -10,7 +10,7 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         hero_header, subtitle, hero_subtext, subtitle_subtext, 
                         chart_container, apply_button_style, render_model_info, apply_container_background, 
                         inference_output_card, render_confidence_analysis_card, telemetry_card,
-                        render_trace_card, render_total_time, render_trace_placeholder)
+                        render_trace_card, render_total_time, render_trace_placeholder, render_pipeline_summary)
 
 #setting the page title
 st.set_page_config(
@@ -425,7 +425,7 @@ def render_live_inference():
 
                 st.divider()
 
-                render_total_time(total_time_ms=result["total_time"])
+                render_pipeline_summary(result["total_time"])
 
         else:
             render_trace_placeholder()
