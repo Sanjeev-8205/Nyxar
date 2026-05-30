@@ -315,4 +315,5 @@ def render_total_time(total_time_ms):
     st.markdown(f'<div style="font-size:1.1rem;"><b>Total Pipeline Time:</b> {total_time_ms:.1f} ms</div>', unsafe_allow_html=True)
 
 def render_trace_placeholder():
-    st.markdown('<div style="text-align:center;padding:1rem 0;"><h4>Awaiting inference execution...</h4><p>Execution stages and timing telemetry<br>will appear after prediction.</p></div>', unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<div style="text-align:center;padding:1rem 0;"><h4>Awaiting inference execution...</h4><p>Execution stages and timing telemetry<br>will appear after prediction.</p></div>', unsafe_allow_html=True)
