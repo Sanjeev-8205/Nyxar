@@ -400,7 +400,7 @@ def render_live_inference():
         if st.session_state.prediction_result is not None:
 
             result = st.session_state.prediction_result
-            with st.container():
+            with st.container(border=True):
                 trace = result["trace"]
 
                 cols = st.columns(len(trace))
@@ -409,9 +409,9 @@ def render_live_inference():
                     with col:
                         render_trace_step(step=item["step"], duration_ms=item["duration_ms"])
 
-            st.divider()
+                st.divider()
 
-            render_total_time(total_time_ms=result["total_time"])
+                render_total_time(total_time_ms=result["total_time"])
 
         else:
             render_trace_placeholder()
