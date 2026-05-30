@@ -9,7 +9,8 @@ from styles import load_global_styles
 from components import (metric_card, status_card, insights_card, mini_card, platform_status_card,
                         hero_header, subtitle, hero_subtext, subtitle_subtext, 
                         chart_container, apply_button_style, render_model_info, apply_container_background, 
-                        inference_output_card, render_confidence_analysis_card, telemetry_card)
+                        inference_output_card, render_confidence_analysis_card, telemetry_card,
+                        render_trace_step, render_total_time, render_trace_placeholder)
 
 #setting the page title
 st.set_page_config(
@@ -395,6 +396,25 @@ def render_live_inference():
                 telemetry_card(title="Throughput")
             with col3:
                 telemetry_card(title="Model Metadata")
+        
+        if st.session_state.prediction_result is not None:
+
+            result = st.session_state.prediction_result
+            with st.container():
+                trace = result["trace"]
+
+                cols = st.columns(len(trace))
+
+                for col, item in zip(cols, trace):
+                    with col:
+                        render_trace_step(step=item["step"], duration_ms=item["duration_ms"])
+
+            st.divider()
+
+            render_total_time(total_time_ms=result["total_time"])
+
+        else:
+            render_trace_placeholder()
 
 def render_batch_intelligence():
 
