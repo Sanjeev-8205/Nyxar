@@ -399,6 +399,8 @@ def render_live_inference():
         if st.session_state.prediction_result is not None:
 
             result = st.session_state.prediction_result
+
+            st.markdown("<div style='margin-top: 1rem'></div>", unsafe_allow_html=True)
             with st.container(border=True):
                 trace = result["trace"]
 
