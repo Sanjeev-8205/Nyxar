@@ -308,12 +308,15 @@ def telemetry_card(
 def apply_container_background():
     st.markdown(f"""<style>.st-emotion-cache-1gz5zxc,div[data-testid="stVerticalBlockBorderWrapper"]{{background:linear-gradient(180deg,rgba(17,24,39,0.96),rgba(8,12,24,0.96))!important;border:1px solid rgba(255,255,255,0.06)!important;border-radius:18px!important;box-shadow:0 4px 20px rgba(0,0,0,0.25)!important;}}</style>""", unsafe_allow_html=True)
 
-def render_trace_step(step, duration_ms):
-    st.markdown(f"""<div style="text-align:center;"><div>✅ <b>{step}</b></div><div style="font-size:1.2rem;">{duration_ms:.1f} ms</div></div>""", unsafe_allow_html=True)
-
 def render_total_time(total_time_ms):
     st.markdown(f'<div style="font-size:1.1rem;"><b>Total Pipeline Time:</b> {total_time_ms:.1f} ms</div>', unsafe_allow_html=True)
 
 def render_trace_placeholder():
+    st.markdown("<div style='margin-top: 1rem'></div>", unsafe_allow_html=True)
+
     with st.container(border=True):
         st.markdown('<div style="text-align:center;padding:1rem 0;"><h4>Awaiting inference execution...</h4><p>Execution stages and timing telemetry<br>will appear after prediction.</p></div>', unsafe_allow_html=True)
+
+def render_trace_card(step, duration_ms):
+    html = f'<div style="text-align:center;padding:16px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg, rgba(15,23,42,0.85), rgba(2,6,23,0.95));"><div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;margin-bottom:8px;">{step.upper()}</div><div style="color:#10B981;font-size:0.85rem;margin-bottom:10px;">✓ COMPLETED</div><div style="font-size:1.8rem;font-weight:700;color:white;">{duration_ms:.1f}</div><div style="font-size:0.8rem;color:#94A3B8;">ms</div></div>'
+    st.markdown(html, unsafe_allow_html=True)

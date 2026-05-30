@@ -10,7 +10,7 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         hero_header, subtitle, hero_subtext, subtitle_subtext, 
                         chart_container, apply_button_style, render_model_info, apply_container_background, 
                         inference_output_card, render_confidence_analysis_card, telemetry_card,
-                        render_trace_step, render_total_time, render_trace_placeholder)
+                        render_trace_card, render_total_time, render_trace_placeholder)
 
 #setting the page title
 st.set_page_config(
@@ -399,16 +399,29 @@ def render_live_inference():
         if st.session_state.prediction_result is not None:
 
             result = st.session_state.prediction_result
-
+            model = result["model_used"]
             st.markdown("<div style='margin-top: 1rem'></div>", unsafe_allow_html=True)
             with st.container(border=True):
                 trace = result["trace"]
+                
+                if model == "Bi-LSTM":
+                    cols = st.columns([4,1,4,1,4,1,4])
+                else:
+                    cols = st.columns([4,1,4,1,4])
 
-                cols = st.columns(len(trace))
+                for i, item in enumerate(trace):
 
-                for col, item in zip(cols, trace):
-                    with col:
-                        render_trace_step(step=item["step"], duration_ms=item["duration_ms"])
+                    # Card column
+                    with cols[i * 2]:
+                        render_trace_card(
+                            step=item["step"],
+                            duration_ms=item["duration_ms"]
+                        )
+
+                    # Arrow column (except after last card)
+                    if i < len(trace) - 1:
+                        with cols[i * 2 + 1]:
+                            st.markdown('<div style="text-align:center;font-size:2rem;color:#64748B;margin-top:55px;">→</div>', unsafe_allow_html=True)
 
                 st.divider()
 
