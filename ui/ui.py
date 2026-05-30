@@ -423,8 +423,6 @@ def render_live_inference():
                         with cols[i * 2 + 1]:
                             st.markdown('<div style="text-align:center;font-size:2rem;color:#64748B;margin-top:55px;">→</div>', unsafe_allow_html=True)
 
-                st.divider()
-
                 render_pipeline_summary(result["total_time"])
 
         else:
