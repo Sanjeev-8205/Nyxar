@@ -431,45 +431,60 @@ def render_live_inference():
         else:
             render_trace_placeholder()
         
-        if st.session_state.prediction_result is not None:
-            results = st.session_state.prediction_result
+        #Last row
+        c1, c2 = st.columns([1, 1.6])
+        with c1:
+            with st.container(border=True):
 
-            c1, c2 = st.columns([1, 1.6])
-            
-            with c1:
-                with st.container(border=True):
+                if st.session_state.prediction_result is not None:
+
+                    results = st.session_state.prediction_result
+
                     text_complexity_header()
 
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        input_analysis_metrics_card("Words", results["words"])
-                        input_analysis_metrics_card("Characters", results["characters"])
-                    with col2:
-                        input_analysis_metrics_card("Sentences", results["sentences"])
-                        input_analysis_metrics_card("Complexity", results["complexity"])
-                
-            with c2:
-                with st.container(border=True):
-                    st.header("Coming soon. Stay tuned.")
+                    words = results["words"]
+                    chars = results["characters"]
+                    sentences = results["sentences"]
+                    complexity = results["complexity"]
 
-        else:
-            c1, c2 = st.columns([1, 1.6])
-            
-            with c1:
-                with st.container(border=True):
+                else:
+
                     text_complexity_header_placeholder()
 
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        input_analysis_metrics_card("Words", "--")
-                        input_analysis_metrics_card("Characters", "--")
-                    with col2:
-                        input_analysis_metrics_card("Sentences", "--")
-                        input_analysis_metrics_card("Complexity", "--")
-                
-            with c2:
-                with st.container(border=True):
-                    st.header("Coming soon. Stay tuned.")
+                    words = "--"
+                    chars = "--"
+                    sentences = "--"
+                    complexity = "--"
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    input_analysis_metrics_card("Words", words)
+                    input_analysis_metrics_card("Characters", chars)
+
+                with col2:
+                    input_analysis_metrics_card("Sentences", sentences)
+                    input_analysis_metrics_card("Complexity", complexity)
+
+        with c2:
+            with st.container(border=True):
+
+                st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">AI Prediction Insights</div>""", unsafe_allow_html=True)
+
+                if st.session_state.prediction_result is not None:
+
+                    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Generated using Gemini Flash</div>""", unsafe_allow_html=True)
+                    st.markdown(
+                        '<div style="min-height:420px;display:flex;align-items:center;color:#E5E7EB;font-size:1rem;line-height:1.8;">Coming soon. Stay tuned.</div>',
+                        unsafe_allow_html=True
+                    )
+
+                else:
+                    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Generated using Gemini Flash</div>""", unsafe_allow_html=True)
+                    st.markdown(
+                        '<div style="min-height:420px;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:1rem;">Run inference to generate AI-powered prediction insights.</div>',
+                        unsafe_allow_html=True
+                    )
 
 def render_batch_intelligence():
 
