@@ -471,18 +471,19 @@ def render_live_inference():
 
                 st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">AI Prediction Insights</div>""", unsafe_allow_html=True)
 
+                st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Generated using Gemini Flash</div>""", unsafe_allow_html=True)
+
                 if st.session_state.prediction_result is not None:
 
-                    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Generated using Gemini Flash</div>""", unsafe_allow_html=True)
                     st.markdown(
-                        '<div style="min-height:420px;display:flex;align-items:center;color:#E5E7EB;font-size:1rem;line-height:1.8;">Coming soon. Stay tuned.</div>',
+                        '<div style="min-height:280px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Coming Soon</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Gemini-powered prediction explanations<br>will appear here after integration.</div></div></div>',
                         unsafe_allow_html=True
                     )
 
                 else:
-                    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Generated using Gemini Flash</div>""", unsafe_allow_html=True)
+
                     st.markdown(
-                        '<div style="min-height:420px;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:1rem;">Run inference to generate AI-powered prediction insights.</div>',
+                        '<div style="min-height:280px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting Analysis</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Run inference to generate<br>AI-powered prediction insights.</div></div></div>',
                         unsafe_allow_html=True
                     )
 
