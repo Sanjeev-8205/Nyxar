@@ -500,8 +500,8 @@ def render_batch_intelligence():
             "Upload CSV", type=["csv"]
         )
 
-        selected_model = st.selectbox("Choose Model", model_list)
-        upload_button = st.button("Start Batch Predictions")
+        selected_model = st.selectbox("Select Model", model_list)
+        upload_button = st.button("Start Batch Processing")
 
         if "polling_started" not in st.session_state:
             st.session_state.polling_started = False
@@ -511,6 +511,9 @@ def render_batch_intelligence():
 
         if "failed_job" not in st.session_state:
             st.session_state.failed_job = False
+        
+        if "last_job_data" not in st.session_state:
+            st.session_state.last_job_data = None
 
         if upload_button:
             if uploaded_file is not None and not st.session_state.get("polling_started", False):
@@ -540,7 +543,7 @@ def render_batch_intelligence():
                 st.session_state.polling_started = True
                 time.sleep(1)
 
-    if "job_id" in st.session_state and st.session_state.get("polling_started", True):
+    if "job_id" in st.session_state and st.session_state.polling_started:
         job_id = st.session_state.job_id
 
         placeholder = st.empty()
@@ -560,33 +563,43 @@ def render_batch_intelligence():
                     st.text(response.text)
                     break
 
-                job_data = response.json()
+                st.session_state.last_job_data = response.json()
 
             except Exception as e:
                 st.error(f"Request Failed: {e}")
                 break
 
-            with placeholder.container():
-                status_text.write(f"Status: {job_data['status']}")
-                progress_bar.progress(job_data['progress'] / 100)
+            with placeholder.container(border=True):
+                status_text.write(f"Status: {st.session_state.last_job_data['status']}")
+                progress_bar.progress(st.session_state.last_job_data['progress'] / 100)
                 row_text.write(
                     f"Processed rows: "
-                    f"{job_data['processed_rows']} / "
-                    f"{job_data['total_rows']}"
+                    f"{st.session_state.last_job_data['processed_rows']} / "
+                    f"{st.session_state.last_job_data['total_rows']}"
                 )
 
-            if job_data["status"] in ["completed", "failed"]:
+            if st.session_state.last_job_data["status"] in ["completed", "failed"]:
 
                 st.session_state.polling_started = False
 
-                if job_data["status"] == "completed":
-                    st.session_state.completed_job_data = job_data
+                if st.session_state.last_job_data["status"] == "completed":
+                    st.session_state.completed_job_data = st.session_state.last_job_data
                 else:
                     st.session_state.failed_job = True
 
-                break  
+                break
 
-            time.sleep(1)              
+            time.sleep(1)
+
+    elif st.session_state.last_job_data is not None:
+        with st.container(border=True):
+            st.write(f"Status: {st.session_state.last_job_data['status']}")
+            st.progress(st.session_state.last_job_data['progress'] / 100)
+            st.write(
+                f"Processed rows: "
+                f"{st.session_state.last_job_data['processed_rows']} / "
+                f"{st.session_state.last_job_data['total_rows']}"
+            )
 
 def render_ai_intelligence():
 
