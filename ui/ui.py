@@ -478,7 +478,7 @@ def render_live_inference():
                     insight = result["insight"]
 
                     st.markdown(
-                        f'<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div style="color:#E5E7EB;font-size:1.05rem;line-height:1.9;max-width:90%;">{insight}</div></div>',
+                        f'<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 5rem;"><div style="max-width:700px;color:#E5E7EB;font-size:1.05rem;line-height:1.9;">{insight}</div></div>',
                         unsafe_allow_html=True
                     )
 
