@@ -578,7 +578,7 @@ def render_batch_intelligence():
                 with c3:
                     input_analysis_metrics_card("Throughput", f"{int((st.session_state.last_job_data['processed_rows']*60)/st.session_state.last_job_data['processing_time'])} RPM")
                 with c4:
-                    input_analysis_metrics_card("Status", st.session_state.last_job_data["status"])
+                    input_analysis_metrics_card("Status", st.session_state.last_job_data["status"].upper())
 
             if st.session_state.last_job_data["status"] in ["completed", "failed"]:
 
@@ -604,9 +604,9 @@ def render_batch_intelligence():
             with c2:
                 input_analysis_metrics_card("Processed Rows", st.session_state.last_job_data['processed_rows'])
             with c3:
-                input_analysis_metrics_card("Throughput", (st.session_state.last_job_data['processed_rows']*60)/st.session_state.last_job_data['processing_time'])
+                input_analysis_metrics_card("Throughput", f"{int((st.session_state.last_job_data['processed_rows']*60)/st.session_state.last_job_data['processing_time'])}")
             with c4:
-                input_analysis_metrics_card("Status", st.session_state.last_job_data["status"])
+                input_analysis_metrics_card("Status", st.session_state.last_job_data["status"].upper())
 
 def render_ai_intelligence():
 
