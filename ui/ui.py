@@ -577,7 +577,7 @@ def render_batch_intelligence():
                     input_analysis_metrics_card("Processed Rows", st.session_state.last_job_data['processed_rows'])
                 with c3:
                     if st.session_state.last_job_data['processed_rows']:
-                        input_analysis_metrics_card("Throughput", f"{int((st.session_state.last_job_data['processed_rows'])/st.session_state.last_job_data['processing_time'])} RPS")
+                        input_analysis_metrics_card("Throughput", f"{int((st.session_state.last_job_data['processed_rows'])/st.session_state.last_job_data['processing_time'])} Rows/Sec")
                     else:
                         input_analysis_metrics_card("Throughput", "0 RPS")
                 with c4:
@@ -608,7 +608,7 @@ def render_batch_intelligence():
                 input_analysis_metrics_card("Processed Rows", st.session_state.last_job_data['processed_rows'])
             with c3:
                 if st.session_state.last_job_data['processed_rows']:
-                    input_analysis_metrics_card("Throughput", f"{int((st.session_state.last_job_data['processed_rows'])/st.session_state.last_job_data['processing_time'])} RPS")
+                    input_analysis_metrics_card("Throughput", f"{int((st.session_state.last_job_data['processed_rows'])/st.session_state.last_job_data['processing_time'])} Rows/Sec")
                 else:
                     input_analysis_metrics_card("Throughput", "0 RPS")
             with c4:
