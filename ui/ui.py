@@ -567,13 +567,17 @@ def render_batch_intelligence():
                 break
 
             with placeholder.container(border=True):
-                st.write(f"Status: {st.session_state.last_job_data['status']}")
                 st.progress(st.session_state.last_job_data['progress'] / 100)
-                st.write(
-                    f"Processed rows: "
-                    f"{st.session_state.last_job_data['processed_rows']} / "
-                    f"{st.session_state.last_job_data['total_rows']}"
-                )
+
+                c1, c2, c3, c4 = st.columns(4)
+                with c1:
+                    input_analysis_metrics_card("Total Rows", st.session_state.last_job_data['total_rows'])
+                with c2:
+                    input_analysis_metrics_card("Processed Rows", st.session_state.last_job_data['processed_rows'])
+                with c3:
+                    input_analysis_metrics_card("Throughput", (st.session_state.last_job_data['processed_rows']*60)/st.session_state.last_job_data['processing_time'])
+                with c4:
+                    input_analysis_metrics_card("Status", st.session_state.last_job_data["status"])
 
             if st.session_state.last_job_data["status"] in ["completed", "failed"]:
 
@@ -590,13 +594,17 @@ def render_batch_intelligence():
 
     elif st.session_state.last_job_data is not None:
         with st.container(border=True):
-            st.write(f"Status: {st.session_state.last_job_data['status']}")
             st.progress(st.session_state.last_job_data['progress'] / 100)
-            st.write(
-                f"Processed rows: "
-                f"{st.session_state.last_job_data['processed_rows']} / "
-                f"{st.session_state.last_job_data['total_rows']}"
-            )
+
+            c1, c2, c3, c4 = st.columns(4)
+            with c1:
+                input_analysis_metrics_card("Total Rows", st.session_state.last_job_data['total_rows'])
+            with c2:
+                input_analysis_metrics_card("Processed Rows", st.session_state.last_job_data['processed_rows'])
+            with c3:
+                input_analysis_metrics_card("Throughput", (st.session_state.last_job_data['processed_rows']*60)/st.session_state.last_job_data['processing_time'])
+            with c4:
+                input_analysis_metrics_card("Status", st.session_state.last_job_data["status"])
 
 def render_ai_intelligence():
 
