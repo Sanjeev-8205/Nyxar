@@ -476,14 +476,14 @@ def render_live_inference():
                 if st.session_state.prediction_result is not None:
 
                     st.markdown(
-                        '<div style="min-height:275px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Coming Soon</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Gemini-powered prediction explanations<br>will appear here after integration.</div></div></div>',
+                        '<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Coming Soon</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Gemini-powered prediction explanations<br>will appear here after integration.</div></div></div>',
                         unsafe_allow_html=True
                     )
 
                 else:
 
                     st.markdown(
-                        '<div style="min-height:275px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting Analysis</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Run inference to generate<br>AI-powered prediction insights.</div></div></div>',
+                        '<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting Analysis</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Run inference to generate<br>AI-powered prediction insights.</div></div></div>',
                         unsafe_allow_html=True
                     )
 
