@@ -471,12 +471,14 @@ def render_live_inference():
 
                 st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">AI Prediction Insights</div>""", unsafe_allow_html=True)
 
-                st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Generated using Gemini Flash</div>""", unsafe_allow_html=True)
+                st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Analysis of key signals influencing prediction</div>""", unsafe_allow_html=True)
 
                 if st.session_state.prediction_result is not None:
+                    result = st.session_state.prediction_result
+                    insight = result["insight"]
 
                     st.markdown(
-                        '<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Coming Soon</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Gemini-powered prediction explanations<br>will appear here after integration.</div></div></div>',
+                        f'<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">{insight}</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Gemini-powered prediction explanations<br>will appear here after integration.</div></div></div>',
                         unsafe_allow_html=True
                     )
 
