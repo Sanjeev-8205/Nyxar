@@ -547,9 +547,6 @@ def render_batch_intelligence():
         job_id = st.session_state.job_id
 
         placeholder = st.empty()
-        progress_bar = st.progress(0)
-        status_text = st.empty()
-        row_text = st.empty()
 
         while True:
 
@@ -570,9 +567,9 @@ def render_batch_intelligence():
                 break
 
             with placeholder.container(border=True):
-                status_text.write(f"Status: {st.session_state.last_job_data['status']}")
-                progress_bar.progress(st.session_state.last_job_data['progress'] / 100)
-                row_text.write(
+                st.write(f"Status: {st.session_state.last_job_data['status']}")
+                st.progress(st.session_state.last_job_data['progress'] / 100)
+                st.write(
                     f"Processed rows: "
                     f"{st.session_state.last_job_data['processed_rows']} / "
                     f"{st.session_state.last_job_data['total_rows']}"
