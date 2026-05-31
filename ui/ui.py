@@ -540,53 +540,53 @@ def render_batch_intelligence():
                 st.session_state.polling_started = True
                 time.sleep(1)
 
-            if "job_id" in st.session_state and st.session_state.get("polling_started", True):
-                job_id = st.session_state.job_id
+    if "job_id" in st.session_state and st.session_state.get("polling_started", True):
+        job_id = st.session_state.job_id
 
-                placeholder = st.empty()
-                progress_bar = st.progress(0)
-                status_text = st.empty()
-                row_text = st.empty()
+        placeholder = st.empty()
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        row_text = st.empty()
 
-                while True:
+        while True:
 
-                    try:
-                        response = requests.get(
-                            f"{BASE_URL}/batch/job/{job_id}", timeout=10
-                        )
+            try:
+                response = requests.get(
+                    f"{BASE_URL}/batch/job/{job_id}", timeout=10
+                )
 
-                        if response.status_code != 200:
-                            st.error(f"API Error: {response.status_code}")
-                            st.text(response.text)
-                            break
+                if response.status_code != 200:
+                    st.error(f"API Error: {response.status_code}")
+                    st.text(response.text)
+                    break
 
-                        job_data = response.json()
+                job_data = response.json()
 
-                    except Exception as e:
-                        st.error(f"Request Failed: {e}")
-                        break
+            except Exception as e:
+                st.error(f"Request Failed: {e}")
+                break
 
-                    with placeholder.container():
-                        status_text.write(f"Status: {job_data['status']}")
-                        progress_bar.progress(job_data['progress'] / 100)
-                        row_text.write(
-                            f"Processed rows: "
-                            f"{job_data['processed_rows']} / "
-                            f"{job_data['total_rows']}"
-                        )
+            with placeholder.container():
+                status_text.write(f"Status: {job_data['status']}")
+                progress_bar.progress(job_data['progress'] / 100)
+                row_text.write(
+                    f"Processed rows: "
+                    f"{job_data['processed_rows']} / "
+                    f"{job_data['total_rows']}"
+                )
 
-                    if job_data["status"] in ["completed", "failed"]:
+            if job_data["status"] in ["completed", "failed"]:
 
-                        st.session_state.polling_started = False
+                st.session_state.polling_started = False
 
-                        if job_data["status"] == "completed":
-                            st.session_state.completed_job_data = job_data
-                        else:
-                            st.session_state.failed_job = True
+                if job_data["status"] == "completed":
+                    st.session_state.completed_job_data = job_data
+                else:
+                    st.session_state.failed_job = True
 
-                        break  
+                break  
 
-                    time.sleep(1)              
+            time.sleep(1)              
 
 def render_ai_intelligence():
 
