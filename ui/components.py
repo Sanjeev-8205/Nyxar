@@ -333,3 +333,8 @@ def text_complexity_header():
     st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Text Complexity</div>""", unsafe_allow_html=True)
 
     st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Input content analysis</div>""", unsafe_allow_html=True)
+
+def text_complexity_header_placeholder():
+    st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Text Complexity</div>""", unsafe_allow_html=True)
+
+    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Input content analysis not available</div>""", unsafe_allow_html=True)

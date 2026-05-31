@@ -11,7 +11,7 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         chart_container, apply_button_style, render_model_info, apply_container_background, 
                         inference_output_card, render_confidence_analysis_card, telemetry_card,
                         render_trace_card, render_trace_placeholder, render_pipeline_summary,
-                        input_analysis_metrics_card, text_complexity_header)
+                        input_analysis_metrics_card, text_complexity_header, text_complexity_header_placeholder)
 
 #setting the page title
 st.set_page_config(
@@ -449,7 +449,7 @@ def render_live_inference():
                         input_analysis_metrics_card("Complexity", results["complexity"])
                 
             with c2:
-                with st.container():
+                with st.container(border=True):
                     st.header("Coming soon. Stay tuned.")
 
         else:
@@ -457,7 +457,7 @@ def render_live_inference():
             
             with c1:
                 with st.container(border=True):
-                    text_complexity_header()
+                    text_complexity_header_placeholder()
 
                     col1, col2 = st.columns(2)
                     with col1:
@@ -468,7 +468,7 @@ def render_live_inference():
                         input_analysis_metrics_card("Complexity", "--")
                 
             with c2:
-                with st.container():
+                with st.container(border=True):
                     st.header("Coming soon. Stay tuned.")
 
 def render_batch_intelligence():
