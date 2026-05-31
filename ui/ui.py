@@ -478,7 +478,7 @@ def render_live_inference():
                     insight = result["insight"]
 
                     st.markdown(
-                        f'<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">{insight}</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Gemini-powered prediction explanations<br>will appear here after integration.</div></div></div>',
+                        f'<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div style="color:#E5E7EB;font-size:1.05rem;line-height:1.9;max-width:90%;">{insight}</div></div>',
                         unsafe_allow_html=True
                     )
 
