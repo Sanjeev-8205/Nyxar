@@ -12,7 +12,7 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         inference_output_card, render_confidence_analysis_card, telemetry_card,
                         render_trace_card, render_trace_placeholder, render_pipeline_summary,
                         input_analysis_metrics_card, text_complexity_header, text_complexity_header_placeholder,
-                        ai_insight_card, progress_bar_modified)
+                        ai_insight_card, progress_bar_modified, batch_job_overview_header)
 
 #setting the page title
 st.set_page_config(
@@ -567,6 +567,7 @@ def render_batch_intelligence():
                 break
 
             with placeholder.container(border=True):
+                batch_job_overview_header()
                 st.progress(st.session_state.last_job_data['progress'] / 100)
 
                 c1, c2, c3, c4 = st.columns(4)
@@ -575,7 +576,7 @@ def render_batch_intelligence():
                 with c2:
                     input_analysis_metrics_card("Processed Rows", st.session_state.last_job_data['processed_rows'])
                 with c3:
-                    input_analysis_metrics_card("Throughput", (st.session_state.last_job_data['processed_rows']*60)/st.session_state.last_job_data['processing_time'])
+                    input_analysis_metrics_card("Throughput", f"{int((st.session_state.last_job_data['processed_rows']*60)/st.session_state.last_job_data['processing_time'])} RPM")
                 with c4:
                     input_analysis_metrics_card("Status", st.session_state.last_job_data["status"])
 
@@ -594,6 +595,7 @@ def render_batch_intelligence():
 
     elif st.session_state.last_job_data is not None:
         with st.container(border=True):
+            batch_job_overview_header()
             st.progress(st.session_state.last_job_data['progress'] / 100)
 
             c1, c2, c3, c4 = st.columns(4)

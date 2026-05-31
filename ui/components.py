@@ -347,3 +347,13 @@ def ai_insight_card(insight):
 
 def progress_bar_modified():
     st.markdown("""<style>.st-emotion-cache-e0hdwm{background-color:rgba(255,255,255,0.08)!important;border-radius:999px!important;height:12px!important;overflow:hidden!important;}.st-emotion-cache-b0dv7m{background:linear-gradient(90deg,#2563EB,#3B82F6,#60A5FA)!important;box-shadow:0 0 15px rgba(59,130,246,0.4)!important;border-radius:999px!important;}</style>""", unsafe_allow_html=True)
+
+def batch_job_overview_header():
+    st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Job Overview</div>""", unsafe_allow_html=True)
+
+    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Operational metrics for current batch job</div>""", unsafe_allow_html=True)
+
+def batch_job_overview_header_placeholder():
+    st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Text Complexity</div>""", unsafe_allow_html=True)
+
+    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Input content analysis not available</div>""", unsafe_allow_html=True)
