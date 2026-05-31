@@ -17,11 +17,12 @@ def process_batch_job(job_id: int, file_path: str, model:str):
 
         if not job:
             return
-    
+
         #mark processing
         job.status = "Processing"
         db.commit()
 
+        operational_start = time.perf_counter()
         #Read CSV
         df = pd.read_csv(file_path)
 
@@ -36,7 +37,7 @@ def process_batch_job(job_id: int, file_path: str, model:str):
         job.inference_time = inference_time
         job.throughput = total_rows/inference_time
 
-        BUFFER = 500
+        BUFFER = max(1, total_rows//10)
         db_time = 0
         results_buffer=[]
         for index, (text, pred, prob) in enumerate(zip(df["text"], preds, probs)):
@@ -62,6 +63,11 @@ def process_batch_job(job_id: int, file_path: str, model:str):
                     ((index+1)/total_rows)*100, 2
                 )
 
+                proc_time = time.perf_counter() - operational_start
+                job.processing_time = round(proc_time, 4)
+
+                db.commit()
+
         if results_buffer:
             st_time = time.perf_counter()
             stmt = insert(BatchResult).values(results_buffer)
@@ -73,7 +79,7 @@ def process_batch_job(job_id: int, file_path: str, model:str):
 
         job.status = "completed"
 
-        proc_time = end_time - start_time
+        proc_time = end_time - operational_start
         job.processing_time = round(proc_time, 4)
         job.completed_at = datetime.now(UTC)
         job.processed_rows = total_rows
