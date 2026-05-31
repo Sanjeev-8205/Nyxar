@@ -58,7 +58,7 @@ def predict_route(data: InputData):
             "certainty": certainty,
             "total_time": total_time,
             "trace": trace,
-            "words": len(words),
+            "words": words,
             "characters": len(text),
             "sentences": sentences,
             "complexity": complexity
