@@ -12,7 +12,7 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         inference_output_card, render_confidence_analysis_card, telemetry_card,
                         render_trace_card, render_trace_placeholder, render_pipeline_summary,
                         input_analysis_metrics_card, text_complexity_header, text_complexity_header_placeholder,
-                        ai_insight_card)
+                        ai_insight_card, progress_bar_modified)
 
 #setting the page title
 st.set_page_config(
@@ -25,6 +25,7 @@ st.set_page_config(
 load_global_styles()
 apply_button_style()
 apply_container_background()
+progress_bar_modified()
 
 BASE_URL = "https://sanjeev2501-nyxar.hf.space"
 
@@ -494,97 +495,98 @@ def render_batch_intelligence():
     hero_header("Batch Intelligence")
     hero_subtext("Track large-scale dataset processing, asynchronous AI workflows, job analytics, and batch inference performance.")
 
-    uploaded_file = st.file_uploader(
-        "Upload CSV", type=["csv"]
-    )
+    with st.container(border=True):
+        uploaded_file = st.file_uploader(
+            "Upload CSV", type=["csv"]
+        )
 
-    selected_model = st.selectbox("Choose Model", model_list)
-    upload_button = st.button("Start Batch Predictions")
+        selected_model = st.selectbox("Choose Model", model_list)
+        upload_button = st.button("Start Batch Predictions")
 
-    if "polling_started" not in st.session_state:
-        st.session_state.polling_started = False
+        if "polling_started" not in st.session_state:
+            st.session_state.polling_started = False
 
-    if "completed_job_data" not in st.session_state:
-        st.session_state.completed_job_data = None
+        if "completed_job_data" not in st.session_state:
+            st.session_state.completed_job_data = None
 
-    if "failed_job" not in st.session_state:
-        st.session_state.failed_job = False
+        if "failed_job" not in st.session_state:
+            st.session_state.failed_job = False
 
-    if upload_button:
-        if uploaded_file is not None and not st.session_state.get("polling_started", False):
-            files = {
-                "file":uploaded_file.getvalue()
-            }
-
-            data = {
-                "model": selected_model
-            }
-
-            response = requests.post(
-                f"{BASE_URL}/batch/upload",
-                params={"model": selected_model},
-                files={
-                    "file":(
-                        uploaded_file.name,
-                        uploaded_file.getvalue(),
-                        "text/csv"
-                    )
+        if upload_button:
+            if uploaded_file is not None and not st.session_state.get("polling_started", False):
+                files = {
+                    "file":uploaded_file.getvalue()
                 }
-            )
 
-            job_id = response.json()['job_id']
+                data = {
+                    "model": selected_model
+                }
 
-            st.session_state.job_id = job_id
-            st.session_state.polling_started = True
-            time.sleep(1)
+                response = requests.post(
+                    f"{BASE_URL}/batch/upload",
+                    params={"model": selected_model},
+                    files={
+                        "file":(
+                            uploaded_file.name,
+                            uploaded_file.getvalue(),
+                            "text/csv"
+                        )
+                    }
+                )
 
-        if "job_id" in st.session_state and st.session_state.get("polling_started", True):
-            job_id = st.session_state.job_id
+                job_id = response.json()['job_id']
 
-            placeholder = st.empty()
-            progress_bar = st.progress(0)
-            status_text = st.empty()
-            row_text = st.empty()
+                st.session_state.job_id = job_id
+                st.session_state.polling_started = True
+                time.sleep(1)
 
-            while True:
+            if "job_id" in st.session_state and st.session_state.get("polling_started", True):
+                job_id = st.session_state.job_id
 
-                try:
-                    response = requests.get(
-                        f"{BASE_URL}/batch/job/{job_id}", timeout=10
-                    )
+                placeholder = st.empty()
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+                row_text = st.empty()
 
-                    if response.status_code != 200:
-                        st.error(f"API Error: {response.status_code}")
-                        st.text(response.text)
+                while True:
+
+                    try:
+                        response = requests.get(
+                            f"{BASE_URL}/batch/job/{job_id}", timeout=10
+                        )
+
+                        if response.status_code != 200:
+                            st.error(f"API Error: {response.status_code}")
+                            st.text(response.text)
+                            break
+
+                        job_data = response.json()
+
+                    except Exception as e:
+                        st.error(f"Request Failed: {e}")
                         break
 
-                    job_data = response.json()
+                    with placeholder.container():
+                        status_text.write(f"Status: {job_data['status']}")
+                        progress_bar.progress(job_data['progress'] / 100)
+                        row_text.write(
+                            f"Processed rows: "
+                            f"{job_data['processed_rows']} / "
+                            f"{job_data['total_rows']}"
+                        )
 
-                except Exception as e:
-                    st.error(f"Request Failed: {e}")
-                    break
+                    if job_data["status"] in ["completed", "failed"]:
 
-                with placeholder.container():
-                    status_text.write(f"Status: {job_data['status']}")
-                    progress_bar.progress(job_data['progress'] / 100)
-                    row_text.write(
-                        f"Processed rows: "
-                        f"{job_data['processed_rows']} / "
-                        f"{job_data['total_rows']}"
-                    )
+                        st.session_state.polling_started = False
 
-                if job_data["status"] in ["completed", "failed"]:
+                        if job_data["status"] == "completed":
+                            st.session_state.completed_job_data = job_data
+                        else:
+                            st.session_state.failed_job = True
 
-                    st.session_state.polling_started = False
+                        break  
 
-                    if job_data["status"] == "completed":
-                        st.session_state.completed_job_data = job_data
-                    else:
-                        st.session_state.failed_job = True
-
-                    break  
-
-                time.sleep(1)              
+                    time.sleep(1)              
 
 def render_ai_intelligence():
 
