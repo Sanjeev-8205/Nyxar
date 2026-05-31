@@ -35,6 +35,20 @@ def predict_route(data: InputData):
         else:
             certainty = "HIGH CERTAINTY"
 
+        text = data.text
+        words = len(text.split())
+        sentences = max(
+            1,
+            len([s for s in text.split(".") if s.strip()])
+        )
+
+        if words<20:
+            complexity = "LOW"
+        elif words<60:
+            complexity = "MEDIUM"
+        else:
+            complexity = "HIGH"
+
         return {
             "prediction":prediction,
             "confidence_scores":prob,
@@ -43,7 +57,11 @@ def predict_route(data: InputData):
             "model_used": data.model,
             "certainty": certainty,
             "total_time": total_time,
-            "trace": trace
+            "trace": trace,
+            "words": len(words),
+            "characters": len(text),
+            "sentences": sentences,
+            "complexity": complexity
         }
 
     finally:
