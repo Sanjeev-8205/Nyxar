@@ -338,3 +338,8 @@ def text_complexity_header_placeholder():
     st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Text Complexity</div>""", unsafe_allow_html=True)
 
     st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Input content analysis not available</div>""", unsafe_allow_html=True)
+
+def ai_insight_card(insight):
+
+    html = f'<div style="background:linear-gradient(135deg,rgba(15,23,42,0.95),rgba(2,6,23,0.95));border:1px solid rgba(148,163,184,0.15);border-left:4px solid rgba(226,232,240,0.85);border-radius:16px;padding:1.5rem;margin-top:1rem;box-shadow:0 0 20px rgba(226,232,240,0.06);"><div style="color:#F8FAFC;font-size:0.95rem;font-weight:700;margin-bottom:1rem;text-shadow:0 0 10px rgba(226,232,240,0.25);">✦ AI Insight Summary</div><div style="color:#E5E7EB;font-size:1rem;line-height:1.9;">{insight}</div></div>'
+    st.markdown(html, unsafe_allow_html=True)

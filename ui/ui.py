@@ -11,7 +11,8 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         chart_container, apply_button_style, render_model_info, apply_container_background, 
                         inference_output_card, render_confidence_analysis_card, telemetry_card,
                         render_trace_card, render_trace_placeholder, render_pipeline_summary,
-                        input_analysis_metrics_card, text_complexity_header, text_complexity_header_placeholder)
+                        input_analysis_metrics_card, text_complexity_header, text_complexity_header_placeholder,
+                        ai_insight_card)
 
 #setting the page title
 st.set_page_config(
@@ -477,10 +478,7 @@ def render_live_inference():
                     result = st.session_state.prediction_result
                     insight = result["insight"]
 
-                    st.markdown(
-                        f'<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 5rem;"><div style="max-width:700px;color:#E5E7EB;font-size:1.05rem;line-height:1.9;">{insight}</div></div>',
-                        unsafe_allow_html=True
-                    )
+                    ai_insight_card(insight=insight)
 
                 else:
 
