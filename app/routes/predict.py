@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from app.schemas.request_schema import InputData
 from app.services.ml_service import predict
 from app.services.logging_service import log_predictions
+from app.services.insights_service.live_inference_insights import generate_ai_prediction_insights
 import time
 
 router = APIRouter()
@@ -49,6 +50,11 @@ def predict_route(data: InputData):
         else:
             complexity = "HIGH"
 
+        response = generate_ai_prediction_insights(
+            prediction=prediction, confidence=conf_score, prob=prob,
+            word_count=words, sentence_count=sentences, complexity=complexity, text=data.text
+        )
+
         return {
             "prediction":prediction,
             "confidence_scores":prob,
@@ -61,7 +67,9 @@ def predict_route(data: InputData):
             "words": words,
             "characters": len(text),
             "sentences": sentences,
-            "complexity": complexity
+            "complexity": complexity,
+            "insight": response["insight"],
+            "llm_used": response["model"]
         }
 
     finally:
