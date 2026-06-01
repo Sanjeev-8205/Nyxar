@@ -59,7 +59,7 @@ async def upload_batch_file(
         total_rows=len(df),
         processed_rows=0,
         progress=0.0,
-        all_columns=", ".join(df.columns),
+        all_columns=len(df.columns),
         text_column="text"
     )
 
