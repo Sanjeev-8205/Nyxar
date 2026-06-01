@@ -543,10 +543,10 @@ def render_batch_intelligence():
                 st.session_state.polling_started = True
                 time.sleep(1)
 
-    if st.session_state.job_id is None and not st.session_state.polling_started:
+    if not st.session_state.job_id and not st.session_state.polling_started:
         with st.container(border=True):
             batch_job_overview_header()
-            st.progress(st.session_state.last_job_data['progress'] / 100)
+            st.progress(0)
 
             c1, c2, c3, c4 = st.columns(4)
             with c1:
