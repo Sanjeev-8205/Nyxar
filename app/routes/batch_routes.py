@@ -58,7 +58,9 @@ async def upload_batch_file(
         model_name=model,
         total_rows=len(df),
         processed_rows=0,
-        progress=0.0
+        progress=0.0,
+        all_columns=", ".join(df.columns),
+        text_column="text"
     )
 
     db.add(job)
@@ -93,6 +95,8 @@ async def get_batch_job(job_id: int):
             "filename": job.filename,
             "status": job.status,
             "model_name": job.model_name,
+            "all_columns":job.all_columns,
+            "text_column":job.text_column,
             "total_rows": job.total_rows,
             "processed_rows": job.processed_rows,
             "inference_time": job.inference_time,

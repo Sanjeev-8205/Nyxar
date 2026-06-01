@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, String, Float, Integer
+from sqlalchemy import Column, DateTime, String, Float, Integer, Text
 from app.core.database import Base
 from datetime import datetime, UTC
 
@@ -10,6 +10,9 @@ class BatchJob(Base):
     status = Column(String, default="pending")
 
     model_name = Column(String, default="Logistic Regression")
+
+    all_columns = Column(Text, default=[])
+    text_column = Column(String, default="reviews")
     
     total_rows = Column(Integer, default=0)
     processed_rows = Column(Integer, default=0)
