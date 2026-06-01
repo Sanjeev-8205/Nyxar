@@ -366,7 +366,7 @@ def dataset_intelligence_card(
     text_column="Not Available"
 ):
     st.markdown(f"""
-        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:280px;">
+        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));height:300px;">
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Dataset Intelligence</div>
         <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Dataset metadata and configuration</div>
         <div style="display:grid;grid-template-columns:1fr auto;row-gap:16px;">
@@ -396,7 +396,7 @@ def prediction_distribution_card(
         subtitle = "Sentiment breakdown across dataset"
 
     st.markdown(f"""
-    <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:280px;">
+    <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));height:300px;">
     <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div>
     <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">{subtitle}</div>
 
