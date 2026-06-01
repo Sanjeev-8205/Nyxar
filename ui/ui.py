@@ -543,7 +543,7 @@ def render_batch_intelligence():
                 st.session_state.polling_started = True
                 time.sleep(1)
 
-    if st.session_stat.job_id is None and not st.session_state.polling_started:
+    if st.session_state.job_id is None and not st.session_state.polling_started:
         with st.container(border=True):
             batch_job_overview_header()
             st.progress(st.session_state.last_job_data['progress'] / 100)
@@ -558,7 +558,7 @@ def render_batch_intelligence():
             with c4:
                 input_analysis_metrics_card("Status", "WAITING")
 
-    if "job_id" in st.session_state and st.session_state.polling_started:
+    elif "job_id" in st.session_state and st.session_state.polling_started:
         job_id = st.session_state.job_id
 
         placeholder = st.empty()
