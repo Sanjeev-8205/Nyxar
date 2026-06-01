@@ -358,7 +358,13 @@ def batch_job_overview_header_placeholder():
 
     st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Input content analysis not available</div>""", unsafe_allow_html=True)
 
-def dataset_intelligence_card(rows, columns, file_size, model, text_column):
+def dataset_intelligence_card(
+    rows="--",
+    columns="--",
+    file_size="--",
+    model="Awaiting Selection",
+    text_column="Not Available"
+):
     st.markdown(f"""
         <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:280px;">
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Dataset Intelligence</div>
@@ -373,15 +379,26 @@ def dataset_intelligence_card(rows, columns, file_size, model, text_column):
         </div>
         """, unsafe_allow_html=True)
     
-def prediction_distribution_card(positive_count, neutral_count, negative_count, total_rows):
-    positive_pct = round((positive_count / total_rows) * 100, 1)
-    neutral_pct = round((neutral_count / total_rows) * 100, 1)
-    negative_pct = round((negative_count / total_rows) * 100, 1)
+def prediction_distribution_card(
+    positive_count=0,
+    neutral_count=0,
+    negative_count=0,
+    total_rows=0
+):
+
+    if total_rows == 0:
+        positive_pct = neutral_pct = negative_pct = 0
+        subtitle = "Upload a dataset to generate sentiment distribution"
+    else:
+        positive_pct = round((positive_count / total_rows) * 100, 1)
+        neutral_pct = round((neutral_count / total_rows) * 100, 1)
+        negative_pct = round((negative_count / total_rows) * 100, 1)
+        subtitle = "Sentiment breakdown across dataset"
 
     st.markdown(f"""
     <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:280px;">
     <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div>
-    <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Sentiment breakdown across dataset</div>
+    <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">{subtitle}</div>
 
     <div style="margin-bottom:22px;">
     <div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Positive</span><span>{positive_count:,} ({positive_pct}%)</span></div>

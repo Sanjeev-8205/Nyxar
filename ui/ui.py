@@ -12,7 +12,8 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         inference_output_card, render_confidence_analysis_card, telemetry_card,
                         render_trace_card, render_trace_placeholder, render_pipeline_summary,
                         input_analysis_metrics_card, text_complexity_header, text_complexity_header_placeholder,
-                        ai_insight_card, progress_bar_modified, batch_job_overview_header)
+                        ai_insight_card, progress_bar_modified, batch_job_overview_header,
+                        dataset_intelligence_card, prediction_distribution_card)
 
 #setting the page title
 st.set_page_config(
@@ -628,6 +629,12 @@ def render_batch_intelligence():
                     input_analysis_metrics_card("Throughput", "0 Rows/Sec")
             with c4:
                 input_analysis_metrics_card("Status", st.session_state.last_job_data["status"].upper())
+
+    c1, c2 = st.columns(2)
+    with c1:
+        dataset_intelligence_card()
+    with c2:
+        prediction_distribution_card()
 
 def render_ai_intelligence():
 
