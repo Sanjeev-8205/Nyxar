@@ -358,126 +358,21 @@ def batch_job_overview_header_placeholder():
 
     st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Input content analysis not available</div>""", unsafe_allow_html=True)
 
-def dataset_intelligence_card(
-    rows="--",
-    columns="--",
-    file_size="--",
-    model="Awaiting Selection",
-    text_column="Not Available"
-):
-    st.markdown(f"""
-        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:320px;">
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Dataset Intelligence</div>
-        <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Dataset metadata and configuration</div>
-        <div style="display:grid;grid-template-columns:1fr auto;row-gap:16px;">
-        <div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">ROWS</div><div style="color:white;font-weight:700;">{rows}</div>
-        <div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">COLUMNS</div><div style="color:white;font-weight:700;">{columns}</div>
-        <div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">FILE SIZE</div><div style="color:white;font-weight:700;">{file_size}</div>
-        <div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">MODEL</div><div style="color:white;font-weight:700;">{model}</div>
-        <div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">TEXT COLUMN</div><div style="color:white;font-weight:700;">{text_column}</div>
-        </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-def prediction_distribution_card(
-    state="empty",
-    positive_count=0,
-    neutral_count=0,
-    negative_count=0,
-    total_rows=0
-):
+def dataset_intelligence_card(rows="--", columns="--", file_size="--", model="Awaiting Selection", text_column="Not Available"):
+    st.markdown(f"""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:420px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Dataset Intelligence</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Dataset metadata and configuration</div><div style="display:grid;grid-template-columns:1fr auto;row-gap:16px;"><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">ROWS</div><div style="color:white;font-weight:700;">{rows}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">COLUMNS</div><div style="color:white;font-weight:700;">{columns}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">FILE SIZE</div><div style="color:white;font-weight:700;">{file_size}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">MODEL</div><div style="color:white;font-weight:700;">{model}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">TEXT COLUMN</div><div style="color:white;font-weight:700;">{text_column}</div></div></div>""", unsafe_allow_html=True)
 
-    # ---------------- EMPTY STATE ---------------- #
-
+def prediction_distribution_card(state="empty", positive_count=0, neutral_count=0, negative_count=0, total_rows=0):
     if state == "empty":
-        st.markdown("""
-        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:320px;">
-            <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div>
-            <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">No batch results available</div>
-
-            <div style="height:210px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
-                <div style="font-size:2rem;">📊</div>
-
-                <div style="margin-top:16px;color:white;font-weight:600;">
-                    Awaiting Dataset Upload
-                </div>
-
-                <div style="margin-top:8px;color:#9CA3AF;font-size:0.9rem;max-width:240px;">
-                    Upload a dataset and start processing to generate sentiment distribution insights.
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # ---------------- PROCESSING STATE ---------------- #
+        st.markdown("""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:420px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">No batch results available</div><div style="height:210px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;"><div style="font-size:2rem;">📊</div><div style="margin-top:16px;color:white;font-weight:600;">Awaiting Dataset Upload</div><div style="margin-top:8px;color:#9CA3AF;font-size:0.9rem;max-width:240px;">Upload a dataset and start processing to generate sentiment distribution insights.</div></div></div>""", unsafe_allow_html=True)
 
     elif state == "processing":
-        st.markdown("""
-        <style>
-        @keyframes spin {
-            0% {transform:rotate(0deg);}
-            100% {transform:rotate(360deg);}
-        }
-
-        .batch-spinner {
-            width:52px;
-            height:52px;
-            border:4px solid rgba(255,255,255,0.10);
-            border-top:4px solid #6366F1;
-            border-radius:50%;
-            animation:spin 1s linear infinite;
-        }
-        </style>
-
-        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:320px;">
-            <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div>
-            <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Sentiment analysis in progress</div>
-
-            <div style="height:210px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
-                <div class="batch-spinner"></div>
-
-                <div style="margin-top:18px;color:white;font-weight:600;">
-                    Processing Dataset
-                </div>
-
-                <div style="margin-top:8px;color:#9CA3AF;font-size:0.9rem;">
-                    Awaiting sentiment distribution results...
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        return
-
-    # ---------------- COMPLETED STATE ---------------- #
+        st.markdown("""<style>@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}.batch-spinner{width:52px;height:52px;border:4px solid rgba(255,255,255,0.10);border-top:4px solid #6366F1;border-radius:50%;animation:spin 1s linear infinite;}</style><div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:420px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Sentiment analysis in progress</div><div style="height:210px;display:flex;flex-direction:column;justify-content:center;align-items:center;"><div class="batch-spinner"></div><div style="margin-top:18px;color:white;font-weight:600;">Processing Dataset</div><div style="margin-top:8px;color:#9CA3AF;font-size:0.9rem;">Awaiting sentiment distribution results...</div></div></div>""", unsafe_allow_html=True)
 
     elif state == "completed":
         positive_pct = round((positive_count / total_rows) * 100, 1)
         neutral_pct = round((neutral_count / total_rows) * 100, 1)
         negative_pct = round((negative_count / total_rows) * 100, 1)
-
-        st.markdown(f"""
-        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:320px;">
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div>
-        <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Sentiment breakdown across dataset</div>
-
-        <div style="margin-bottom:28px;">
-        <div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Positive</span><span>{positive_count:,} ({positive_pct}%)</span></div>
-        <div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{positive_pct}%;height:100%;background:#22C55E;border-radius:999px;"></div></div>
-        </div>
-
-        <div style="margin-bottom:28px;">
-        <div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Neutral</span><span>{neutral_count:,} ({neutral_pct}%)</span></div>
-        <div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{neutral_pct}%;height:100%;background:#F59E0B;border-radius:999px;"></div></div>
-        </div>
-
-        <div>
-        <div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Negative</span><span>{negative_count:,} ({negative_pct}%)</span></div>
-        <div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{negative_pct}%;height:100%;background:#EF4444;border-radius:999px;"></div></div>
-        </div>
-
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(f"""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:420px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Sentiment breakdown across dataset</div><div style="margin-bottom:28px;"><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Positive</span><span>{positive_count:,} ({positive_pct}%)</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{positive_pct}%;height:100%;background:#22C55E;border-radius:999px;"></div></div></div><div style="margin-bottom:28px;"><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Neutral</span><span>{neutral_count:,} ({neutral_pct}%)</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{neutral_pct}%;height:100%;background:#F59E0B;border-radius:999px;"></div></div></div><div><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Negative</span><span>{negative_count:,} ({negative_pct}%)</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{negative_pct}%;height:100%;background:#EF4444;border-radius:999px;"></div></div></div></div>""", unsafe_allow_html=True)
 
     else:
         raise ValueError(f"Unknown state: {state}")
