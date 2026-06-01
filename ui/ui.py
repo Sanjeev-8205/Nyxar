@@ -515,6 +515,9 @@ def render_batch_intelligence():
         
         if "last_job_data" not in st.session_state:
             st.session_state.last_job_data = None
+        
+        if "file_size" not in st.session_state:
+            st.session_state.file_size = None
 
         if upload_button:
             if uploaded_file is not None and not st.session_state.get("polling_started", False):
@@ -525,6 +528,19 @@ def render_batch_intelligence():
                 data = {
                     "model": selected_model
                 }
+
+                file_size_bytes = uploaded_file.size
+                def format_file_size(size_bytes):
+                    if size_bytes < 1024:
+                        return f"{size_bytes} B"
+                    elif size_bytes < 1024**2:
+                        return f"{size_bytes / 1024:.2f} KB"
+                    elif size_bytes < 1024**3:
+                        return f"{size_bytes / (1024**2):.2f} MB"
+                    else:
+                        return f"{size_bytes / (1024**3):.2f} GB"
+                    
+                st.session_state.file_size = format_file_size(file_size_bytes)
 
                 response = requests.post(
                     f"{BASE_URL}/batch/upload",
@@ -632,7 +648,11 @@ def render_batch_intelligence():
 
     c1, c2 = st.columns(2)
     with c1:
-        dataset_intelligence_card()
+        if not st.session_state.job_id:
+            dataset_intelligence_card()
+        else:
+            results = st.session_state.last_job_data
+            dataset_intelligence_card(rows=results["total_rows"], columns=results["all_columns"], file_size=st.session_state.file_size, model=results["model_name"], text_column=results["text_column"])
     with c2:
         prediction_distribution_card()
 
