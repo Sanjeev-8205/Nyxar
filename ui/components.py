@@ -409,11 +409,9 @@ def prediction_distribution_card(
         </div>
         """, unsafe_allow_html=True)
 
-        return
-
     # ---------------- PROCESSING STATE ---------------- #
 
-    if state == "processing":
+    elif state == "processing":
         st.markdown("""
         <style>
         @keyframes spin {
@@ -453,29 +451,33 @@ def prediction_distribution_card(
 
     # ---------------- COMPLETED STATE ---------------- #
 
-    positive_pct = round((positive_count / total_rows) * 100, 1)
-    neutral_pct = round((neutral_count / total_rows) * 100, 1)
-    negative_pct = round((negative_count / total_rows) * 100, 1)
+    elif state == "completed":
+        positive_pct = round((positive_count / total_rows) * 100, 1)
+        neutral_pct = round((neutral_count / total_rows) * 100, 1)
+        negative_pct = round((negative_count / total_rows) * 100, 1)
 
-    st.markdown(f"""
-    <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));height:300px;">
-    <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div>
-    <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Sentiment breakdown across dataset</div>
+        st.markdown(f"""
+        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));height:300px;">
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div>
+        <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Sentiment breakdown across dataset</div>
 
-    <div style="margin-bottom:28px;">
-    <div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Positive</span><span>{positive_count:,} ({positive_pct}%)</span></div>
-    <div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{positive_pct}%;height:100%;background:#22C55E;border-radius:999px;"></div></div>
-    </div>
+        <div style="margin-bottom:28px;">
+        <div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Positive</span><span>{positive_count:,} ({positive_pct}%)</span></div>
+        <div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{positive_pct}%;height:100%;background:#22C55E;border-radius:999px;"></div></div>
+        </div>
 
-    <div style="margin-bottom:28px;">
-    <div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Neutral</span><span>{neutral_count:,} ({neutral_pct}%)</span></div>
-    <div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{neutral_pct}%;height:100%;background:#F59E0B;border-radius:999px;"></div></div>
-    </div>
+        <div style="margin-bottom:28px;">
+        <div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Neutral</span><span>{neutral_count:,} ({neutral_pct}%)</span></div>
+        <div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{neutral_pct}%;height:100%;background:#F59E0B;border-radius:999px;"></div></div>
+        </div>
 
-    <div>
-    <div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Negative</span><span>{negative_count:,} ({negative_pct}%)</span></div>
-    <div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{negative_pct}%;height:100%;background:#EF4444;border-radius:999px;"></div></div>
-    </div>
+        <div>
+        <div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Negative</span><span>{negative_count:,} ({negative_pct}%)</span></div>
+        <div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{negative_pct}%;height:100%;background:#EF4444;border-radius:999px;"></div></div>
+        </div>
 
-    </div>
-    """, unsafe_allow_html=True)
+        </div>
+        """, unsafe_allow_html=True)
+
+    else:
+        raise ValueError(f"Unknown state: {state}")
