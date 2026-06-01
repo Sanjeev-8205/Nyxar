@@ -391,7 +391,7 @@ def prediction_distribution_card(
 
     if state == "empty":
         st.markdown("""
-        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));height:300px;">
+        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));height:320px;">
             <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div>
             <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">No batch results available</div>
 
@@ -429,7 +429,7 @@ def prediction_distribution_card(
         }
         </style>
 
-        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));height:300px;">
+        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));height:320px;">
             <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div>
             <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Sentiment analysis in progress</div>
 
@@ -457,7 +457,7 @@ def prediction_distribution_card(
         negative_pct = round((negative_count / total_rows) * 100, 1)
 
         st.markdown(f"""
-        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));height:300px;">
+        <div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));height:320px;">
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div>
         <div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Sentiment breakdown across dataset</div>
 
