@@ -4,6 +4,7 @@ import plotly.express as px
 import pandas as pd
 from streamlit_autorefresh import st_autorefresh
 import time
+from collections import Counter
 
 from styles import load_global_styles
 from components import (metric_card, status_card, insights_card, mini_card, platform_status_card,
@@ -654,7 +655,32 @@ def render_batch_intelligence():
             results = st.session_state.last_job_data
             dataset_intelligence_card(rows=results["total_rows"], columns=results["all_columns"], file_size=st.session_state.file_size, model=results["model_name"], text_column=results["text_column"])
     with c2:
-        prediction_distribution_card()
+        if st.session_state.polling_started:
+            prediction_distribution_card(state="processing")
+        
+        elif st.session_state.completed_job_data:
+            response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}/results")
+
+            if response.status_code == 200:
+                data = response.json()
+                results = data["results"]
+
+                sentiments = [r["prediction"] for r in results]
+                sentiments_count = Counter(sentiments)
+
+                prediction_distribution_card(
+                    state="completed",
+                    negative_count=sentiments_count.get("0", 0),
+                    neutral_count=sentiments_count.get("1", 0),
+                    positive_count=sentiments_count.get("2", 0),
+                    total_rows=len(sentiments)
+                )
+            
+            else:
+                st.error("Unexpected Error Occured") 
+
+        else:
+            prediction_distribution_card()
 
 def render_ai_intelligence():
 
