@@ -692,7 +692,7 @@ def render_batch_intelligence():
             
             data = st.session_state.completed_job_data
             processing_analytics_card(
-                inference_time=format_duration(data["ml_processing_time"]), db_time=format_duration(data["db_time"]),
+                ml_processing_time=format_duration(data["ml_processing_time"]), db_time=format_duration(data["db_time"]),
                 overhead_time=format_duration(data["overhead_time"]), total_runtime=format_duration(data["processing_time"]),
                 model_name=data["model_name"]
             )
@@ -704,7 +704,7 @@ def render_batch_intelligence():
         if st.session_state.completed_job_data:
             data = st.session_state.completed_job_data
             processing_breakdown_card(
-                inference_time=data["ml_processing_time"], db_time=data["db_time"], overhead_time=data["overhead_time"], state="completed"
+                ml_processing_time=data["ml_processing_time"], db_time=data["db_time"], overhead_time=data["overhead_time"], state="completed"
             )
 
         else:
