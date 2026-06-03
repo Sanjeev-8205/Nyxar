@@ -27,8 +27,6 @@ def process_batch_job(job_id: int, file_path: str, model:str):
         df = pd.read_csv(file_path)
 
         total_rows = len(df)
-        
-        start_time = time.perf_counter()
 
         start = time.perf_counter()
         preds, probs = predict_batch(df["text"], model)
@@ -66,7 +64,9 @@ def process_batch_job(job_id: int, file_path: str, model:str):
                 proc_time = time.perf_counter() - operational_start
                 job.processing_time = round(proc_time, 4)
 
+                st_time = time.perf_counter()
                 db.commit()
+                db_time += time.perf_counter() - st_time
 
         if results_buffer:
             st_time = time.perf_counter()
