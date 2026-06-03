@@ -4,9 +4,11 @@ from models.batch_result_model import BatchResult
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.services.batch_service import process_batch_job
+from datetime import datetime, UTC
 import pandas as pd
 from pathlib import Path
 import uuid
+import time
 
 router = APIRouter()
 
@@ -26,6 +28,8 @@ async def upload_batch_file(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
+    created_at = datetime.now(UTC)
+
     #Validate CSV
     if not file.filename.lower().endswith(".csv"):
         raise HTTPException(status_code=400, detail="Only CSV files are allowed.")
@@ -38,9 +42,12 @@ async def upload_batch_file(
 
     upload_path = UPLOAD_DIR / unique_filename
 
+    st = time.perf_counter()
     with open(upload_path, "wb") as buffer:
         buffer.write(await file.read())
-    
+    upload_time = time.perf_counter() - st
+
+    start = time.perf_counter()
     #Validate CSV structure
     try:
         df = pd.read_csv(upload_path)
@@ -51,6 +58,8 @@ async def upload_batch_file(
     if "text" not in df.columns:
         raise HTTPException(status_code=400, detail="CSV must contain 'text' column.")
 
+    end_time = time.perf_counter() - start
+
     # Create job
     job = BatchJob(
         filename=file.filename,
@@ -60,7 +69,10 @@ async def upload_batch_file(
         processed_rows=0,
         progress=0.0,
         all_columns=len(df.columns),
-        text_column="text"
+        text_column="text",
+        file_validation_time = end_time,
+        upload_time = upload_time,
+        created_at = created_at
     )
 
     db.add(job)
@@ -102,7 +114,6 @@ async def get_batch_job(job_id: int):
             "inference_time": job.inference_time,
             "db_time": job.db_time,
             "overhead_time": job.overhead_time,
-            "processing_time": job.processing_time,
             "throughput": job.throughput,
             "progress": job.progress,
             "processing_time": job.processing_time,

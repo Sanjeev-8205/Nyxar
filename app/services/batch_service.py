@@ -29,11 +29,44 @@ def process_batch_job(job_id: int, file_path: str, model:str):
         total_rows = len(df)
 
         start = time.perf_counter()
-        preds, probs = predict_batch(df["text"], model)
-        inference_time = time.perf_counter() - start
+        preds, probs, trace = predict_batch(df["text"], model)
+        ml_processing_time = time.perf_counter() - start
 
-        job.inference_time = inference_time
-        job.throughput = total_rows/inference_time
+        job.ml_processing_time = ml_processing_time
+        job.throughput = total_rows/ml_processing_time
+        
+        try:
+            if len(trace)==4 and model == "Bi-LSTM":
+                for x in range(len(trace)):
+                    if x==0:
+                        job.text_preprocessing_time = trace[x]["time_taken"]
+                    elif x==1:
+                        job.tokenization_time = trace[x]["time_taken"]
+                    elif x==2:
+                        job.sequence_padding_time = trace[x]["time_taken"]
+                    else:
+                        job.inference_time = trace[x]["time_taken"]
+
+            elif len(trace)==3 and model == "Logistic Regression":
+                for x in range(len(trace)):
+                    if x==0:
+                        job.text_preprocessing_time = trace[x]["time_taken"]
+                    elif x==1:
+                        job.vectorization_time = trace[x]["time_taken"]
+                    else:
+                        job.inference_time = trace[x]["time_taken"]
+            
+            elif len(trace==3) and model == "RoBERTa Transformer":
+                for x in range(len(trace)):
+                    if x==0:
+                        job.text_preprocessing_time = trace[x]["time_taken"]
+                    elif x==1:
+                        job.tokenization_time = trace[x]["time_taken"]
+                    else :
+                        job.inference_time = trace[x]["time_taken"]
+        
+        except Exception as trace_error:
+            raise RuntimeError(f"Trace Error: {trace_error}")
 
         BUFFER = max(1, total_rows//10)
         db_time = 0

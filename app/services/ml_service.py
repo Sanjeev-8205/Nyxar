@@ -165,33 +165,96 @@ def predict(text, model_name):
         raise RuntimeError(str(e))
 
 def predict_batch(texts, model_name):
-
+    
     if model_name not in models:
         raise ValueError(f"Model '{model_name}' not available in deployment!")
     pipeline = get_model(model_name)
     model_type = models[model_name]["type"]
 
+    trace = []
+
     try:
         if model_type == "sklearn":
+            start = time.perf_counter()
             texts = preprocess_batch_lr(texts)
+            trace.append(
+                {
+                    "step": "Text Preprocessing",
+                    "time_taken": time.perf_counter() - start
+                }
+            )
+
+            start = time.perf_counter()
             transformed = pipeline["vectorizer"].transform(texts)
+            trace.append(
+                {
+                    "step": "Vectorization",
+                    "time_taken": time.perf_counter() - start
+                }
+            )
+
+            start = time.perf_counter()
             predictions = pipeline["model"].predict(transformed)
             probs = pipeline["model"].predict_proba(transformed)
+            trace.append(
+                {
+                    "step": "Logistic Batch Inference",
+                    "time_taken": time.perf_counter() - start
+                }
+            )
 
         elif model_type == "keras":
+            start = time.perf_counter()
             texts = preprocess_batch_bilstm(texts)
+            trace.append(
+                {
+                    "step": "Text Preprocessing",
+                    "time_taken": time.perf_counter() - start
+                }
+            )
+
             tokenizer = pipeline["tokenizer"]
             model = pipeline["model"]
             maxlen = pipeline["maxlen"]
 
+            start = time.perf_counter()
             seq = tokenizer.texts_to_sequences(texts)
-            pad = pad_sequences(seq, maxlen=maxlen, padding="post")
+            trace.append(
+                {
+                    "step": "Tokenization",
+                    "time_taken": time.perf_counter() - start
+                }
+            )
 
+            start = time.perf_counter()
+            pad = pad_sequences(seq, maxlen=maxlen, padding="post")
+            trace.append(
+                {
+                    "step": "Sequence Padding",
+                    "time_taken": time.perf_counter() - start
+                }
+            )
+            
+            start = time.perf_counter()
             probs = model.predict(pad, verbose=0)
             predictions = np.argmax(probs, axis=1)
+            trace.append(
+                {
+                    "step": "Bi-LSTM Batch Inference",
+                    "time_taken": time.perf_counter() - start
+                }
+            )
 
         elif model_type == "transformer":
+            start = time.perf_counter()
             texts = preprocess_batch_RoBERTa(texts)
+            trace.append(
+                {
+                    "step": "Text Preprocessing",
+                    "time_taken": time.perf_counter() - start
+                }
+            )
+            
             tokenizer = pipeline["tokenizer"]
             session = pipeline["session"]   # ← onnx session instead of model
             maxlen = pipeline["maxlen"]
@@ -199,9 +262,12 @@ def predict_batch(texts, model_name):
             BATCH_SIZE = 64
             all_probs = []
 
+            tokenization_time = 0
+            roberta_inference_time = 0
             for i in range(0, len(texts), BATCH_SIZE):
                 batch = texts[i: i + BATCH_SIZE]
 
+                st = time.perf_counter()
                 inputs = tokenizer(
                     batch,
                     max_length=maxlen,
@@ -209,7 +275,9 @@ def predict_batch(texts, model_name):
                     truncation=True,
                     padding=True
                 )
+                tokenization_time += time.perf_counter() - st
 
+                st = time.perf_counter()
                 outputs = session.run(
                     ["logits"],
                     {
@@ -217,14 +285,29 @@ def predict_batch(texts, model_name):
                         "attention_mask": inputs["attention_mask"]
                     }
                 )
-
                 batch_probs = softmax(outputs[0], axis=1)
                 all_probs.append(batch_probs)
 
+                roberta_inference_time += time.perf_counter() - st
+
+            trace.append(
+                {
+                    "step": "Tokenization",
+                    "time_taken": tokenization_time
+                }
+            )
+
+            trace.append(
+                {
+                    "step": "RoBERTa Batch Inference",
+                    "time_taken": roberta_inference_time
+                }
+            )
+            
             probs = np.concatenate(all_probs, axis=0)
             predictions = np.argmax(probs, axis=1)
 
-        return (predictions.tolist(), probs.tolist())
+        return (predictions.tolist(), probs.tolist(), trace)
 
     except Exception as e:
         raise e

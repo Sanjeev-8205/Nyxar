@@ -17,9 +17,17 @@ class BatchJob(Base):
     total_rows = Column(Integer, default=0)
     processed_rows = Column(Integer, default=0)
 
+    file_validation_time = Column(Float, default = 0.0)
+    upload_time = Column(Float, default = 0.0)
     inference_time = Column(Float, default = 0.0)
+    ml_processing_time = Column(Float, default = 0.0)
     db_time = Column(Float, default = 0.0)
     overhead_time = Column(Float, default = 0.0)
+
+    text_preprocessing_time = Column(Float, default = 0.0)
+    tokenization_time = Column(Float, default = 0.0)
+    vectorization_time = Column(Float, default = 0.0)
+    sequence_padding_time = Column(Float, default = 0.0)
 
     throughput = Column(Float, default = 0.0)
 
