@@ -655,10 +655,7 @@ def render_batch_intelligence():
             results = st.session_state.last_job_data
             dataset_intelligence_card(rows=results["total_rows"], columns=results["all_columns"], file_size=st.session_state.file_size, model=results["model_name"], text_column=results["text_column"])
     with c2:
-        if st.session_state.polling_started:
-            prediction_distribution_card(state="processing")
-        
-        elif st.session_state.completed_job_data:
+        if st.session_state.completed_job_data:
             response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}/results")
 
             if response.status_code == 200:
