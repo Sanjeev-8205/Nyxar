@@ -657,7 +657,7 @@ def render_batch_intelligence():
             dataset_intelligence_card(rows=results["total_rows"], columns=results["all_columns"], file_size=st.session_state.file_size, model=results["model_name"], text_column=results["text_column"])
     with c2:
         if st.session_state.completed_job_data:
-            response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}/results")
+            response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}/results", timeout=30)
 
             if response.status_code == 200:
                 data = response.json()
@@ -760,7 +760,7 @@ def render_batch_intelligence():
                 },
                 {
                     "step": "Tokenization",
-                    "duration": result["vectorization_time"] * 1000 if result["vectorization_time"]<1 else result["vectorization_time"]
+                    "duration": result["tokenization_time"] * 1000 if result["tokenization_time"]<1 else result["tokenization_time"]
                 },
                 {
                     "step": "Sequence Padding",
@@ -820,7 +820,7 @@ def render_batch_intelligence():
                 with cols[i * 2]:
                     render_trace_card(
                         step=item["step"],
-                        duration_ms=f"{item["duration"]:.2f}"
+                        duration=f"{item["duration"]:.0f}" if item["duration"]*1000 < 1 else f"{item["duration"]:.2f}"
                     )
 
                 # Arrow column (except after last card)
