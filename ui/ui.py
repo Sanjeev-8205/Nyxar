@@ -680,6 +680,7 @@ def render_batch_intelligence():
         else:
             prediction_distribution_card()
 
+    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
 
     with c1:
