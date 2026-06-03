@@ -375,16 +375,16 @@ def prediction_distribution_card(state="empty", positive_count=0, neutral_count=
         raise ValueError(f"Unknown state: {state}")
     
 def processing_analytics_card(
-    inference_time="--",
+    ml_processing_time="--",
     db_time="--",
     overhead_time="--",
     total_runtime="--",
     model_name="--"
 ):
-    st.markdown(f"""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Processing Analytics</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Execution performance and runtime metrics</div><div style="display:grid;grid-template-columns:1fr auto;row-gap:16px;"><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">INFERENCE TIME</div><div style="color:white;font-weight:700;">{inference_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">DATABASE TIME</div><div style="color:white;font-weight:700;">{db_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">OVERHEAD TIME</div><div style="color:white;font-weight:700;">{overhead_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">TOTAL RUNTIME</div><div style="color:white;font-weight:700;">{total_runtime}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">MODEL USED</div><div style="color:white;font-weight:700;">{model_name}</div></div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Processing Analytics</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Execution performance and runtime metrics</div><div style="display:grid;grid-template-columns:1fr auto;row-gap:16px;"><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">ML_PROCESSING_TIME TIME</div><div style="color:white;font-weight:700;">{ml_processing_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">DATABASE TIME</div><div style="color:white;font-weight:700;">{db_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">OVERHEAD TIME</div><div style="color:white;font-weight:700;">{overhead_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">TOTAL RUNTIME</div><div style="color:white;font-weight:700;">{total_runtime}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">MODEL USED</div><div style="color:white;font-weight:700;">{model_name}</div></div></div>""", unsafe_allow_html=True)
 
 def processing_breakdown_card(
-    inference_time=0,
+    ml_processing_time=0,
     db_time=0,
     overhead_time=0,
     state="empty"
@@ -394,11 +394,17 @@ def processing_breakdown_card(
         st.markdown("""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Processing Breakdown</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Runtime distribution analysis</div><div style="height:210px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;"><div style="font-size:2rem;">⚡</div><div style="margin-top:16px;color:white;font-weight:600;">Awaiting Processing Results</div><div style="margin-top:8px;color:#9CA3AF;font-size:0.9rem;max-width:240px;">Complete a batch job to analyze execution bottlenecks.</div></div></div>""", unsafe_allow_html=True)
         return
 
-    total = inference_time + db_time + overhead_time
+    total = ml_processing_time + db_time + overhead_time
 
-    inference_pct = round((inference_time / total) * 100, 1)
+    ml_processing_pct = round((ml_processing_time / total) * 100, 1)
     db_pct = round((db_time / total) * 100, 1)
     overhead_pct = round((overhead_time / total) * 100, 1)
 
-    st.markdown(f"""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Processing Breakdown</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Runtime distribution analysis</div><div style="margin-bottom:28px;"><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Inference</span><span>{inference_pct}%</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{inference_pct}%;height:100%;background:#6366F1;border-radius:999px;"></div></div></div><div style="margin-bottom:28px;"><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Database</span><span>{db_pct}%</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{db_pct}%;height:100%;background:#22C55E;border-radius:999px;"></div></div></div><div><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Overhead</span><span>{overhead_pct}%</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{overhead_pct}%;height:100%;background:#F59E0B;border-radius:999px;"></div></div></div></div>""", unsafe_allow_html=True)
-    
+    st.markdown(f"""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Processing Breakdown</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Runtime distribution analysis</div><div style="margin-bottom:28px;"><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>ML Processing</span><span>{ml_processing_pct}%</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{inference_pct}%;height:100%;background:#6366F1;border-radius:999px;"></div></div></div><div style="margin-bottom:28px;"><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Database</span><span>{db_pct}%</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{db_pct}%;height:100%;background:#22C55E;border-radius:999px;"></div></div></div><div><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Overhead</span><span>{overhead_pct}%</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{overhead_pct}%;height:100%;background:#F59E0B;border-radius:999px;"></div></div></div></div>""", unsafe_allow_html=True)
+
+
+def render_trace_placeholder_batch_inference():
+    st.markdown("<div style='margin-top: 1rem'></div>", unsafe_allow_html=True)
+
+    with st.container(border=True):
+        st.markdown('<div style="text-align:center;padding:1rem 0;"><h4>Awaiting batch inference execution...</h4><p>Execution stages and timing telemetry<br>will appear after batch processing.</p></div>', unsafe_allow_html=True)

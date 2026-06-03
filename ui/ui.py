@@ -15,7 +15,7 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         input_analysis_metrics_card, text_complexity_header, text_complexity_header_placeholder,
                         ai_insight_card, progress_bar_modified, batch_job_overview_header,
                         dataset_intelligence_card, prediction_distribution_card,
-                        processing_analytics_card, processing_breakdown_card)
+                        processing_analytics_card, processing_breakdown_card, render_trace_placeholder_batch_inference)
 
 #setting the page title
 st.set_page_config(
@@ -95,7 +95,7 @@ def get_dashboard_metrics():
     try:
         response = requests.get(
             f"{BASE_URL}/dashboard",
-            timeout=10
+            timeout=30
         )
 
         response.raise_for_status()
@@ -692,7 +692,7 @@ def render_batch_intelligence():
             
             data = st.session_state.completed_job_data
             processing_analytics_card(
-                inference_time=format_duration(data["inference_time"]), db_time=format_duration(data["db_time"]),
+                inference_time=format_duration(data["ml_processing_time"]), db_time=format_duration(data["db_time"]),
                 overhead_time=format_duration(data["overhead_time"]), total_runtime=format_duration(data["processing_time"]),
                 model_name=data["model_name"]
             )
@@ -704,12 +704,134 @@ def render_batch_intelligence():
         if st.session_state.completed_job_data:
             data = st.session_state.completed_job_data
             processing_breakdown_card(
-                inference_time=data["inference_time"], db_time=data["db_time"], overhead_time=data["overhead_time"], state="completed"
+                inference_time=data["ml_processing_time"], db_time=data["db_time"], overhead_time=data["overhead_time"], state="completed"
             )
 
         else:
             processing_breakdown_card()
 
+    #Pipeline
+    if st.session_state.completed_job_data is not None:
+
+        result = st.session_state.completed_job_data
+        model = result["model_name"]
+
+        if model == "Logistic Regression":
+            trace = [
+                {
+                    "step": "Upload",
+                    "duration": result["upload_time"] * 1000 if result["upload_time"]<1 else result["upload_time"]
+                },
+                {
+                    "step": "Dataset Validation",
+                    "duration": result["validation_time"] * 1000 if result["validation_time"]<1 else result["validation_time"]
+                },
+                {
+                    "step": "Text Preprocessing",
+                    "duration": result["text_preprocessing_time"] * 1000 if result["text_preprocessing_time"]<1 else result["text_preprocessing_time"]
+                },
+                {
+                    "step": "Vectorization",
+                    "duration": result["vectorization_time"] * 1000 if result["vectorization_time"]<1 else result["vectorization_time"]
+                },
+                {
+                    "step": "Logistic Batch Inference",
+                    "duration": result["inference_time"] * 1000 if result["inference_time"]<1 else result["inference_time"]
+                },
+                {
+                    "step": "Database",
+                    "duration_ms":result["db_time"] * 1000 if result["db_time"]<1 else result["db_time"]
+                }
+            ]
+        
+        elif model == "Bi-LSTM":
+            trace = [
+                {
+                    "step": "Upload",
+                    "duration": result["upload_time"] * 1000 if result["upload_time"]<1 else result["upload_time"]
+                },
+                {
+                    "step": "Dataset Validation",
+                    "duration": result["validation_time"] * 1000 if result["validation_time"]<1 else result["validation_time"]
+                },
+                {
+                    "step": "Text Preprocessing",
+                    "duration": result["text_preprocessing_time"] * 1000 if result["text_preprocessing_time"]<1 else result["text_preprocessing_time"]
+                },
+                {
+                    "step": "Tokenization",
+                    "duration": result["vectorization_time"] * 1000 if result["vectorization_time"]<1 else result["vectorization_time"]
+                },
+                {
+                    "step": "Sequence Padding",
+                    "duration": result["sequence_padding_time"] * 1000 if result["sequence_padding_time"]<1 else result["sequence_padding_time"]
+                },
+                {
+                    "step": "Bi-LSTM Batch Inference",
+                    "duration": result["inference_time"] * 1000 if result["inference_time"]<1 else result["inference_time"]
+                },
+                {
+                    "step": "Database",
+                    "duration":result["db_time"] * 1000 if result["db_time"]<1 else result["db_time"]
+                }
+            ]
+
+        elif model == "RoBERTa Transformer":
+            trace = [
+                {
+                    "step": "Upload",
+                    "duration": result["upload_time"] * 1000 if result["upload_time"]<1 else result["upload_time"]
+                },
+                {
+                    "step": "Dataset Validation",
+                    "duration": result["validation_time"] * 1000 if result["validation_time"]<1 else result["validation_time"]
+                },
+                {
+                    "step": "Text Preprocessing",
+                    "duration": result["text_preprocessing_time"] * 1000 if result["text_preprocessing_time"]<1 else result["text_preprocessing_time"]
+                },
+                {
+                    "step": "Tokenization",
+                    "duration": result["tokenization_time"] * 1000 if result["tokenization_time"]<1 else result["tokenization_time"]
+                },
+                {
+                    "step": "Onnx Batch Inference",
+                    "duration": result["inference_time"] * 1000 if result["inference_time"]<1 else result["inference_time"]
+                },
+                {
+                    "step": "Database",
+                    "duration":result["db_time"] * 1000 if result["db_time"]<1 else result["db_time"]
+                }
+            ]
+
+
+        st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+
+        with st.container(border=True):
+            
+            if model == "Bi-LSTM":
+                cols = st.columns([4,1,4,1,4,1,4,1,4,1,4,1,4])
+            else:
+                cols = st.columns([4,1,4,1,4,1,4,1,4,1,4])
+
+            for i, item in enumerate(trace):
+
+                # Card column
+                with cols[i * 2]:
+                    render_trace_card(
+                        step=item["step"],
+                        duration_ms=f"{item["duration"]:.2f}"
+                    )
+
+                # Arrow column (except after last card)
+                if i < len(trace) - 1:
+                    with cols[i * 2 + 1]:
+                        st.markdown('<div style="text-align:center;font-size:2rem;color:#64748B;margin-top:55px;">→</div>', unsafe_allow_html=True)
+
+            render_pipeline_summary(result["total_time"])
+
+    else:
+        render_trace_placeholder()
 
 def render_ai_intelligence():
 
