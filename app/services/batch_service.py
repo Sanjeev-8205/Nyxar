@@ -118,7 +118,7 @@ def process_batch_job(job_id: int, file_path: str, model:str):
         job.processed_rows = total_rows
         job.progress = 100
         job.db_time = round(db_time, 4)
-        job.overhead_time = round(proc_time - db_time - inference_time, 4)
+        job.overhead_time = round(proc_time - db_time - ml_processing_time, 4)
 
         db.commit()
 
