@@ -14,7 +14,8 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         render_trace_card, render_trace_placeholder, render_pipeline_summary,
                         input_analysis_metrics_card, text_complexity_header, text_complexity_header_placeholder,
                         ai_insight_card, progress_bar_modified, batch_job_overview_header,
-                        dataset_intelligence_card, prediction_distribution_card)
+                        dataset_intelligence_card, prediction_distribution_card,
+                        processing_analytics_card, processing_breakdown_card)
 
 #setting the page title
 st.set_page_config(
@@ -678,6 +679,30 @@ def render_batch_intelligence():
 
         else:
             prediction_distribution_card()
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        if st.session_state.completed_job_data:
+            data = st.session_state.completed_job_data
+            processing_analytics_card(
+                inference_time=data["inference_time"], db_time=data["db_time"], overhead_time=data["overhead_time"],
+                total_runtime=data["processing_time"], model_name=data["model_name"]
+            )
+        
+        else:
+            processing_analytics_card()
+    
+    with c2:
+        if st.session_state.completed_job_data:
+            data = st.session_state.completed_job_data
+            processing_breakdown_card(
+                inference_time=data["inferencde_time"], db_time=data["db_time"], overhead_time=data["overhead_time"], state="completed"
+            )
+
+        else:
+            processing_breakdown_card()
+
 
 def render_ai_intelligence():
 
