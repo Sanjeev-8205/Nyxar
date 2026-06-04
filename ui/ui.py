@@ -15,7 +15,7 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         input_analysis_metrics_card, text_complexity_header, text_complexity_header_placeholder,
                         ai_insight_card, progress_bar_modified, batch_job_overview_header,
                         dataset_intelligence_card, prediction_distribution_card,
-                        processing_analytics_card, processing_breakdown_card, render_trace_placeholder_batch_inference)
+                        processing_analytics_card, processing_breakdown_card, render_trace_placeholder_batch_inference, render_batch_trace_card)
 
 #setting the page title
 st.set_page_config(
@@ -818,7 +818,7 @@ def render_batch_intelligence():
 
                 # Card column
                 with cols[i * 2]:
-                    render_trace_card(
+                    render_batch_trace_card(
                         step=item["step"],
                         duration=f"{item["duration"]:.0f}" if item["duration"] < 1000 else f"{item["duration"]:.2f}"
                     )
@@ -831,7 +831,7 @@ def render_batch_intelligence():
             render_pipeline_summary(result["total_time"])
 
     else:
-        render_trace_placeholder()
+        render_trace_placeholder_batch_inference()
 
 def render_ai_intelligence():
 
