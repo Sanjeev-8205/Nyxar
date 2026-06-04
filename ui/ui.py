@@ -746,7 +746,7 @@ def render_batch_intelligence():
                 },
                 {
                     "step": "Database",
-                    "duration_ms":result["db_time"]
+                    "duration":result["db_time"]
                 }
             ]
         
