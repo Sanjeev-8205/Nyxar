@@ -5,6 +5,7 @@ import pandas as pd
 from streamlit_autorefresh import st_autorefresh
 import time
 from collections import Counter
+from datetime import datetime
 
 from styles import load_global_styles
 from components import (metric_card, status_card, insights_card, mini_card, platform_status_card,
@@ -716,6 +717,9 @@ def render_batch_intelligence():
 
         result = st.session_state.completed_job_data
         model = result["model_name"]
+        completed_at = datetime.fromisoformat(result["completed_at"])
+        created_at = datetime.fromisoformat(result["created_at"])
+        total_time = (completed_at - created_at).total_seconds()
 
         if model == "Logistic Regression":
             trace = [
@@ -822,7 +826,7 @@ def render_batch_intelligence():
                 if i < len(trace) - 1:
                     st.markdown("""<div style="margin-left:18px;height:30px;border-left:2px solid #64748B;"></div>""", unsafe_allow_html=True)
 
-            render_batch_pipeline_summary(total_time=(result["completed_at"] - result["created_at"]).total_seconds())
+            render_batch_pipeline_summary(total_time=total_time)
 
     else:
         render_trace_placeholder_batch_inference()
