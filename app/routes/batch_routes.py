@@ -118,7 +118,7 @@ async def get_batch_job(job_id: int):
             "upload_time": job.upload_time,
             "validation_time": job.file_validation_time,
             "text_preprocessing_time": job.text_preprocessing_time,
-            "vectorizartion_time": job.vectorization_time,
+            "vectorization_time": job.vectorization_time,
             "tokenization_time": job.tokenization_time,
             "sequence_padding_time": job.sequence_padding_time,
             "throughput": job.throughput,
