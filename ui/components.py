@@ -420,7 +420,11 @@ def render_batch_trace_card(step, duration):
         
 def render_batch_pipeline_summary(total_time):
     if total_time*1000 < 1000:
-        st.markdown(f'<div style="text-align:center;padding:10px;"><div style="font-size:0.75rem;letter-spacing:2px;color:#94A3B8;">TOTAL PIPELINE TIME</div><div style="font-size:2.2rem;font-weight:700;color:white;">{total_time*1000:.0f} ms</div><div style="font-size:0.9rem;color:#10B981;">Pipeline execution complete</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="text-align:center;padding:10px;"><div style="font-size:0.75rem;letter-spacing:2px;color:#94A3B8;">TOTAL PIPELINE TIME</div><div style="font-size:2.2rem;font-weight:700;color:white;">{total_time*1000:.1f} ms</div><div style="font-size:0.9rem;color:#10B981;">Pipeline execution complete</div></div>', unsafe_allow_html=True)
 
     else:
         st.markdown(f'<div style="text-align:center;padding:10px;"><div style="font-size:0.75rem;letter-spacing:2px;color:#94A3B8;">TOTAL PIPELINE TIME</div><div style="font-size:2.2rem;font-weight:700;color:white;">{total_time:.2f} s</div><div style="font-size:0.9rem;color:#10B981;">Pipeline execution complete</div></div>', unsafe_allow_html=True)
+
+#def render_batch_trace_card(step, duration):
+#   value = f"{duration*1000:.0f} ms" if duration * 1000 < 1000 else f"{duration:.2f} s"
+#    st.markdown(f"""<div style="text-align:center;padding:8px 16px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));"><div style="font-size:0.70rem;font-weight:600;letter-spacing:1px;color:#94A3B8;margin-bottom:2px;">{step.upper()}</div><div style="color:#10B981;font-size:0.75rem;margin-bottom:4px;">✓ COMPLETED</div><div style="font-size:1.3rem;font-weight:700;color:white;line-height:1;">{value}</div></div>""", unsafe_allow_html=True)
