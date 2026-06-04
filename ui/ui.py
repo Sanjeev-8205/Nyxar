@@ -820,7 +820,7 @@ def render_batch_intelligence():
                 with cols[i * 2]:
                     render_trace_card(
                         step=item["step"],
-                        duration=f"{item["duration"]:.0f}" if item["duration"]*1000 < 1 else f"{item["duration"]:.2f}"
+                        duration_ms=f"{item["duration"]:.0f}" if item["duration"] < 1 else f"{item["duration"]:.2f}"
                     )
 
                 # Arrow column (except after last card)
