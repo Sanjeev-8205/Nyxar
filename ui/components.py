@@ -404,10 +404,13 @@ def processing_breakdown_card(
 
 
 def render_trace_placeholder_batch_inference():
-    st.markdown("<div style='margin-top: 1rem'></div>", unsafe_allow_html=True)
-
     with st.container(border=True):
-        st.markdown('<div style="text-align:center;padding:1rem 0;"><h4>Awaiting batch inference execution...</h4><p>Execution stages and timing telemetry<br>will appear after batch processing.</p></div>', unsafe_allow_html=True)
+        #st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
+        #st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Stage-level Runtime Breakdown not available</div>""", unsafe_allow_html=True)
+
+        #st.markdown('<div style="text-align:center;height: 272.5px;padding:1rem 0;"><h4>Awaiting batch inference execution...</h4><p>Execution stages and timing telemetry<br>will appear after batch processing.</p></div>', unsafe_allow_html=True)
+
+        st.markdown("""<div style="height:272.5px;display:flex;flex-direction:column;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Stage-level Runtime Breakdown not available</div><div style="flex:1;display:flex;align-items:center;justify-content:center;text-align:center;"><div><h4>Awaiting batch inference execution...</h4><p>Execution stages and timing telemetry<br>will appear after batch processing.</p></div></div></div>""", unsafe_allow_html=True)
 
 def render_batch_trace_card(step, duration):
     if duration*1000 < 1000:
