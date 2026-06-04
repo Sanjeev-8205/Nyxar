@@ -714,11 +714,12 @@ def render_batch_intelligence():
             processing_breakdown_card()
 
     #Pipeline
+    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+
     c1, c2 = st.columns([1.25,2])
     with c1:
         if st.session_state.completed_job_data is not None:
             
-            batch_trace_header()
             result = st.session_state.completed_job_data
             model = result["model_name"]
 
@@ -814,11 +815,9 @@ def render_batch_intelligence():
                     }
                 ]
 
-
-            st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
-
             with st.container(border=True):
-
+                
+                batch_trace_header()
                 max_duration = max(item["duration"] for item in trace)
 
                 for i, item in enumerate(trace):
