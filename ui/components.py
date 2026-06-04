@@ -402,15 +402,12 @@ def processing_breakdown_card(
 
     st.markdown(f"""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Processing Breakdown</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Runtime distribution analysis</div><div style="margin-bottom:28px;"><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>ML Processing</span><span>{ml_processing_pct}%</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{ml_processing_pct}%;height:100%;background:#6366F1;border-radius:999px;"></div></div></div><div style="margin-bottom:28px;"><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Database</span><span>{db_pct}%</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{db_pct}%;height:100%;background:#22C55E;border-radius:999px;"></div></div></div><div><div style="display:flex;justify-content:space-between;color:white;font-weight:600;"><span>Overhead</span><span>{overhead_pct}%</span></div><div style="width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:8px;"><div style="width:{overhead_pct}%;height:100%;background:#F59E0B;border-radius:999px;"></div></div></div></div>""", unsafe_allow_html=True)
 
-
 def render_trace_placeholder_batch_inference():
     with st.container(border=True):
-        #st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
-        #st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Stage-level Runtime Breakdown not available</div>""", unsafe_allow_html=True)
+        st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
+        st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Stage-level Runtime Breakdown not available</div>""", unsafe_allow_html=True)
 
-        #st.markdown('<div style="text-align:center;height: 272.5px;padding:1rem 0;"><h4>Awaiting batch inference execution...</h4><p>Execution stages and timing telemetry<br>will appear after batch processing.</p></div>', unsafe_allow_html=True)
-
-        st.markdown("""<div style="height:272.5px;display:flex;flex-direction:column;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Stage-level Runtime Breakdown not available</div><div style="flex:1;display:flex;align-items:center;justify-content:center;text-align:center;"><div><h4>Awaiting batch inference execution...</h4><p>Execution stages and timing telemetry<br>will appear after batch processing.</p></div></div></div>""", unsafe_allow_html=True)
+        st.markdown('<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting batch inference execution</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Run inference to generate<br>AI-powered prediction insights.</div></div></div>', unsafe_allow_html=True)
 
 def render_batch_trace_card(step, duration):
     if duration*1000 < 1000:
@@ -436,8 +433,3 @@ def batch_trace_header():
     st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
 
     st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Stage-level Runtime Breakdown</div>""", unsafe_allow_html=True)
-
-def batch_trace_header_placeholder():
-    st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
-
-    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Stage-level Runtime Breakdown not available</div>""", unsafe_allow_html=True)
