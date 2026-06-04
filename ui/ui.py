@@ -831,6 +831,8 @@ def render_batch_intelligence():
                         dot, color, glow, weight = "●", "#14B8A6", "0 0 6px rgba(20,184,166,0.5)", "500"
                     
                     batch_trace_row(dot, color, glow, weight, duration_ms, item["step"], show_connector=i<len(trace) - 1)
+                
+                st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
 
         else:
             render_trace_placeholder_batch_inference()

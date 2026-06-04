@@ -432,9 +432,9 @@ def batch_trace_row(dot, color, glow, weight, duration_ms, step, show_connector=
 def batch_trace_header():
     st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
 
-    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Pipeline execution timeline</div>""", unsafe_allow_html=True)
+    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Stage-level Runtime Breakdown</div>""", unsafe_allow_html=True)
 
 def batch_trace_header_placeholder():
     st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
 
-    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Pipeline execution timeline not available</div>""", unsafe_allow_html=True)
+    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Stage-level Runtime Breakdown not available</div>""", unsafe_allow_html=True)
