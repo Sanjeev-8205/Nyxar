@@ -18,7 +18,7 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         dataset_intelligence_card, prediction_distribution_card,
                         processing_analytics_card, processing_breakdown_card, 
                         render_trace_placeholder_batch_inference, render_batch_pipeline_summary,
-                        batch_trace_connector, batch_trace_dot, batch_trace_row)
+                        batch_trace_connector, batch_trace_row, batch_trace_header, batch_trace_header_placeholder)
 
 #setting the page title
 st.set_page_config(
@@ -714,128 +714,151 @@ def render_batch_intelligence():
             processing_breakdown_card()
 
     #Pipeline
-    if st.session_state.completed_job_data is not None:
+    c1, c2 = st.columns([1.25,2])
+    with c1:
+        if st.session_state.completed_job_data is not None:
+            
+            batch_trace_header()
+            result = st.session_state.completed_job_data
+            model = result["model_name"]
 
-        result = st.session_state.completed_job_data
-        model = result["model_name"]
-        completed_at = datetime.fromisoformat(result["completed_at"])
-        created_at = datetime.fromisoformat(result["created_at"])
-        total_time = (completed_at - created_at).total_seconds()
+            completed_at = datetime.fromisoformat(result["completed_at"])
+            created_at = datetime.fromisoformat(result["created_at"])
+            total_time = (completed_at - created_at).total_seconds()
 
-        if model == "Logistic Regression":
-            trace = [
-                {
-                    "step": "Upload",
-                    "duration": result["upload_time"]
-                },
-                {
-                    "step": "Dataset Validation",
-                    "duration": result["validation_time"]
-                },
-                {
-                    "step": "Text Preprocessing",
-                    "duration": result["text_preprocessing_time"]
-                },
-                {
-                    "step": "Vectorization",
-                    "duration": result["vectorization_time"]
-                },
-                {
-                    "step": "Logistic Batch Prediction",
-                    "duration": result["inference_time"]
-                },
-                {
-                    "step": "Database",
-                    "duration":result["db_time"]
-                }
-            ]
-        
-        elif model == "Bi-LSTM":
-            trace = [
-                {
-                    "step": "Upload",
-                    "duration": result["upload_time"]
-                },
-                {
-                    "step": "Dataset Validation",
-                    "duration": result["validation_time"]
-                },
-                {
-                    "step": "Text Preprocessing",
-                    "duration": result["text_preprocessing_time"]
-                },
-                {
-                    "step": "Tokenization",
-                    "duration": result["tokenization_time"]
-                },
-                {
-                    "step": "Sequence Padding",
-                    "duration": result["sequence_padding_time"]
-                },
-                {
-                    "step": "Bi-LSTM Batch Prediction ",
-                    "duration": result["inference_time"]
-                },
-                {
-                    "step": "Database",
-                    "duration":result["db_time"]
-                }
-            ]
+            if model == "Logistic Regression":
+                trace = [
+                    {
+                        "step": "Upload",
+                        "duration": result["upload_time"]
+                    },
+                    {
+                        "step": "Dataset Validation",
+                        "duration": result["validation_time"]
+                    },
+                    {
+                        "step": "Text Preprocessing",
+                        "duration": result["text_preprocessing_time"]
+                    },
+                    {
+                        "step": "Vectorization",
+                        "duration": result["vectorization_time"]
+                    },
+                    {
+                        "step": "Logistic Batch Prediction",
+                        "duration": result["inference_time"]
+                    },
+                    {
+                        "step": "Database",
+                        "duration":result["db_time"]
+                    }
+                ]
+            
+            elif model == "Bi-LSTM":
+                trace = [
+                    {
+                        "step": "Upload",
+                        "duration": result["upload_time"]
+                    },
+                    {
+                        "step": "Dataset Validation",
+                        "duration": result["validation_time"]
+                    },
+                    {
+                        "step": "Text Preprocessing",
+                        "duration": result["text_preprocessing_time"]
+                    },
+                    {
+                        "step": "Tokenization",
+                        "duration": result["tokenization_time"]
+                    },
+                    {
+                        "step": "Sequence Padding",
+                        "duration": result["sequence_padding_time"]
+                    },
+                    {
+                        "step": "Bi-LSTM Batch Prediction ",
+                        "duration": result["inference_time"]
+                    },
+                    {
+                        "step": "Database",
+                        "duration":result["db_time"]
+                    }
+                ]
 
-        elif model == "RoBERTa Transformer":
-            trace = [
-                {
-                    "step": "Upload",
-                    "duration": result["upload_time"]
-                },
-                {
-                    "step": "Dataset Validation",
-                    "duration": result["validation_time"]
-                },
-                {
-                    "step": "Text Preprocessing",
-                    "duration": result["text_preprocessing_time"]
-                },
-                {
-                    "step": "Tokenization",
-                    "duration": result["tokenization_time"]
-                },
-                {
-                    "step": "Onnx Batch Prediction",
-                    "duration": result["inference_time"]
-                },
-                {
-                    "step": "Database",
-                    "duration":result["db_time"]
-                }
-            ]
+            elif model == "RoBERTa Transformer":
+                trace = [
+                    {
+                        "step": "Upload",
+                        "duration": result["upload_time"]
+                    },
+                    {
+                        "step": "Dataset Validation",
+                        "duration": result["validation_time"]
+                    },
+                    {
+                        "step": "Text Preprocessing",
+                        "duration": result["text_preprocessing_time"]
+                    },
+                    {
+                        "step": "Tokenization",
+                        "duration": result["tokenization_time"]
+                    },
+                    {
+                        "step": "Onnx Batch Prediction",
+                        "duration": result["inference_time"]
+                    },
+                    {
+                        "step": "Database",
+                        "duration":result["db_time"]
+                    }
+                ]
 
 
-        st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
 
-        with st.container(border=True):
+            with st.container(border=True):
 
-            max_duration = max(item["duration"] for item in trace)
+                max_duration = max(item["duration"] for item in trace)
 
-            for i, item in enumerate(trace):
-                duration_ms = item["duration"] * 1000
-                is_bottleneck = item["duration"] == max_duration
+                for i, item in enumerate(trace):
+                    duration_ms = item["duration"] * 1000
+                    is_bottleneck = item["duration"] == max_duration
 
-                if is_bottleneck:
-                    dot, color, glow, weight = "💥", "#A855F7", "0 0 10px #A855F7, 0 0 20px #A855F7", "700"
+                    if is_bottleneck:
+                        dot, color, glow, weight = "💥", "#A855F7", "0 0 10px #A855F7, 0 0 20px #A855F7", "700"
+                        
+                    else:
+                        dot, color, glow, weight = "●", "#14B8A6", "0 0 6px rgba(20,184,166,0.5)", "500"
                     
-                else:
-                    dot, color, glow, weight = "●", "#14B8A6", "0 0 6px rgba(20,184,166,0.5)", "500"
-                
-                batch_trace_row(dot, color, glow, weight, duration_ms, item["step"])
-                
-                if i < len(trace) - 1:
-                    batch_trace_connector()
+                    batch_trace_row(dot, color, glow, weight, duration_ms, item["step"])
+                    
+                    if i < len(trace) - 1:
+                        batch_trace_connector()
 
-            render_batch_pipeline_summary(total_time=total_time)
+                render_batch_pipeline_summary(total_time=total_time)
 
-    else:
-        render_trace_placeholder_batch_inference()
+        else:
+            render_trace_placeholder_batch_inference()
+
+    with c2:
+        with st.container(border=True):
+            st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">AI Prediction Insights</div>""", unsafe_allow_html=True)
+
+            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Analysis of key signals influencing prediction</div>""", unsafe_allow_html=True)
+
+            if st.session_state.completed_job_data is not None:
+                #result = st.session_state.prediction_result
+                insight = "Coming soon."
+
+                ai_insight_card(insight=insight)
+
+            else:
+
+                st.markdown(
+                    '<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting Analysis</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Run inference to generate<br>AI-powered prediction insights.</div></div></div>',
+                    unsafe_allow_html=True
+                )
 
 def render_ai_intelligence():
 

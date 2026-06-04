@@ -433,7 +433,13 @@ def batch_trace_connector():
 
 def batch_trace_row(dot, color, glow, weight, duration_ms, step):
     st.markdown(f"""<div style="display:flex;align-items:center;gap:12px;margin:6px 0;"><span style="color:{color};text-shadow:{glow};font-size:1.2rem;">{dot}</span><span style="color:{color};text-shadow:{glow};font-weight:{weight};min-width:80px;">{duration_ms:.0f} ms</span><span style="color:white;font-weight:{weight};">{step}</span></div>""", unsafe_allow_html=True)
-    
-#def render_batch_trace_card(step, duration):
-#   value = f"{duration*1000:.0f} ms" if duration * 1000 < 1000 else f"{duration:.2f} s"
-#    st.markdown(f"""<div style="text-align:center;padding:8px 16px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));"><div style="font-size:0.70rem;font-weight:600;letter-spacing:1px;color:#94A3B8;margin-bottom:2px;">{step.upper()}</div><div style="color:#10B981;font-size:0.75rem;margin-bottom:4px;">✓ COMPLETED</div><div style="font-size:1.3rem;font-weight:700;color:white;line-height:1;">{value}</div></div>""", unsafe_allow_html=True)
+
+def batch_trace_header():
+    st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
+
+    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Pipeline steps and timing telemetry</div>""", unsafe_allow_html=True)
+
+def batch_trace_header_placeholder():
+    st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
+
+    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Pipeline steps not available</div>""", unsafe_allow_html=True)
