@@ -720,27 +720,27 @@ def render_batch_intelligence():
             trace = [
                 {
                     "step": "Upload",
-                    "duration": result["upload_time"] * 1000 if result["upload_time"]<1 else result["upload_time"]
+                    "duration": result["upload_time"]
                 },
                 {
                     "step": "Dataset Validation",
-                    "duration": result["validation_time"] * 1000 if result["validation_time"]<1 else result["validation_time"]
+                    "duration": result["validation_time"]
                 },
                 {
                     "step": "Text Preprocessing",
-                    "duration": result["text_preprocessing_time"] * 1000 if result["text_preprocessing_time"]<1 else result["text_preprocessing_time"]
+                    "duration": result["text_preprocessing_time"]
                 },
                 {
                     "step": "Vectorization",
-                    "duration": result["vectorization_time"] * 1000 if result["vectorization_time"]<1 else result["vectorization_time"]
+                    "duration": result["vectorization_time"]
                 },
                 {
-                    "step": "Logistic Batch Inference",
-                    "duration": result["inference_time"] * 1000 if result["inference_time"]<1 else result["inference_time"]
+                    "step": "Logistic Batch Prediction",
+                    "duration": result["inference_time"]
                 },
                 {
                     "step": "Database",
-                    "duration_ms":result["db_time"] * 1000 if result["db_time"]<1 else result["db_time"]
+                    "duration_ms":result["db_time"]
                 }
             ]
         
@@ -748,31 +748,31 @@ def render_batch_intelligence():
             trace = [
                 {
                     "step": "Upload",
-                    "duration": result["upload_time"] * 1000 if result["upload_time"]<1 else result["upload_time"]
+                    "duration": result["upload_time"]
                 },
                 {
                     "step": "Dataset Validation",
-                    "duration": result["validation_time"] * 1000 if result["validation_time"]<1 else result["validation_time"]
+                    "duration": result["validation_time"]
                 },
                 {
                     "step": "Text Preprocessing",
-                    "duration": result["text_preprocessing_time"] * 1000 if result["text_preprocessing_time"]<1 else result["text_preprocessing_time"]
+                    "duration": result["text_preprocessing_time"]
                 },
                 {
                     "step": "Tokenization",
-                    "duration": result["tokenization_time"] * 1000 if result["tokenization_time"]<1 else result["tokenization_time"]
+                    "duration": result["tokenization_time"]
                 },
                 {
                     "step": "Sequence Padding",
-                    "duration": result["sequence_padding_time"] * 1000 if result["sequence_padding_time"]<1 else result["sequence_padding_time"]
+                    "duration": result["sequence_padding_time"]
                 },
                 {
-                    "step": "Bi-LSTM Batch Inference",
-                    "duration": result["inference_time"] * 1000 if result["inference_time"]<1 else result["inference_time"]
+                    "step": "Bi-LSTM Batch Prediction ",
+                    "duration": result["inference_time"]
                 },
                 {
                     "step": "Database",
-                    "duration":result["db_time"] * 1000 if result["db_time"]<1 else result["db_time"]
+                    "duration":result["db_time"]
                 }
             ]
 
@@ -780,27 +780,27 @@ def render_batch_intelligence():
             trace = [
                 {
                     "step": "Upload",
-                    "duration": result["upload_time"] * 1000 if result["upload_time"]<1 else result["upload_time"]
+                    "duration": result["upload_time"]
                 },
                 {
                     "step": "Dataset Validation",
-                    "duration": result["validation_time"] * 1000 if result["validation_time"]<1 else result["validation_time"]
+                    "duration": result["validation_time"]
                 },
                 {
                     "step": "Text Preprocessing",
-                    "duration": result["text_preprocessing_time"] * 1000 if result["text_preprocessing_time"]<1 else result["text_preprocessing_time"]
+                    "duration": result["text_preprocessing_time"]
                 },
                 {
                     "step": "Tokenization",
-                    "duration": result["tokenization_time"] * 1000 if result["tokenization_time"]<1 else result["tokenization_time"]
+                    "duration": result["tokenization_time"]
                 },
                 {
-                    "step": "Onnx Batch Inference",
-                    "duration": result["inference_time"] * 1000 if result["inference_time"]<1 else result["inference_time"]
+                    "step": "Onnx Batch Prediction",
+                    "duration": result["inference_time"]
                 },
                 {
                     "step": "Database",
-                    "duration":result["db_time"] * 1000 if result["db_time"]<1 else result["db_time"]
+                    "duration":result["db_time"]
                 }
             ]
 
@@ -820,7 +820,7 @@ def render_batch_intelligence():
                 with cols[i * 2]:
                     render_batch_trace_card(
                         step=item["step"],
-                        duration=f"{item["duration"]:.0f}" if item["duration"] < 1000 else f"{item["duration"]:.2f}"
+                        duration=item["duration"]
                     )
 
                 # Arrow column (except after last card)
