@@ -832,8 +832,6 @@ def render_batch_intelligence():
                     
                     batch_trace_row(dot, color, glow, weight, duration_ms, item["step"], show_connector=i<len(trace) - 1)
 
-                render_batch_pipeline_summary(total_time=total_time)
-
         else:
             render_trace_placeholder_batch_inference()
 

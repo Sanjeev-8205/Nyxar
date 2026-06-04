@@ -381,7 +381,7 @@ def processing_analytics_card(
     total_runtime="--",
     model_name="--"
 ):
-    st.markdown(f"""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Processing Analytics</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Execution performance and runtime metrics</div><div style="display:grid;grid-template-columns:1fr auto;row-gap:16px;"><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">ML_PROCESSING_TIME TIME</div><div style="color:white;font-weight:700;">{ml_processing_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">DATABASE TIME</div><div style="color:white;font-weight:700;">{db_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">OVERHEAD TIME</div><div style="color:white;font-weight:700;">{overhead_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">TOTAL RUNTIME</div><div style="color:white;font-weight:700;">{total_runtime}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">MODEL USED</div><div style="color:white;font-weight:700;">{model_name}</div></div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Processing Analytics</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Execution performance and runtime metrics</div><div style="display:grid;grid-template-columns:1fr auto;row-gap:16px;"><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">ML PROCESSING TIME</div><div style="color:white;font-weight:700;">{ml_processing_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">DATABASE TIME</div><div style="color:white;font-weight:700;">{db_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">OVERHEAD TIME</div><div style="color:white;font-weight:700;">{overhead_time}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">TOTAL RUNTIME</div><div style="color:white;font-weight:700;">{total_runtime}</div><div style="color:#94A3B8;font-size:0.82rem;font-weight:600;letter-spacing:1px;">MODEL USED</div><div style="color:white;font-weight:700;">{model_name}</div></div></div>""", unsafe_allow_html=True)
 
 def processing_breakdown_card(
     ml_processing_time=0,
@@ -432,9 +432,9 @@ def batch_trace_row(dot, color, glow, weight, duration_ms, step, show_connector=
 def batch_trace_header():
     st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
 
-    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Pipeline steps and timing telemetry</div>""", unsafe_allow_html=True)
+    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Pipeline execution timeline</div>""", unsafe_allow_html=True)
 
 def batch_trace_header_placeholder():
     st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)
 
-    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Pipeline steps not available</div>""", unsafe_allow_html=True)
+    st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Pipeline execution timeline not available</div>""", unsafe_allow_html=True)
