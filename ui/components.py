@@ -410,10 +410,10 @@ def render_trace_placeholder_batch_inference():
         st.markdown('<div style="text-align:center;padding:1rem 0;"><h4>Awaiting batch inference execution...</h4><p>Execution stages and timing telemetry<br>will appear after batch processing.</p></div>', unsafe_allow_html=True)
 
 def render_batch_trace_card(step, duration):
-    if duration*1000 < 1:
-        html = f'<div style="text-align:center;padding:16px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg, rgba(15,23,42,0.85), rgba(2,6,23,0.95));"><div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;margin-bottom:8px;">{step.upper()}</div><div style="color:#10B981;font-size:0.85rem;margin-bottom:10px;">✓ COMPLETED</div><div style="font-size:1.8rem;font-weight:700;color:white;">{duration*1000}</div><div style="font-size:0.8rem;color:#94A3B8;">ms</div></div>'
+    if duration*1000 < 1000:
+        html = f'<div style="text-align:center;padding:16px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg, rgba(15,23,42,0.85), rgba(2,6,23,0.95));"><div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;margin-bottom:8px;">{step.upper()}</div><div style="color:#10B981;font-size:0.85rem;margin-bottom:10px;">✓ COMPLETED</div><div style="font-size:1.8rem;font-weight:700;color:white;">{duration*1000:.0f}</div><div style="font-size:0.8rem;color:#94A3B8;">ms</div></div>'
         st.markdown(html, unsafe_allow_html=True)
     
     else:
-        html = f'<div style="text-align:center;padding:16px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg, rgba(15,23,42,0.85), rgba(2,6,23,0.95));"><div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;margin-bottom:8px;">{step.upper()}</div><div style="color:#10B981;font-size:0.85rem;margin-bottom:10px;">✓ COMPLETED</div><div style="font-size:1.8rem;font-weight:700;color:white;">{duration}</div><div style="font-size:0.8rem;color:#94A3B8;">s</div></div>'
+        html = f'<div style="text-align:center;padding:16px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg, rgba(15,23,42,0.85), rgba(2,6,23,0.95));"><div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;margin-bottom:8px;">{step.upper()}</div><div style="color:#10B981;font-size:0.85rem;margin-bottom:10px;">✓ COMPLETED</div><div style="font-size:1.8rem;font-weight:700;color:white;">{duration:.2f}</div><div style="font-size:0.8rem;color:#94A3B8;">s</div></div>'
         st.markdown(html, unsafe_allow_html=True)
