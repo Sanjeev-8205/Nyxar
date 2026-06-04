@@ -17,8 +17,7 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         ai_insight_card, progress_bar_modified, batch_job_overview_header,
                         dataset_intelligence_card, prediction_distribution_card,
                         processing_analytics_card, processing_breakdown_card, 
-                        render_trace_placeholder_batch_inference, render_batch_pipeline_summary,
-                        batch_trace_row, batch_trace_header, batch_trace_header_placeholder)
+                        render_trace_placeholder_batch_inference, batch_trace_row, batch_trace_header)
 
 #setting the page title
 st.set_page_config(
