@@ -425,11 +425,9 @@ def render_batch_pipeline_summary(total_time):
     else:
         st.markdown(f'<div style="text-align:center;padding:10px;"><div style="font-size:0.75rem;letter-spacing:2px;color:#94A3B8;">TOTAL PIPELINE TIME</div><div style="font-size:2.2rem;font-weight:700;color:white;">{total_time:.2f} s</div><div style="font-size:0.9rem;color:#10B981;">Pipeline execution complete</div></div>', unsafe_allow_html=True)
 
-def batch_trace_connector():
-    st.markdown("""<div style="margin-left:11px;color:#475569;font-size:1.3rem;line-height:1;height:24px;">│</div>""", unsafe_allow_html=True)
-    
-def batch_trace_row(dot, color, glow, weight, duration_ms, step):
-    st.markdown(f"""<div style="display:flex;align-items:center;gap:16px;margin:8px 0;"><div style="width:24px;text-align:center;color:{color};text-shadow:{glow};font-size:1.2rem;flex-shrink:0;">{dot}</div><div style="color:{color};text-shadow:{glow};font-weight:{weight};min-width:100px;">{duration_ms:.0f} ms</div><div style="color:white;font-weight:{weight};">{step}</div></div>""", unsafe_allow_html=True)
+def batch_trace_row(dot, color, glow, weight, duration_ms, step, show_connector=True):
+    connector = f"""<div style="width:2px;height:32px;background:#475569;margin-top:2px;"></div>""" if show_connector else ""
+    st.markdown(f"""<div style="display:flex;align-items:flex-start;gap:16px;"><div style="display:flex;flex-direction:column;align-items:center;width:24px;"><div style="color:{color};text-shadow:{glow};font-size:1.2rem;line-height:1;">{dot}</div>{connector}</div><div style="color:{color};text-shadow:{glow};font-weight:{weight};min-width:120px;">{duration_ms:.0f} ms</div><div style="color:white;font-weight:{weight};">{step}</div></div>""", unsafe_allow_html=True)
 
 def batch_trace_header():
     st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Batch Trace Execution</div>""", unsafe_allow_html=True)

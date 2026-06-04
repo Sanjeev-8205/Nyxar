@@ -18,7 +18,7 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         dataset_intelligence_card, prediction_distribution_card,
                         processing_analytics_card, processing_breakdown_card, 
                         render_trace_placeholder_batch_inference, render_batch_pipeline_summary,
-                        batch_trace_connector, batch_trace_row, batch_trace_header, batch_trace_header_placeholder)
+                        batch_trace_row, batch_trace_header, batch_trace_header_placeholder)
 
 #setting the page title
 st.set_page_config(
@@ -830,10 +830,7 @@ def render_batch_intelligence():
                     else:
                         dot, color, glow, weight = "●", "#14B8A6", "0 0 6px rgba(20,184,166,0.5)", "500"
                     
-                    batch_trace_row(dot, color, glow, weight, duration_ms, item["step"])
-                    
-                    if i < len(trace) - 1:
-                        batch_trace_connector()
+                    batch_trace_row(dot, color, glow, weight, duration_ms, item["step"], show_connector=i<len(trace) - 1)
 
                 render_batch_pipeline_summary(total_time=total_time)
 
