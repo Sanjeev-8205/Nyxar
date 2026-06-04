@@ -17,7 +17,8 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         ai_insight_card, progress_bar_modified, batch_job_overview_header,
                         dataset_intelligence_card, prediction_distribution_card,
                         processing_analytics_card, processing_breakdown_card, 
-                        render_trace_placeholder_batch_inference, render_batch_trace_card, render_batch_pipeline_summary)
+                        render_trace_placeholder_batch_inference, render_batch_pipeline_summary,
+                        batch_trace_connector, batch_trace_dot, batch_trace_row)
 
 #setting the page title
 st.set_page_config(
@@ -813,12 +814,24 @@ def render_batch_intelligence():
         st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
 
         with st.container(border=True):
+
+            max_duration = max(item["duration"] for item in trace)
+
             for i, item in enumerate(trace):
-                render_batch_trace_card(step=item["step"], duration=item["duration"])
+                duration_ms = item["duration"] * 1000
+                is_bottleneck = item["duration"] == max_duration
+
+                if is_bottleneck:
+                    dot, color, glow, weight = "💥", "#A855F7", "0 0 10px #A855F7, 0 0 20px #A855F7", "700"
+                    
+                else:
+                    dot, color, glow, weight = "●", "#14B8A6", "0 0 6px rgba(20,184,166,0.5)", "500"
+                
+                batch_trace_row(dot, color, glow, weight, duration_ms, item["step"])
                 
                 if i < len(trace) - 1:
-                    st.markdown("""<div style="text-align:center;font-size:2rem;color:#64748B;margin:0.5rem 0;">↓</div>""", unsafe_allow_html=True)
-            
+                    batch_trace_connector()
+
             render_batch_pipeline_summary(total_time=total_time)
 
     else:
