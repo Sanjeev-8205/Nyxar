@@ -15,7 +15,8 @@ from components import (metric_card, status_card, insights_card, mini_card, plat
                         input_analysis_metrics_card, text_complexity_header, text_complexity_header_placeholder,
                         ai_insight_card, progress_bar_modified, batch_job_overview_header,
                         dataset_intelligence_card, prediction_distribution_card,
-                        processing_analytics_card, processing_breakdown_card, render_trace_placeholder_batch_inference, render_batch_trace_card)
+                        processing_analytics_card, processing_breakdown_card, 
+                        render_trace_placeholder_batch_inference, render_batch_trace_card, render_batch_pipeline_summary)
 
 #setting the page title
 st.set_page_config(
@@ -808,27 +809,20 @@ def render_batch_intelligence():
         st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
 
         with st.container(border=True):
-            
-            if model == "Bi-LSTM":
-                cols = st.columns([4,1,4,1,4,1,4,1,4,1,4,1,4])
-            else:
-                cols = st.columns([4,1,4,1,4,1,4,1,4,1,4])
 
             for i, item in enumerate(trace):
+                col1, col2 = st.columns([1, 12])
 
-                # Card column
-                with cols[i * 2]:
-                    render_batch_trace_card(
-                        step=item["step"],
-                        duration=item["duration"]
-                    )
+                with col1:
+                    st.markdown("""<div style="text-align:center;font-size:1.8rem;color:#10B981;">●</div>""", unsafe_allow_html=True)
 
-                # Arrow column (except after last card)
+                with col2:
+                    render_batch_trace_card(step=item["step"], duration=item["duration"])
+
                 if i < len(trace) - 1:
-                    with cols[i * 2 + 1]:
-                        st.markdown('<div style="text-align:center;font-size:2rem;color:#64748B;margin-top:55px;">→</div>', unsafe_allow_html=True)
+                    st.markdown("""<div style="margin-left:18px;height:30px;border-left:2px solid #64748B;"></div>""", unsafe_allow_html=True)
 
-            render_pipeline_summary(result["total_time"])
+            render_batch_pipeline_summary(total_time=(result["completed_at"] - result["created_at"]).total_seconds())
 
     else:
         render_trace_placeholder_batch_inference()
