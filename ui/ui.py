@@ -8,7 +8,7 @@ from collections import Counter
 from datetime import datetime
 
 from styles import load_global_styles
-from components import (metric_card, status_card, insights_card, mini_card, platform_status_card,
+from components import (metric_card, status_card, insights_card, platform_status_card,
                         hero_header, subtitle, hero_subtext, subtitle_subtext, 
                         chart_container, apply_button_style, render_model_info, apply_container_background, 
                         inference_output_card, render_confidence_analysis_card, telemetry_card,
@@ -838,9 +838,9 @@ def render_batch_intelligence():
 
     with c2:
         with st.container(border=True):
-            st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">AI Prediction Insights</div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Operational Insights</div>""", unsafe_allow_html=True)
 
-            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">Analysis of key signals influencing prediction</div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">AI-generated assessment of batch execution efficiency and processing performance.</div>""", unsafe_allow_html=True)
 
             if st.session_state.completed_job_data is not None:
                 #result = st.session_state.prediction_result
