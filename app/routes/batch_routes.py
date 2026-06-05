@@ -2,6 +2,7 @@ from fastapi import APIRouter, UploadFile, File, BackgroundTasks, HTTPException,
 from models.batch_job_model import BatchJob
 from models.batch_result_model import BatchResult
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.core.database import SessionLocal
 from app.services.batch_service import process_batch_job
 from datetime import datetime, UTC
@@ -9,6 +10,8 @@ import pandas as pd
 from pathlib import Path
 import uuid
 import time
+
+from app.services.insights_service.live_inference_insights import generate_batch_prediction_ai_insights
 
 router = APIRouter()
 
@@ -98,9 +101,31 @@ async def get_batch_job(job_id: int):
 
     try:
         job = db.query(BatchJob).filter(BatchJob.id == job_id).first()
+        predictions = (
+            db.query(BatchResult.prediction, func.count(BatchResult.id))
+            .filter(BatchResult.id == job_id)
+            .group_by(BatchResult.prediction)
+            .order_by(BatchResult.prediction)
+            .all()
+        )
+
+        prediction_distribution = {
+            prediction: count
+            for prediction, count in predictions
+        }
 
         if not job:
             raise HTTPException(status_code=404, detail = "Job Not Found")
+        
+        completion_rate = (job.processed_rows/job.total_rows) if job.total_rows>0 else 0
+
+        batch_insight = generate_batch_prediction_ai_insights(
+            total_rows=job.total_rows, processed_rows=job.processed_rows, completion_rate=completion_rate,
+            throughput=job.throughput, ml_processing_time=job.ml_processing_time, database_time=job.db_time,
+            overhead_time=job.overhead_time, total_runtime=(job.completed_at - job.created_at).total_seconds(),
+            ml_model_used=job.model_name, positive_count=prediction_distribution.get("2", 0),
+            negative_count=prediction_distribution.get("0", 0), neutral_count=prediction_distribution.get("1", 0)
+        )
         
         return {
             "job_id": job.id,
@@ -126,7 +151,8 @@ async def get_batch_job(job_id: int):
             "processing_time": job.processing_time,
             "created_at": job.created_at,
             "completed_at": job.completed_at,
-            "error_message": job.error_message
+            "error_message": job.error_message,
+            "insight": batch_insight
         }
 
     finally:
