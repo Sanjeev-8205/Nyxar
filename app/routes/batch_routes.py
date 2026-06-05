@@ -120,7 +120,7 @@ async def get_batch_job(job_id: int):
         completion_rate = (job.processed_rows/job.total_rows) if job.total_rows>0 else 0
 
         batch_insight = generate_batch_prediction_ai_insights(
-            total_rows=job.total_rows, processed_rows=job.processed_rows, completion_rate=completion_rate,
+            total_rows=job.total_rows, processed_rows=job.processed_rows, completion_rate=round(completion_rate*100, 2),
             throughput=job.throughput, ml_processing_time=job.ml_processing_time, database_time=job.db_time,
             overhead_time=job.overhead_time, total_runtime=(job.completed_at - job.created_at).total_seconds(),
             ml_model_used=job.model_name, positive_count=prediction_distribution.get("2", 0),
