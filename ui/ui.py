@@ -843,10 +843,9 @@ def render_batch_intelligence():
             st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">AI-generated assessment of batch execution efficiency and processing performance.</div>""", unsafe_allow_html=True)
 
             if st.session_state.completed_job_data is not None:
-                #result = st.session_state.prediction_result
-                insight = "Coming soon."
+                insights = st.session_state.completed_job_data["insight"]["insight"]
 
-                ai_insight_card(insight=insight)
+                ai_insight_card(insight=insights)
 
             else:
 
