@@ -872,13 +872,11 @@ def render_batch_intelligence():
                     break
                 time.sleep(2)
 
-            placeholder.empty()
-
-            if raw_insights:
-                ai_insight_card(insight=raw_insights["insight"])
-            else:
-                st.markdown('<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Oops. Unexpected error occured</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Insights could not be generated.</div></div></div>', unsafe_allow_html=True)
-
+            with placeholder.container():
+                if raw_insights:
+                    ai_insight_card(insight=raw_insights["insight"])
+                else:
+                    st.markdown('<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Oops. Unexpected error occured</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Insights could not be generated.</div></div></div>', unsafe_allow_html=True)
 
 def render_ai_intelligence():
 
