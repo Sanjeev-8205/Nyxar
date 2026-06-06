@@ -23,6 +23,7 @@ def predict_route(data: InputData):
         latency = time.perf_counter() - start
 
         conf_score = max(prob)
+        confidence=conf_score
 
         status = "success"
         

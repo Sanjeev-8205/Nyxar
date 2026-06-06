@@ -2,7 +2,6 @@ from google import genai
 from groq import Groq
 import os
 
-
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
@@ -17,7 +16,7 @@ def generate_with_gemini(prompt):
 
     print(response.usage_metadata)
 
-    return [response.text, "gemini-3.1-flash-lite"]
+    return (response.text, "gemini-3.1-flash-lite")
 
 def generate_with_groq(prompt):
     response = groq_client.chat.completions.create(
@@ -32,7 +31,7 @@ def generate_with_groq(prompt):
 
     print(response.usage)
 
-    return [response.choices[0].message.content, "llama-3.1-8b-instant"]
+    return (response.choices[0].message.content, "llama-3.1-8b-instant")
 
 def generate_ai_prediction_insights(prediction, confidence, prob, word_count, sentence_count, complexity, text):
     INSIGHTS_PROMPT = f"""
