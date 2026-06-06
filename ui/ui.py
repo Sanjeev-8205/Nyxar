@@ -111,6 +111,7 @@ if "dashboard_metrics" not in st.session_state:
     st.session_state.dashboard_metrics = get_dashboard_metrics()
 
 dashboard_metrics = st.session_state.dashboard_metrics
+st.write(dashboard_metrics)
 
 # =========================
 # SESSION STATE INIT
@@ -588,7 +589,7 @@ def render_batch_intelligence():
 
             try:
                 response = requests.get(
-                    f"{BASE_URL}/batch/job/{job_id}", timeout=10
+                    f"{BASE_URL}/batch/job/{job_id}", timeout=30
                 )
 
                 if response.status_code != 200:
