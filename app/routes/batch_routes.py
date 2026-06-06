@@ -101,25 +101,9 @@ async def get_batch_job(job_id: int):
 
     try:
         job = db.query(BatchJob).filter(BatchJob.id == job_id).first()
-        predictions = (
-            db.query(BatchResult.prediction, func.count(BatchResult.id))
-            .filter(BatchResult.id == job_id)
-            .group_by(BatchResult.prediction)
-            .order_by(BatchResult.prediction)
-            .all()
-        )
 
         if not job:
             raise HTTPException(status_code=404, detail = "Job Not Found")
-        
-        completion_rate = (job.processed_rows/job.total_rows) if job.total_rows>0 else 0
-
-        batch_insight = generate_batch_prediction_ai_insights(
-            total_rows=job.total_rows, processed_rows=job.processed_rows, completion_rate=round(completion_rate*100, 2),
-            throughput=job.throughput, ml_processing_time=job.ml_processing_time, database_time=job.db_time,
-            overhead_time=job.overhead_time, total_runtime=(job.completed_at - job.created_at).total_seconds(),
-            ml_model_used=job.model_name
-        )
         
         return {
             "job_id": job.id,
@@ -146,7 +130,7 @@ async def get_batch_job(job_id: int):
             "created_at": job.created_at,
             "completed_at": job.completed_at,
             "error_message": job.error_message,
-            "insight": batch_insight
+            "insight": job.ai_insights
         }
 
     finally:

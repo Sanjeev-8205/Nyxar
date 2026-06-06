@@ -4,6 +4,7 @@ from app.core.database import SessionLocal
 from models.batch_job_model import BatchJob
 from models.batch_result_model import BatchResult
 from app.services.ml_service import predict_batch
+from app.services.insights_service.live_inference_insights import generate_batch_prediction_ai_insights
 
 import pandas as pd
 import time
@@ -119,6 +120,15 @@ def process_batch_job(job_id: int, file_path: str, model:str):
         job.progress = 100
         job.db_time = round(db_time, 4)
         job.overhead_time = round(proc_time - db_time - ml_processing_time, 4)
+
+        completion_rate = (job.processed_rows/job.total_rows) if job.total_rows>0 else 0
+        
+        job.ai_insights = generate_batch_prediction_ai_insights(
+            total_rows=job.total_rows, processed_rows=job.processed_rows, completion_rate=round(completion_rate*100, 2),
+            throughput=job.throughput, ml_processing_time=job.ml_processing_time, database_time=job.db_time,
+            overhead_time=job.overhead_time, total_runtime=(job.completed_at - job.created_at).total_seconds(),
+            ml_model_used=job.model_name
+        )
 
         db.commit()
 

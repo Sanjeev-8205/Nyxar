@@ -34,6 +34,8 @@ class BatchJob(Base):
     progress = Column(Float, default=0.0)
     processing_time = Column(Float, default=0.0)
 
+    ai_insights = Column(Text, nullable=True)
+
     created_at = Column(DateTime(timezone=True), default=lambda:datetime.now(UTC))
     completed_at = Column(DateTime(timezone=True), nullable=True)
 
