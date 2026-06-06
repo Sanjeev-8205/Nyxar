@@ -174,10 +174,10 @@ def get_recent_activity_feed(db):
             "Latency": round(recent_activity[3],3)
         },
         "batch_jobs":{
-            "id": recent_batch_job.id if recent_batch_job.id else "No batch jobs yet",
-            "status": recent_batch_job.status if recent_batch_job.status else "No batch jobs yet",
-            "rows_processed": recent_batch_job.processed_rows if recent_batch_job.processed_rows else "No batch jobs yet",
-            "model_used": recent_batch_job.model_name if recent_batch_job.model_name else "No batch jobs yet"
+            "id": recent_batch_job.id if recent_batch_job else "No batch jobs yet",
+            "status": recent_batch_job.status if recent_batch_job else "No batch jobs yet",
+            "rows_processed": recent_batch_job.processed_rows if recent_batch_job else "No batch jobs yet",
+            "model_used": recent_batch_job.model_name if recent_batch_job else "No batch jobs yet"
         }
     }
 
