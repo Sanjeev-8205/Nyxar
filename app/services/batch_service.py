@@ -121,7 +121,11 @@ def process_batch_job(job_id: int, file_path: str, model:str):
         job.db_time = round(db_time, 4)
         job.overhead_time = round(proc_time - db_time - ml_processing_time, 4)
 
+        db.commit()
+
         completion_rate = (job.processed_rows/job.total_rows) if job.total_rows>0 else 0
+
+        start =time.perf_counter()
         
         job.ai_insights = generate_batch_prediction_ai_insights(
             total_rows=job.total_rows, processed_rows=job.processed_rows, completion_rate=round(completion_rate*100, 2),
@@ -129,6 +133,9 @@ def process_batch_job(job_id: int, file_path: str, model:str):
             overhead_time=job.overhead_time, total_runtime=(job.completed_at - job.created_at).total_seconds(),
             ml_model_used=job.model_name
         )
+
+        elapsed = time.perf_counter() - start
+        print(f"AI insights generated in {elapsed:.2f}s")
 
         db.commit()
 
