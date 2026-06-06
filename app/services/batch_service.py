@@ -57,7 +57,7 @@ def process_batch_job(job_id: int, file_path: str, model:str):
                     else:
                         job.inference_time = trace[x]["time_taken"]
             
-            elif len(trace==3) and model == "RoBERTa Transformer":
+            elif len(trace)==3 and model == "RoBERTa Transformer":
                 for x in range(len(trace)):
                     if x==0:
                         job.text_preprocessing_time = trace[x]["time_taken"]
@@ -126,7 +126,7 @@ def process_batch_job(job_id: int, file_path: str, model:str):
         completion_rate = (job.processed_rows/job.total_rows) if job.total_rows>0 else 0
 
         start =time.perf_counter()
-        
+
         job.ai_insights = generate_batch_prediction_ai_insights(
             total_rows=job.total_rows, processed_rows=job.processed_rows, completion_rate=round(completion_rate*100, 2),
             throughput=job.throughput, ml_processing_time=job.ml_processing_time, database_time=job.db_time,
