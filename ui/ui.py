@@ -111,7 +111,6 @@ if "dashboard_metrics" not in st.session_state:
     st.session_state.dashboard_metrics = get_dashboard_metrics()
 
 dashboard_metrics = st.session_state.dashboard_metrics
-st.write(dashboard_metrics)
 
 # =========================
 # SESSION STATE INIT
