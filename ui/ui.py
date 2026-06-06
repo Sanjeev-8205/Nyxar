@@ -837,24 +837,24 @@ def render_batch_intelligence():
             render_trace_placeholder_batch_inference()
 
     with c2:
-        '''with st.container(border=True):
-            st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Operational Insights</div>""", unsafe_allow_html=True)
-
-            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">AI-generated assessment of batch execution efficiency and processing performance.</div>""", unsafe_allow_html=True)
-
-            raw_insights = None
-            for _ in range(10):  # retry up to 10 times
-                response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}")
-                data = response.json()
-                raw_insights = data.get("insight")
-                if raw_insights:
-                    break
-                time.sleep(2)
-
-                if raw_insights:
-                    ai_insight_card(insight=raw_insights["insight"])
-                else:
-                    st.markdown('<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Please wait.......</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Insights are being generated.</div></div></div>', unsafe_allow_html=True)'''
+        #'''with st.container(border=True):
+        #   st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Operational Insights</div>""", unsafe_allow_html=True)
+        #
+        #  st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">AI-generated assessment of batch execution efficiency and processing performance.</div>""", unsafe_allow_html=True)
+        #
+        #    raw_insights = None
+        #    for _ in range(10):  # retry up to 10 times
+        #        response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}")
+        #        data = response.json()
+        #        raw_insights = data.get("insight")
+        #        if raw_insights:
+        #            break
+        #        time.sleep(2)
+        #
+        #        if raw_insights:
+        #            ai_insight_card(insight=raw_insights["insight"])
+        #        else:
+        #            st.markdown('<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Please wait.......</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Insights are being generated.</div></div></div>', unsafe_allow_html=True)
 
         with st.container(border=True):
             st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Operational Insights</div>""", unsafe_allow_html=True)
