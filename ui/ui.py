@@ -837,7 +837,7 @@ def render_batch_intelligence():
             render_trace_placeholder_batch_inference()
 
     with c2:
-        with st.container(border=True):
+        '''with st.container(border=True):
             st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Operational Insights</div>""", unsafe_allow_html=True)
 
             st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">AI-generated assessment of batch execution efficiency and processing performance.</div>""", unsafe_allow_html=True)
@@ -851,25 +851,34 @@ def render_batch_intelligence():
                     break
                 time.sleep(2)
 
+                if raw_insights:
+                    ai_insight_card(insight=raw_insights["insight"])
+                else:
+                    st.markdown('<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Please wait.......</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Insights are being generated.</div></div></div>', unsafe_allow_html=True)'''
+
+        with st.container(border=True):
+            st.markdown("""<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Operational Insights</div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1rem;">AI-generated assessment of batch execution efficiency and processing performance.</div>""", unsafe_allow_html=True)
+
+            raw_insights = None
+            placeholder = st.empty()
+            placeholder.markdown("""<style>@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}.pulse{animation:pulse 1.5s ease-in-out infinite;}</style><div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div class="pulse" style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Generating Insights...</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">AI is analyzing pipeline performance.</div></div></div>""", unsafe_allow_html=True)
+
+            for _ in range(10):
+                response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}")
+                data = response.json()
+                raw_insights = data.get("insight")
+                if raw_insights:
+                    break
+                time.sleep(2)
+
+            placeholder.empty()
+
             if raw_insights:
                 ai_insight_card(insight=raw_insights["insight"])
             else:
-                st.markdown(
-                    '<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Please wait.......</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Insights are being generated.</div></div></div>',
-                    unsafe_allow_html=True
-                )
+                st.markdown('<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Oops. Unexpected error occured</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Insights could not be generated.</div></div></div>', unsafe_allow_html=True)
 
-            if st.session_state.completed_job_data is not None:
-                insights = st.session_state.completed_job_data["insight"]["insight"]
-
-                ai_insight_card(insight=insights)
-
-            else:
-
-                st.markdown(
-                    '<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting Analysis</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Run inference to generate<br>AI-powered prediction insights.</div></div></div>',
-                    unsafe_allow_html=True
-                )
 
 def render_ai_intelligence():
 
