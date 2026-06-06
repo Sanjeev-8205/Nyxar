@@ -1,6 +1,7 @@
 from sqlalchemy import Column, DateTime, String, Float, Integer, Text
 from app.core.database import Base
 from datetime import datetime, UTC
+from sqlalchemy.dialects.postgresql import JSON
 
 class BatchJob(Base):
     __tablename__ = "batch_jobs"
@@ -34,7 +35,7 @@ class BatchJob(Base):
     progress = Column(Float, default=0.0)
     processing_time = Column(Float, default=0.0)
 
-    ai_insights = Column(Text, nullable=True)
+    ai_insights = Column(JSON, nullable=True)
 
     created_at = Column(DateTime(timezone=True), default=lambda:datetime.now(UTC))
     completed_at = Column(DateTime(timezone=True), nullable=True)
