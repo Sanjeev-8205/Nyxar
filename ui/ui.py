@@ -914,6 +914,7 @@ def render_ai_intelligence():
             )
 
             summary_type = SUMMARY_MAPPING[selected_option]
+            st.session_state.summary_type = selected_option
 
             if st.button("Generate AI Insights"):
 
@@ -931,23 +932,20 @@ def render_ai_intelligence():
 
                     else:
                         st.error("Failed to generate insights. Try again.")
+         
+    if not st.session_state.completed_job_data:
+        with st.container(border=True):
+            st.markdown('<div style="min-height:320px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">No Batch Prediction Results Available</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Run a batch prediction to generate results before AI insights can be created.</div></div></div>', unsafe_allow_html=True)
 
-    with st.container(border=True):           
-        if not st.session_state.completed_job_data:
-            st.markdown(
-                '<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;text-align:center;">No Batch Prediction Results Available</div>'
-                '<div style="color:#9CA3AF;font-size:0.92rem;text-align:center;">Run a batch prediction to generate results before AI insights can be created.</div>',
-                unsafe_allow_html=True,
-            )
-
-        elif st.session_state.ai_summary:
+    elif st.session_state.ai_summary:
+        with st.container(border=True):  
             c1, c2 = st.columns([3,1])
 
             with c1:
-                if summary_type == "Full Report(Both)":
+                if st.session_state.summary_type == "Full Report(Both)":
                     summary_type="Full Report"
 
-                if st.button(f"View {summary_type}"):
+                if st.button(f"View {summary_type}", width="stretch"):
                     show_summary()
             
             with c2:
@@ -956,14 +954,12 @@ def render_ai_intelligence():
                     st.session_state.ai_summary,
                     file_name="ai_summary.md",
                     mime="text/markdown",
+                    width="stretch"
                 )
 
-        else:
-            st.markdown(
-                '<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;text-align:center;">Insights Ready to Generate</div>'
-                '<div style="color:#9CA3AF;font-size:0.92rem;text-align:center;">Prediction results are available. Generate AI-powered insights to identify strengths, pain points, themes, sentiment drivers, and strategic opportunities.</div>',
-                unsafe_allow_html=True,
-            )
+    else:
+        with st.container(border=True):  
+            st.markdown('<div style="min-height:320px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Insights Ready to Generate</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Prediction results are available. Generate AI-powered insights to identify strengths, pain points, themes, sentiment drivers, and strategic opportunities.</div></div></div>', unsafe_allow_html=True)
 
 def render_observability():
 
