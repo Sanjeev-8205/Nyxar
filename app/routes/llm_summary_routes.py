@@ -100,7 +100,7 @@ def generate_summary(
     new_summary = BatchSummary(
         job_id = job_id,
         summary_type = summary_type,
-        summary = summary.get("executive_summary"),
+        summary = summary,
         provider = results["provider"],
         fallback_used = results["fallback_used"],
         llm_latency = results["latency"],
