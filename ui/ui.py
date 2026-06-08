@@ -949,7 +949,7 @@ def render_ai_intelligence():
                         data = response.json()
 
                         st.session_state.ai_summary = data["summary"]
-                        st.toast("AI insights generated sucessfully.", icon="")
+                        st.toast("AI insights generated sucessfully.", icon="✅")
 
                     else:
                         st.error("Failed to generate insights. Try again.")
