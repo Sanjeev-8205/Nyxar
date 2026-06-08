@@ -952,31 +952,29 @@ def render_ai_intelligence():
                         st.toast("AI insights generated sucessfully.", icon="✅")
 
                         if st.session_state.ai_summary:
-                            with st.container(border=True):
-                                st.markdown(
-                                    f'<div style="padding:16px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));margin-bottom:1rem;"><div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;margin-bottom:10px;text-transform:uppercase;">Report Ready</div><div style="font-size:1rem;color:#E5E7EB;line-height:1.8;">{st.session_state.summary_type} generated successfully and is ready for review or download.</div></div>',
-                                    unsafe_allow_html=True,
+                            if st.session_state.summary_type == "Full Report(Both)":
+                                summary_type="Full Report"
+                            else:
+                                summary_type = st.session_state.summary_type
+
+                            st.divider()
+                            st.markdown(f'<div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;text-transform:uppercase;">{summary_type}</div>', unsafe_allow_html=True)
+                            st.markdown(f'<div style="color:#E5E7EB;margin-top:0.5rem;margin-bottom:1rem;"> {summary_type} generated successfully and is ready for view or download.</div>', unsafe_allow_html=True)
+
+                            c1, c2 = st.columns([3,1])
+
+                            with c1:
+                                if st.button(f"📄 View {summary_type}", width="stretch"):
+                                    show_summary()
+                            
+                            with c2:
+                                st.download_button(
+                                    f"📥 Download {summary_type}",
+                                    st.session_state.ai_summary,
+                                    file_name="ai_summary.md",
+                                    mime="text/markdown",
+                                    width="stretch",
                                 )
-
-                                c1, c2 = st.columns([3,1])
-
-                                with c1:
-                                    if st.session_state.summary_type == "Full Report(Both)":
-                                        summary_type="Full Report"
-                                    else:
-                                        summary_type = st.session_state.summary_type
-
-                                    if st.button(f"View {summary_type}", width="stretch"):
-                                        show_summary()
-                                
-                                with c2:
-                                    st.download_button(
-                                        f"Download {summary_type}",
-                                        st.session_state.ai_summary,
-                                        file_name="ai_summary.md",
-                                        mime="text/markdown",
-                                        width="stretch"
-                                    )
 
                     else:
                         st.error("Failed to generate insights. Try again.")
