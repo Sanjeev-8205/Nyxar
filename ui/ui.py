@@ -952,7 +952,7 @@ def render_ai_intelligence():
                         st.toast("AI insights generated sucessfully.", icon="✅")
 
                         if st.session_state.ai_summary:
-                            with st.contianer(border=True):
+                            with st.container(border=True):
                                 st.markdown(
                                     f'<div style="padding:16px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));margin-bottom:1rem;"><div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;margin-bottom:10px;text-transform:uppercase;">Report Ready</div><div style="font-size:1rem;color:#E5E7EB;line-height:1.8;">{st.session_state.summary_type} generated successfully and is ready for review or download.</div></div>',
                                     unsafe_allow_html=True,
