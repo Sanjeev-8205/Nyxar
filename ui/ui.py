@@ -971,7 +971,7 @@ def render_ai_intelligence():
                     show_summary()
             
             with c2:
-                st.markdown("<div style='height:20px;'></div>", unsafe_allow_html=True)
+                st.markdown("<div style='height:35px;'></div>", unsafe_allow_html=True)
                 st.download_button(
                     f"📥 Download {summary_type}",
                     st.session_state.ai_summary,
