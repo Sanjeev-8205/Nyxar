@@ -439,3 +439,7 @@ def batch_ai_insight_card(insight):
     html = f'<div style="height:272.5px;display:flex;align-items:center;justify-content:center;margin-bottom:20px"><div style="width:88%;min-height:235px;background:linear-gradient(135deg,rgba(15,23,42,0.95),rgba(2,6,23,0.95));border:1px solid rgba(148,163,184,0.15);border-left:4px solid rgba(226,232,240,0.85);border-radius:18px;padding:1.75rem 2rem;box-shadow:0 0 20px rgba(226,232,240,0.05);display:flex;flex-direction:column;justify-content:center;"><div style="color:#F8FAFC;font-size:1rem;font-weight:700;margin-bottom:1rem;text-shadow:0 0 8px rgba(226,232,240,0.2);">✦ AI Insight Summary</div><div style="color:#E5E7EB;font-size:1.05rem;line-height:2;">{insight}</div></div></div>'
 
     st.markdown(html, unsafe_allow_html=True)
+
+def summary_description_card(title, description):
+    html = f'<div style="padding:16px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));margin-top:0.5rem;margin-bottom:1rem;"><div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;margin-bottom:10px;text-transform:uppercase;">{title}</div><div style="font-size:1rem;color:#E5E7EB;line-height:1.8;">{description}</div></div>'
+    st.markdown(html, unsafe_allow_html=True)

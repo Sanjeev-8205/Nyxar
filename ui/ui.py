@@ -17,7 +17,8 @@ from components import (metric_card, status_card, insights_card, platform_status
                         ai_insight_card, progress_bar_modified, batch_job_overview_header,
                         dataset_intelligence_card, prediction_distribution_card,
                         processing_analytics_card, processing_breakdown_card, 
-                        render_trace_placeholder_batch_inference, batch_trace_row, batch_trace_header, batch_ai_insight_card)
+                        render_trace_placeholder_batch_inference, batch_trace_row, batch_trace_header, batch_ai_insight_card,
+                        summary_description_card)
 
 #setting the page title
 st.set_page_config(
@@ -894,30 +895,49 @@ def render_ai_intelligence():
     #recommendation_container = st.container()
     
     with st.container(border=True):
-        if st.session_state.completed_job_data:
+        st.markdown("### Intelligence Control Center")
 
-            SUMMARY_MAPPING = {
-                "Executive Summary": "executive",
-                "Detailed Report": "detailed",
-                "Full Report(Both)": "full"
-            }
+        st.markdown('<div style="color:#9CA3AF;font-size:1rem;line-height:1.8;margin-top:-0.25rem;margin-bottom:1rem;">Choose the depth of analysis to generate from batch prediction results.</div>',unsafe_allow_html=True,)
 
-            selected_option = st.radio(
-                "Summary Type",
-                [
-                    "Executive Summary",
-                    "Detailed Report",
-                    "Full Report(Both)"
-                ],
-                horizontal=True,
-                help = "Executive: 30 seconds read | Detailed: Full Breakdown | Full: Both"
-            )
+        SUMMARY_MAPPING = {
+            "Executive Summary": "executive",
+            "Detailed Report": "detailed",
+            "Full Report(Both)": "full"
+        }
 
-            summary_type = SUMMARY_MAPPING[selected_option]
-            st.session_state.summary_type = selected_option
+        selected_option = st.radio(
+            "Summary Type",
+            [
+                "Executive Summary",
+                "Detailed Report",
+                "Full Report(Both)"
+            ],
+            horizontal=True,
+            help = "Executive: 30 seconds read | Detailed: Full Breakdown | Full: Both"
+        )
 
-            if st.button("Generate AI Insights"):
+        summary_type = SUMMARY_MAPPING[selected_option]
+        st.session_state.summary_type = selected_option
 
+        #Description of the summary types
+        descriptions = {
+            "Executive Summary":
+                "Quick overview of key findings, sentiment trends, and major themes (~30 second read).",
+
+            "Detailed Report":
+                "Comprehensive analysis of customer strengths, pain points, sentiment drivers, emerging themes, and strategic opportunities.",
+
+            "Full Report(Both)":
+                "Includes both the Executive Summary and Detailed Report for complete intelligence coverage."
+        }
+
+        summary_description_card(title=st.session_state.summary_type, description=descriptions[selected_option])
+
+        if st.button("Generate AI Insights"):
+            if not st.session_state.completed_job_data:
+                st.toast("Run a batch prediction before generating AI insights.", icon="⚠️")
+
+            else:
                 with st.spinner("Analyzing reviews with AI..."):
                     response = requests.get(
                         f"{BASE_URL}/batch/job/{st.session_state.job_id}/summary",
@@ -929,6 +949,7 @@ def render_ai_intelligence():
                         data = response.json()
 
                         st.session_state.ai_summary = data["summary"]
+                        st.toast("AI insights generated sucessfully.", icon="")
 
                     else:
                         st.error("Failed to generate insights. Try again.")
