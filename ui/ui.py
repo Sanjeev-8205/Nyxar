@@ -17,7 +17,7 @@ from components import (metric_card, status_card, insights_card, platform_status
                         ai_insight_card, progress_bar_modified, batch_job_overview_header,
                         dataset_intelligence_card, prediction_distribution_card,
                         processing_analytics_card, processing_breakdown_card, 
-                        render_trace_placeholder_batch_inference, batch_trace_row, batch_trace_header)
+                        render_trace_placeholder_batch_inference, batch_trace_row, batch_trace_header, batch_ai_insight_card)
 
 #setting the page title
 st.set_page_config(
@@ -874,7 +874,7 @@ def render_batch_intelligence():
 
             with placeholder.container():
                 if raw_insights:
-                    ai_insight_card(insight=raw_insights["insight"])
+                    batch_ai_insight_card(insight=raw_insights["insight"])
                 else:
                     st.markdown('<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Oops. Unexpected error occured</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Insights could not be generated.</div></div></div>', unsafe_allow_html=True)
 
