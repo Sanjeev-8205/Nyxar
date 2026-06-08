@@ -1,6 +1,7 @@
 from app.core.database import Base
 from sqlalchemy import Column, Float, String, Text, DateTime, Boolean, Integer, UniqueConstraint, ForeignKey
 from datetime import datetime, UTC
+from sqlalchemy.dialects.postgresql import JSON
 
 class BatchSummary(Base):
     __tablename__ = "batch_summaries"
@@ -11,7 +12,7 @@ class BatchSummary(Base):
 
     summary_type = Column(String, default="full")
 
-    summary = Column(Text)
+    summary = Column(JSON, nullable=True)
 
     provider = Column(String)
 

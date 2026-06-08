@@ -3,6 +3,7 @@ from google import genai
 from google.genai import types
 from groq import Groq
 import time
+import json
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -10,148 +11,443 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 groq_client = Groq(api_key=GROQ_API_KEY)
 
+BASE_PROMPT = """
+Your task is to analyze the provided dataset information, prediction distributions, batch analytics, and representative customer reviews and generate an evidence-based intelligence report.
+
+CRITICAL
+
+Treat the supplied data as the sole source of truth.
+
+Every insight, finding, conclusion, theme, risk, opportunity, and recommendation must be directly supported by the provided evidence.
+
+Do not use:
+
+* External knowledge
+* Industry assumptions
+* Market trends
+* Generic business advice
+* Prior training knowledge
+* Speculative reasoning
+
+Return ONLY valid JSON.
+
+PRIMARY OBJECTIVE
+
+Generate a business intelligence report that identifies meaningful patterns, strengths, concerns, opportunities, expectations, and risks present within the dataset.
+
+Focus on observed evidence rather than statistics alone.
+
+Representative reviews should be treated as the primary source for discovering customer behavior, recurring themes, strengths, concerns, and expectations.
+
+Prediction distributions and dataset metrics should be used only as supporting context.
+
+EXECUTIVE SUMMARY RULES
+
+The executive summary should:
+
+* Highlight the most important findings.
+* Describe the overall sentiment landscape.
+* Explain dominant customer perceptions.
+* Emphasize notable strengths and concerns.
+* Avoid simply repeating dataset statistics.
+
+DYNAMIC SECTION RULES
+
+Create sections dynamically based on observed patterns.
+
+Examples include:
+
+* Customer Strengths
+* Common Pain Points
+* Satisfaction Drivers
+* User Experience Insights
+* Emerging Themes
+* Customer Expectations
+* Feature Requests
+* Product Opportunities
+* Risk Indicators
+* Operational Concerns
+* Service Quality Insights
+* Performance & Reliability
+* Adoption & Engagement Signals
+* Pricing & Value Perception
+* Trust & Reputation Signals
+* Competitive Comparisons
+
+These are examples only.
+
+Create only sections supported by evidence.
+
+Do not force sections to match the examples.
+
+SECTION CONSTRUCTION RULES
+
+Each section must contain:
+
+* title
+* description
+* findings
+
+Descriptions should summarize the section theme.
+
+Each finding must:
+
+* Describe an observed pattern.
+* Explain why the pattern matters.
+* Be supported by multiple reviews whenever possible.
+* Be specific and evidence-based.
+* Avoid generic observations.
+* Avoid repetition.
+
+Weak Example:
+
+"Customers like product quality."
+
+Strong Example:
+
+"Positive reviews repeatedly highlight reliability and consistent performance, suggesting dependable operation is a major contributor to customer satisfaction."
+
+REVIEW ANALYSIS RULES
+
+Use representative reviews as the primary source for:
+
+* Strengths
+* Complaints
+* Themes
+* Expectations
+* Requests
+* Risks
+* Opportunities
+
+Identify recurring patterns across multiple reviews.
+
+Do not create findings from isolated comments unless the pattern appears repeatedly.
+
+Do not infer motivations, intentions, or business impact unless clearly supported by the reviews.
+
+SECTION SELECTION RULES
+
+Create sections only when supported by evidence.
+
+If evidence is limited:
+
+* Generate fewer sections.
+* Do not invent findings.
+* Do not fabricate opportunities, risks, or requests.
+
+Prefer multiple focused sections over combining unrelated findings.
+
+Keep strengths, weaknesses, opportunities, expectations, and risks logically separated.
+
+DEDUPLICATION RULES
+
+Do not repeat findings.
+
+A finding may appear only once in the report.
+
+Avoid rewording the same observation across multiple sections.
+
+Each section should provide unique analytical value.
+
+RECOMMENDATION RULES
+
+Recommendations must:
+
+* Be directly connected to findings.
+* Address significant concerns or opportunities.
+* Be practical and evidence-based.
+* Prioritize high-impact actions.
+
+Do not generate recommendations unsupported by the supplied data.
+
+REPORT METADATA RULES
+
+Generate:
+
+* dominant_sentiment
+* analysis_scope
+* evidence_source
+
+OPPORTUNITY IDENTIFICATION RULES
+
+Opportunities must emerge from:
+
+* Repeated customer requests
+* Unmet expectations
+* Recurring pain points
+* Frequently praised strengths that could be amplified
+
+Do not create opportunities based on hypothetical business strategies.
+
+RISK IDENTIFICATION RULES
+
+Risks must be directly observable from:
+
+* Recurring negative feedback
+* Declining sentiment patterns
+* Repeated complaints
+* Trust concerns
+* Reliability concerns
+* Service failures
+
+Do not infer financial, legal, compliance, or market risks unless explicitly supported by the provided data.
+
+SECTION DIVERSITY RULES
+
+Each section must represent a distinct analytical dimension.
+
+Do not create multiple sections that describe substantially similar themes.
+
+Merge overlapping themes into a single section.
+
+Prefer breadth of insight over repeating variations of the same observation.
+
+FINAL VALIDATION
+
+Before generating the report:
+
+1. Verify every finding is supported by the supplied evidence.
+2. Remove unsupported findings.
+3. Remove duplicate findings.
+4. Remove overlapping sections.
+5. Ensure all recommendations are traceable to report findings.
+6. Ensure the output conforms exactly to the provided JSON schema.
+
+OUTPUT REQUIREMENTS
+
+* Return valid JSON only.
+* Do not return markdown.
+* Do not return code blocks.
+* Do not return explanations.
+* Do not return commentary.
+* Do not return fields outside the schema.
+"""
+
 EXECUTIVE_PROMPT = """
-You are an AI review intelligence analyst.
+{BASE}
 
-Analyze the following reviews grouped by sentiment.
-The reviews may belong to any domain such as products, apps, movies, games, services, software, restaurants, books, or digital platforms.
+REPORT MODE: EXECUTIVE SUMMARY
 
-POSITIVE REVIEWS:
-{positive_reviews}
+You are an Enterprise AI Intelligence Engine responsible for converting large-scale sentiment prediction results into structured business intelligence reports.
 
-NEGATIVE REVIEWS:
-{negative_reviews}
+Your task is to analyze the provided dataset information, prediction distributions, batch analytics, and representative customer reviews and generate an executive-ready intelligence report for display within an analytics dashboard.
 
-NEUTRAL REVIEWS:
-{neutral_reviews}
+CRITICAL:
+Treat the supplied data as the sole source of truth.
 
-Generate this structure exactly:
+Every insight, finding, conclusion, theme, risk, opportunity, and recommendation must be directly supported by the provided evidence.
 
-# EXECUTIVE SUMMARY
+Do not use:
 
-## Overall Sentiment
-Summarize the overall sentiment in 2 concise sentences.
+* External knowledge
+* Industry assumptions
+* Market trends
+* Generic business advice
+* Prior training knowledge
+* Speculative reasoning
 
-## Key Signals
-- Dominant sentiment
-- Satisfaction level
-- Urgency level
+Return ONLY valid JSON.
 
-## Top Positive Theme
-Identify the strongest recurring positive pattern.
+JSON Schema:
 
-## Top Negative Theme
-Identify the most common complaint or issue.
+{
+    "executive_summary": "string",
+    "sections": [
+        {
+            "title": "string",
+            "description": "string",
+            "importance": "high|medium|low",
+            "items": ["string"]
+        }
+    ],
+    "recommendations": ["string"],
+    "report_metadata": {
+        "dominant_sentiment": "string",
+        "analysis_scope": "string",
+        "evidence_source": "string",
+        "reviews_analyzed": "string",
+        "analysis_mode": "executive|detailed|full"
+    }
+}
 
-## Recommended Action
-Provide the single most important improvement recommendation.
+REPORT REQUIREMENTS:
 
-Requirements:
-- Be concise and insight-focused
-- Use professional language
-- Reference recurring review patterns
-- Adapt naturally to the review domain
-- Avoid unnecessary explanation
+* Generate 3 to 4 sections.
+* Maximum 3 findings per section.
+* Executive summary maximum 150 words.
+* Generate exactly 3 recommendations.
+* Focus only on the most important findings.
+* Prioritize readability over depth.
+* Suitable for a 30-second executive review.
+
+Dataset Information:
+{DATASET_CONTEXT}
+
+Prediction Distribution:
+{PREDICTION_DISTRIBUTION}
+
+Representative Positive Reviews:
+{TOP_POSITIVE_REVIEWS}
+
+Representative Neutral Reviews:
+{TOP_NEUTRAL_REVIEWS}
+
+Representative Negative Reviews:
+{TOP_NEGATIVE_REVIEWS}
 """
 
 DETAILED_PROMPT = """
-You are an AI review intelligence analyst.
+{BASE}
 
-Analyze the following reviews grouped by sentiment.
-The reviews may belong to any domain or category.
+REPORT MODE: DETAILED ANALYSIS
 
-POSITIVE REVIEWS:
-{positive_reviews}
+You are an Enterprise AI Intelligence Engine responsible for converting large-scale sentiment prediction results into structured business intelligence reports.
 
-NEGATIVE REVIEWS:
-{negative_reviews}
+Return ONLY valid JSON.
 
-NEUTRAL REVIEWS:
-{neutral_reviews}
+JSON Schema:
 
-Generate this structure exactly:
+{
+    "executive_summary": "string",
 
-# DETAILED REPORT
+    "sections": [
+        {
+            "title": "string",
+            "description": "string",
+            "items": ["string"]
+        }
+    ],
 
-## Best Performing Aspect
-Describe the strongest recurring positive experience or feature.
+    "recommendations": ["string"],
 
-## Positive Themes
-Provide 3-5 recurring positive patterns.
+    "report_metadata": {
+        "dominant_sentiment": "string",
+        "analysis_scope": "string",
+        "evidence_source": "string",
+        "reviews_analyzed": "string",
+        "analysis_mode": "executive|detailed|full"
+    }
+}
 
-## Negative Themes
-Provide 3-5 recurring complaints or frustrations.
+REPORT REQUIREMENTS:
 
-## Biggest Pain Point
-Describe the most damaging recurring issue.
+* Generate 5 to 8 sections.
+* Generate 4 to 6 findings per section.
+* Executive summary maximum 150 words.
+* Generate 4 to 6 recommendations.
+* Separate strengths, concerns, risks, opportunities, and expectations whenever supported by evidence.
+* Identify recurring themes across review samples.
+* Provide richer explanations.
+* Emphasize evidence-based pattern recognition.
+* Suitable for analyst-level review.
 
-## Improvement Opportunities
-Provide 3 actionable recommendations.
+Dataset Information:
+{DATASET_CONTEXT}
 
-## Priority Focus Areas
-Rank the top 3 improvement areas by impact.
+Prediction Distribution:
+{PREDICTION_DISTRIBUTION}
 
-Requirements:
-- Be concise but analytical
-- Avoid generic statements
-- Adapt naturally to the review domain
-- Reference recurring patterns from reviews
-- Keep recommendations practical and specific
+Representative Positive Reviews:
+{TOP_POSITIVE_REVIEWS}
+
+Representative Neutral Reviews:
+{TOP_NEUTRAL_REVIEWS}
+
+Representative Negative Reviews:
+{TOP_NEGATIVE_REVIEWS}
 """
 
 FULL_PROMPT = """
-You are an AI review intelligence analyst.
+{BASE}
 
-Analyze the following reviews grouped by sentiment.
-The reviews may belong to any domain such as products, apps, movies, games, software, services, restaurants, books, or digital platforms.
+REPORT MODE: FULL INTELLIGENCE REPORT
 
-POSITIVE REVIEWS:
-{positive_reviews}
+You are an Enterprise AI Intelligence Engine responsible for converting large-scale sentiment prediction results into structured business intelligence reports.
 
-NEGATIVE REVIEWS:
-{negative_reviews}
+Return ONLY valid JSON.
 
-NEUTRAL REVIEWS:
-{neutral_reviews}
+JSON Schema:
 
-Generate this structure exactly:
+{
+    "executive_summary": "string",
 
-# FULL REVIEW REPORT
+    "sections": [
+        {
+            "title": "string",
+            "description": "string",
+            "items": ["string"],
+            "importance": "high|medium|low"
+        }
+    ],
 
-## Overall Sentiment
-Summarize the overall customer/user sentiment in 2-3 concise paragraphs.
+    "recommendations": ["string"],
 
-## Key Positive Themes
-Provide 4-6 recurring positive themes observed in reviews.
+    "opportunity_assessment": {
+        "potential": "Low|Moderate|High",
+        "summary": "string",
+        "opportunities": ["string"]
+    },
 
-## Key Negative Themes
-Provide 4-6 recurring complaints or frustrations.
+    "risk_assessment": {
+        "severity": "Low|Moderate|High|Critical",
+        "summary": "string",
+        "risks": ["string"]
+    },
 
-## Most Significant Strength
-Describe the strongest positive recurring pattern.
+    "confidence_assessment": {
+        "confidence_level": "High|Medium|Low",
+        "confidence_rationale": "string"
+    },
 
-## Biggest Pain Point
-Describe the most damaging recurring issue.
+    "report_metadata": {
+        "dominant_sentiment": "string",
+        "analysis_scope": "string",
+        "evidence_source": "string",
+        "reviews_analyzed": "string",
+        "analysis_mode": "executive|detailed|full"
+    }
+}
 
-## Recommended Improvements
-Provide 4 practical improvement recommendations.
+REPORT REQUIREMENTS:
 
-## Priority Focus Areas
-Rank the top 3 areas needing immediate attention.
+* Generate 6 to 10 sections.
+* Generate 5 to 8 findings per section.
+* Executive summary maximum 200 words.
+* Generate 5 to 8 recommendations.
 
-## Customer/User Behavior Pattern
-Describe the major behavioral or expectation trends reflected in the reviews.
+Additionally generate:
 
-## Risk Assessment
-Identify the biggest long-term risk or concern suggested by the review patterns.
+1. Opportunity Assessment
+2. Risk Assessment
+3. Confidence Assessment
 
-Requirements:
-- Be concise but analytical
-- Adapt naturally to the review domain
-- Avoid repetitive wording
-- Reference recurring review patterns
-- Keep insights practical and actionable
-- Avoid unnecessary explanation
+Opportunity Assessment:
+Identify evidence-supported growth opportunities.
+
+Risk Assessment:
+Identify evidence-supported concerns and recurring negative patterns.
+
+Confidence Assessment:
+Evaluate how strongly the provided reviews support the generated findings.
+
+Provide deep thematic synthesis.
+
+The report should resemble an enterprise Voice-of-Customer intelligence report rather than a sentiment summary.
+
+Dataset Information:
+{DATASET_CONTEXT}
+
+Prediction Distribution:
+{PREDICTION_DISTRIBUTION}
+
+Representative Positive Reviews:
+{TOP_POSITIVE_REVIEWS}
+
+Representative Neutral Reviews:
+{TOP_NEUTRAL_REVIEWS}
+
+Representative Negative Reviews:
+{TOP_NEGATIVE_REVIEWS}
 """
 
 def truncate_reviews(text, max_words=120):
@@ -170,7 +466,7 @@ def estimate_tokens(text):
 
     return int(words*1.3)
 
-def build_prompt(positive_reviews, neutral_reviews, negative_reviews, summary_type):
+def build_prompt(positive_reviews, neutral_reviews, negative_reviews, summary_type, dataset_context, prediction_distribution, base_prompt):
     if summary_type == "executive":
         template = EXECUTIVE_PROMPT
     elif summary_type == "detailed":
@@ -179,24 +475,28 @@ def build_prompt(positive_reviews, neutral_reviews, negative_reviews, summary_ty
         template = FULL_PROMPT
 
     return template.format(
-        positive_reviews=format_reviews(positive_reviews),
-        negative_reviews=format_reviews(negative_reviews),
-        neutral_reviews=format_reviews(neutral_reviews)
+        DATASET_CONTEXT = dataset_context,
+        PREDICTION_DISTRIBUTION = prediction_distribution,
+        TOP_POSITIVE_REVIEWS = positive_reviews,
+        TOP_NEGATIVE_REVIEWS = negative_reviews,
+        TOP_NEUTRAL_REVIEWS = neutral_reviews,
+        BASE = BASE_PROMPT
     )
 
 def generate_with_gemini(prompt, summary_type):
     if summary_type=="executive":
-        max_tok = 1000
+        max_tok = 3000
     elif summary_type=="detailed":
-        max_tok = 2600
+        max_tok = 6000
     else:
-        max_tok = 3800
+        max_tok = 8000
 
     response = gemini_client.models.generate_content(
         model = "gemini-3.1-flash-lite",
-        contents = prompt,
+        contents = types.Part.from_text(text=prompt),
         config = types.GenerateContentConfig(
-            max_output_tokens=max_tok
+            max_output_tokens=max_tok,
+            response_mime_type="application/json"
         )
     )
     
@@ -213,7 +513,7 @@ def generate_with_gemini(prompt, summary_type):
     thought_tokens = usage.thoughts_token_count
 
     return {
-        "summary": response.text.strip(), 
+        "insights": json.loads(response.text), 
         "provider":f"gemini/gemini-3.1-flash-lite", 
         "input_tokens": input_tokens,
         "output_tokens": output_tokens,
@@ -223,11 +523,11 @@ def generate_with_gemini(prompt, summary_type):
 
 def generate_with_groq(prompt, summary_type):
     if summary_type=="executive":
-        max_tok = 1000
-    elif summary_type=="detailed":
         max_tok = 3000
+    elif summary_type=="detailed":
+        max_tok = 6000
     else:
-        max_tok = 4200
+        max_tok = 8000
 
     response = groq_client.chat.completions.create(
         model = "meta-llama/llama-4-scout-17b-16e-instruct",
@@ -237,12 +537,14 @@ def generate_with_groq(prompt, summary_type):
                 "content":prompt
             }
         ],
-        max_tokens = max_tok
+        max_tokens = max_tok,
+        response_format = {"type": "json_object"}
     )
 
+    content = response.choices[0].message.content
     print(response.usage)
     return {
-        "summary": response.choices[0].message.content, 
+        "insights": json.loads(content) if isinstance(content, str) else content,
         "provider": f"groq/{response.model}",
         "output_tokens": response.usage.completion_tokens,
         "input_tokens": response.usage.prompt_tokens,
@@ -250,7 +552,7 @@ def generate_with_groq(prompt, summary_type):
         "thoughts_tokens": None
     }
 
-def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, summary_type="full"):
+def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, dataset_context, prediction_distribution, summary_type="full"):
     positive_reviews = positive_reviews[:50]
     neutral_reviews = neutral_reviews[:50]
     negative_reviews = negative_reviews[:50]
@@ -263,7 +565,10 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
         positive_reviews=positive_reviews,
         neutral_reviews=neutral_reviews,
         negative_reviews=negative_reviews,
-        summary_type=summary_type
+        summary_type=summary_type,
+        dataset_context=dataset_context,
+        prediction_distribution = prediction_distribution,
+        base_prompt=BASE_PROMPT
     )
 
     estimated_tokens = estimate_tokens(prompt)
@@ -277,7 +582,7 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
         latency = round(time.perf_counter() - start_time, 2)
 
         return {
-            "summary": gemini_results["summary"],
+            "summary": gemini_results["insights"],
             "provider": gemini_results["provider"],
             "fallback_used": False,
             "fallback_reason": None,
@@ -301,7 +606,7 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, sum
             latency = round(time.perf_counter() - start_time, 2)
 
             return {
-                "summary": groq_results["summary"],
+                "summary": groq_results["insights"],
                 "provider": groq_results["provider"],
                 "fallback_used": True,
                 "fallback_reason": str(gemini_error),
