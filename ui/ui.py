@@ -961,7 +961,7 @@ def render_ai_intelligence():
                 summary_type = st.session_state.summary_type
 
             st.divider()
-            st.markdown(f'<div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;text-transform:uppercase;">{summary_type}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;text-transform:uppercase;">REPORT GENERATED</div>', unsafe_allow_html=True)
             st.markdown(f'<div style="color:#E5E7EB;margin-top:0.5rem;margin-bottom:0rem;"> {summary_type} generated successfully and is ready for view or download.</div>', unsafe_allow_html=True)
 
             c1, c2 = st.columns(2)
