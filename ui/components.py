@@ -482,3 +482,51 @@ def render_recommendations_card(recommendations):
 def render_metadata_card(metadata):
 
     st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:1.5rem;"><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1.5rem;">Intelligence Metadata</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;"><div><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;">Dominant Sentiment</div><div style="color:#F3F4F6;font-weight:600;margin-top:0.3rem;">{metadata['dominant_sentiment']}</div></div><div><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;">Analysis Scope</div><div style="color:#F3F4F6;font-weight:600;margin-top:0.3rem;">{metadata['analysis_scope']}</div></div><div><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;">Evidence Source</div><div style="color:#F3F4F6;font-weight:600;margin-top:0.3rem;">{metadata['evidence_source']}</div></div><div><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;">Reviews Analyzed</div><div style="color:#F3F4F6;font-weight:600;margin-top:0.3rem;">{metadata['reviews_analyzed']}</div></div><div><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;">Report Mode</div><div style="color:#F3F4F6;font-weight:600;margin-top:0.3rem;">{metadata['analysis_mode']}</div></div></div></div>""", unsafe_allow_html=True)
+
+def render_opportunity_assessment(assessment):
+
+    potential = assessment["potential"]
+
+    potential_color = {
+        "High": "#22C55E",
+        "Moderate": "#EAB308",
+        "Low": "#6B7280"
+    }.get(potential, "#22C55E")
+
+    opportunities_html = ""
+
+    for item in assessment["opportunities"]:
+        opportunities_html += f"""<div style="color:#E5E7EB;margin-bottom:0.8rem;line-height:1.8;">• {item}</div>"""
+
+    st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-left:4px solid {potential_color};border-radius:20px;padding:1.5rem;margin-bottom:1rem;"><div style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.05);color:{potential_color};font-size:0.75rem;font-weight:600;margin-bottom:1rem;">{potential} Potential</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:0.8rem;">Opportunity Assessment</div><div style="color:#9CA3AF;font-size:0.95rem;line-height:1.8;margin-bottom:1.2rem;">{assessment['summary']}</div>{opportunities_html}</div>""", unsafe_allow_html=True)
+
+def render_risk_assessment(assessment):
+
+    severity = assessment["severity"]
+
+    severity_color = {
+        "Low": "#22C55E",
+        "Moderate": "#EAB308",
+        "High": "#F97316",
+        "Critical": "#EF4444"
+    }.get(severity, "#EF4444")
+
+    risks_html = ""
+
+    for item in assessment["risks"]:
+        risks_html += f"""<div style="color:#E5E7EB;margin-bottom:0.8rem;line-height:1.8;">• {item}</div>"""
+
+    st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-left:4px solid {severity_color};border-radius:20px;padding:1.5rem;margin-bottom:1rem;"><div style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.05);color:{severity_color};font-size:0.75rem;font-weight:600;margin-bottom:1rem;">{severity} Severity</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:0.8rem;">Risk Assessment</div><div style="color:#9CA3AF;font-size:0.95rem;line-height:1.8;margin-bottom:1.2rem;">{assessment['summary']}</div>{risks_html}</div>""", unsafe_allow_html=True)
+
+def render_confidence_assessment(assessment):
+
+    confidence = assessment["confidence_level"]
+
+    confidence_color = {
+        "High": "#22C55E",
+        "Medium": "#EAB308",
+        "Low": "#EF4444"
+    }.get(confidence, "#22C55E")
+
+    st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-left:4px solid {confidence_color};border-radius:20px;padding:1.5rem;margin-bottom:1rem;"><div style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.05);color:{confidence_color};font-size:0.75rem;font-weight:600;margin-bottom:1rem;">{confidence} Confidence</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:0.8rem;">Confidence Assessment</div><div style="color:#9CA3AF;font-size:0.95rem;line-height:1.8;">{assessment['confidence_rationale']}</div></div>""", unsafe_allow_html=True)
+    

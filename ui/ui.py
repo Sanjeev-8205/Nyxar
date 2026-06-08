@@ -18,7 +18,8 @@ from components import (metric_card, status_card, insights_card, platform_status
                         dataset_intelligence_card, prediction_distribution_card,
                         processing_analytics_card, processing_breakdown_card, 
                         render_trace_placeholder_batch_inference, batch_trace_row, batch_trace_header, batch_ai_insight_card,
-                        summary_description_card, render_section_card, render_intelligence_sections, render_recommendations_card, render_metadata_card)
+                        summary_description_card, render_section_card, render_intelligence_sections, render_recommendations_card, render_metadata_card,
+                        render_opportunity_assessment, render_risk_assessment, render_confidence_assessment)
 
 #setting the page title
 st.set_page_config(
@@ -997,6 +998,12 @@ def render_ai_intelligence():
                 st.error("Response timed out. No response from the server.")
 
             render_intelligence_sections(summary_data["sections"])
+
+            if st.session_state.summary_type == "Full Report(Both)":
+                render_opportunity_assessment(summary_data["opportunity_assessment"])
+                render_risk_assessment(summary_data["risk_assesssment"])
+                render_confidence_assessment(summary_data["confidence_assessment"])
+
             render_recommendations_card(summary_data["recommendations"])
             render_metadata_card(summary_data["report_metadata"])
 
