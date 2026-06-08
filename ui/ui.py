@@ -989,7 +989,7 @@ def render_ai_intelligence():
 
     else:
         with st.container(border=True):
-            response = requests.get(f"/batch/job/{st.session_state.job_id}/summary")
+            response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}/summary")
 
             if response.status_code == 200:
                 data=response.json()
