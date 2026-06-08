@@ -43,7 +43,7 @@ def generate_summary(
 
     pred_dist=(
         db.query(BatchResult.prediction.label("sentiment"),
-        func.count(BatchResult.id).label("count"))
+        func.count(BatchResult.id).label("countings"))
         .filter(BatchResult.job_id == job_id)
         .group_by(BatchResult.prediction)
         .order_by(BatchResult.prediction.desc()).all()
@@ -72,7 +72,7 @@ def generate_summary(
 
     sentiments_mapping = {"0": "Negative", "1": "Neutral", "2": "Positive"}
     pred_distribution = {
-        sentiments_mapping[row.sentiment]: row.count()
+        sentiments_mapping[row.sentiment]: row.countings
         for row in pred_dist
     }
 
