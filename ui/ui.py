@@ -18,7 +18,7 @@ from components import (metric_card, status_card, insights_card, platform_status
                         dataset_intelligence_card, prediction_distribution_card,
                         processing_analytics_card, processing_breakdown_card, 
                         render_trace_placeholder_batch_inference, batch_trace_row, batch_trace_header, batch_ai_insight_card,
-                        summary_description_card)
+                        summary_description_card, render_section_card, render_intelligence_sections, render_recommendations_card, render_metadata_card)
 
 #setting the page title
 st.set_page_config(
@@ -948,7 +948,7 @@ def render_ai_intelligence():
                     if response.status_code == 200:
                         data = response.json()
 
-                        st.session_state.ai_summary = data["summary"]
+                        st.session_state.ai_summary = data["summary"]["executive_summary"]
                         st.toast("AI insights generated sucessfully.", icon="✅")
 
                     else:
@@ -971,7 +971,7 @@ def render_ai_intelligence():
                     show_summary()
             
             with c2:
-                st.markdown("<div style='height:27.2px;'></div>", unsafe_allow_html=True)
+                st.markdown("<div style='height:27.4px;'></div>", unsafe_allow_html=True)
                 st.download_button(
                     f"📥 Download {summary_type}",
                     st.session_state.ai_summary,
@@ -987,7 +987,18 @@ def render_ai_intelligence():
 
     else:
         with st.container(border=True):
-            st.markdown("""<div style="min-height:320px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="font-size:2rem;margin-bottom:1rem;filter:drop-shadow(0 0 10px rgba(255,255,255,0.2));">🧠</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Coming Soon</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;max-width:650px;">Feature is not available yet.<br><br>Please, wait patiently for this feature.</div></div></div>""", unsafe_allow_html=True)
+            response = requests.get(f"/batch/job/{st.session_state.job_id}/summary")
+
+            if response.status_code == 200:
+                data=response.json()
+                summary_data = data["summary"]
+
+            else:
+                st.error("Response timed out. No response from the server.")
+
+            render_intelligence_sections(summary_data["sections"])
+            render_recommendations_card(summary_data["recommendations"])
+            render_metadata_card(summary_data["report_metadata"])
 
 def render_observability():
 
