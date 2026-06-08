@@ -45,7 +45,7 @@ def generate_summary(
         db.query(BatchResult.prediction.label("sentiment"),
         func.count(BatchResult.id).label("count"))
         .filter(BatchResult.job_id == job_id)
-        .groupby(BatchResult.prediction)
+        .group_by(BatchResult.prediction)
         .order_by(BatchResult.prediction.desc()).all()
     )
 
