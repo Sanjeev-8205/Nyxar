@@ -1005,7 +1005,7 @@ def render_ai_intelligence():
                 with c1:
                     render_opportunity_assessment(summary_data["opportunity_assessment"])
                 with c2:
-                    render_risk_assessment(summary_data["risk_assesssment"])
+                    render_risk_assessment(summary_data["risk_assessment"])
                 render_confidence_assessment(summary_data["confidence_assessment"])
 
             render_recommendations_card(summary_data["recommendations"])
