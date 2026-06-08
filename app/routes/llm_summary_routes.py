@@ -58,7 +58,7 @@ def generate_summary(
     if existing_summary:
         return {
             "cached": True,
-            "summary": existing_summary.summary.get("executive_summary"),
+            "summary": existing_summary.summary,
             "sections": existing_summary.summary.get("sections"),
             "recommendations": existing_summary.summary.get("recommendations"),
             "risk_assessment": existing_summary.summary.get("risk_assessment"),
@@ -96,6 +96,7 @@ def generate_summary(
     )
 
     summary = results["summary"]
+    print(f"AI response keys: {summary.keys()}")
 
     new_summary = BatchSummary(
         job_id = job_id,
