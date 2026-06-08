@@ -982,7 +982,7 @@ def render_ai_intelligence():
 
     
     if not st.session_state.ai_summary:
-        with st.contianer(border=True):
+        with st.container(border=True):
             st.markdown("""<div style="min-height:320px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="font-size:2rem;margin-bottom:1rem;filter:drop-shadow(0 0 10px rgba(255,255,255,0.2));">🧠</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting Intelligence Generation</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;max-width:650px;">Generate an AI-powered intelligence report from completed batch analysis.<br><br>The report will automatically organize findings into relevant analytical sections and provide structured insights based on the observed patterns within the dataset.</div></div></div>""", unsafe_allow_html=True)
 
     else:
