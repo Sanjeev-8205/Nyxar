@@ -1000,8 +1000,11 @@ def render_ai_intelligence():
             render_intelligence_sections(summary_data["sections"])
 
             if st.session_state.summary_type == "Full Report(Both)":
-                render_opportunity_assessment(summary_data["opportunity_assessment"])
-                render_risk_assessment(summary_data["risk_assesssment"])
+                c1, c2 = st.columns(2)
+                with c1:
+                    render_opportunity_assessment(summary_data["opportunity_assessment"])
+                with c2:
+                    render_risk_assessment(summary_data["risk_assesssment"])
                 render_confidence_assessment(summary_data["confidence_assessment"])
 
             render_recommendations_card(summary_data["recommendations"])
