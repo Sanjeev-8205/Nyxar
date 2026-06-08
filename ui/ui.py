@@ -882,59 +882,88 @@ def render_ai_intelligence():
 
     dashboard_metrics = st.session_state.dashboard_metrics
 
-    hero_header("AI Intelligence")
-    hero_subtext("Generate LLM-powered summaries, topic insights, anomaly detection, and enterprise-scale feedback intelligence.")
+    @st.dialog("AI Intelligence Summary", width="large")
+    def show_summary():
+        st.markdown(st.session_state.ai_summary)
+
+    with st.container(border=True):
+        hero_header("AI Intelligence")
+        hero_subtext("Generate LLM-powered summaries, topic insights, and enterprise-scale feedback intelligence.")
 
     #telemetry_container = st.container()
     #recommendation_container = st.container()
     
-    if st.session_state.completed_job_data:
+    with st.container(border=True):
+        if st.session_state.completed_job_data:
 
-        SUMMARY_MAPPING = {
-            "Executive Summary": "executive",
-            "Detailed Report": "detailed",
-            "Full Report(Both)": "full"
-        }
+            SUMMARY_MAPPING = {
+                "Executive Summary": "executive",
+                "Detailed Report": "detailed",
+                "Full Report(Both)": "full"
+            }
 
-        selected_option = st.radio(
-            "Summary Type",
-            [
-                "Executive Summary",
-                "Detailed Report",
-                "Full Report(Both)"
-            ],
-            horizontal=True,
-            help = "Executive: 30 seconds read | Detailed: Full Breakdown | Full: Both"
-        )
+            selected_option = st.radio(
+                "Summary Type",
+                [
+                    "Executive Summary",
+                    "Detailed Report",
+                    "Full Report(Both)"
+                ],
+                horizontal=True,
+                help = "Executive: 30 seconds read | Detailed: Full Breakdown | Full: Both"
+            )
 
-        summary_type = SUMMARY_MAPPING[selected_option]
+            summary_type = SUMMARY_MAPPING[selected_option]
 
-        if st.button("Generate AI Insights"):
+            if st.button("Generate AI Insights"):
 
-            with st.spinner("Analyzing reviews with AI..."):
-                response = requests.get(
-                    f"{BASE_URL}/batch/job/{st.session_state.job_id}/summary",
-                    params={"summary_type":summary_type},
-                    timeout=120
+                with st.spinner("Analyzing reviews with AI..."):
+                    response = requests.get(
+                        f"{BASE_URL}/batch/job/{st.session_state.job_id}/summary",
+                        params={"summary_type":summary_type},
+                        timeout=120
+                    )
+
+                    if response.status_code == 200:
+                        data = response.json()
+
+                        st.session_state.ai_summary = data["summary"]
+
+                    else:
+                        st.error("Failed to generate insights. Try again.")
+
+    with st.container(border=True):           
+        if not st.session_state.completed_job_data:
+            st.markdown(
+                '<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;text-align:center;">No Batch Prediction Results Available</div>'
+                '<div style="color:#9CA3AF;font-size:0.92rem;text-align:center;">Run a batch prediction to generate results before AI insights can be created.</div>',
+                unsafe_allow_html=True,
+            )
+
+        elif st.session_state.ai_summary:
+            c1, c2 = st.columns([3,1])
+
+            with c1:
+                if summary_type == "Full Report(Both)":
+                    summary_type="Full Report"
+
+                if st.button(f"View {summary_type}"):
+                    show_summary()
+            
+            with c2:
+                st.download_button(
+                    f"Download {summary_type}",
+                    st.session_state.ai_summary,
+                    file_name="ai_summary.md",
+                    mime="text/markdown",
                 )
 
-                if response.status_code == 200:
-                    data = response.json()
-
-                    st.session_state.ai_summary = data["summary"]
-
-                else:
-                    st.error("Failed to generate insights. Try again.")
-
-        if st.session_state.ai_summary:
-            summary_container = st.empty()
-            with summary_container.container(height=500):
-                st.caption("AI Summary")
-                with st.expander("View AI Summary", expanded=True):
-                    st.markdown(st.session_state.ai_summary)
-
-    if not st.session_state.completed_job_data:
-        st.markdown("### Perform batch prediction in the Batch Intelligence Page to enable insights generation.")
+        else:
+            st.markdown(
+                '<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;text-align:center;">Insights Ready to Generate</div>'
+                '<div style="color:#9CA3AF;font-size:0.92rem;text-align:center;">Prediction results are available. Generate AI-powered insights to identify strengths, pain points, themes, sentiment drivers, and strategic opportunities.</div>',
+                unsafe_allow_html=True,
+            )
 
 def render_observability():
 
