@@ -250,25 +250,25 @@ Return ONLY valid JSON.
 
 JSON Schema:
 
-{
+{{
     "executive_summary": "string",
     "sections": [
-        {
+        {{
             "title": "string",
             "description": "string",
             "importance": "high|medium|low",
             "items": ["string"]
-        }
+        }}
     ],
     "recommendations": ["string"],
-    "report_metadata": {
+    "report_metadata": {{
         "dominant_sentiment": "string",
         "analysis_scope": "string",
         "evidence_source": "string",
         "reviews_analyzed": "string",
         "analysis_mode": "executive|detailed|full"
-    }
-}
+    }}
+}}
 
 REPORT REQUIREMENTS:
 
@@ -307,27 +307,27 @@ Return ONLY valid JSON.
 
 JSON Schema:
 
-{
+{{
     "executive_summary": "string",
 
     "sections": [
-        {
+        {{
             "title": "string",
             "description": "string",
             "items": ["string"]
-        }
+        }}
     ],
 
     "recommendations": ["string"],
 
-    "report_metadata": {
+    "report_metadata": {{
         "dominant_sentiment": "string",
         "analysis_scope": "string",
         "evidence_source": "string",
         "reviews_analyzed": "string",
         "analysis_mode": "executive|detailed|full"
-    }
-}
+    }}
+}}
 
 REPORT REQUIREMENTS:
 
@@ -368,45 +368,45 @@ Return ONLY valid JSON.
 
 JSON Schema:
 
-{
+{{
     "executive_summary": "string",
 
     "sections": [
-        {
+        {{
             "title": "string",
             "description": "string",
             "items": ["string"],
             "importance": "high|medium|low"
-        }
+        }}
     ],
 
     "recommendations": ["string"],
 
-    "opportunity_assessment": {
+    "opportunity_assessment": {{
         "potential": "Low|Moderate|High",
         "summary": "string",
         "opportunities": ["string"]
-    },
+    }},
 
-    "risk_assessment": {
+    "risk_assessment": {{
         "severity": "Low|Moderate|High|Critical",
         "summary": "string",
         "risks": ["string"]
-    },
+    }},
 
-    "confidence_assessment": {
+    "confidence_assessment": {{
         "confidence_level": "High|Medium|Low",
         "confidence_rationale": "string"
-    },
+    }},
 
-    "report_metadata": {
+    "report_metadata": {{
         "dominant_sentiment": "string",
         "analysis_scope": "string",
         "evidence_source": "string",
         "reviews_analyzed": "string",
         "analysis_mode": "executive|detailed|full"
-    }
-}
+    }}
+}}
 
 REPORT REQUIREMENTS:
 
