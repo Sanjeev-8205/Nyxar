@@ -951,33 +951,33 @@ def render_ai_intelligence():
                         st.session_state.ai_summary = data["summary"]
                         st.toast("AI insights generated sucessfully.", icon="✅")
 
-                        if st.session_state.ai_summary:
-                            if st.session_state.summary_type == "Full Report(Both)":
-                                summary_type="Full Report"
-                            else:
-                                summary_type = st.session_state.summary_type
-
-                            st.divider()
-                            st.markdown(f'<div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;text-transform:uppercase;">{summary_type}</div>', unsafe_allow_html=True)
-                            st.markdown(f'<div style="color:#E5E7EB;margin-top:0.5rem;margin-bottom:1rem;"> {summary_type} generated successfully and is ready for view or download.</div>', unsafe_allow_html=True)
-
-                            c1, c2 = st.columns([3,1])
-
-                            with c1:
-                                if st.button(f"📄 View {summary_type}", width="stretch"):
-                                    show_summary()
-                            
-                            with c2:
-                                st.download_button(
-                                    f"📥 Download {summary_type}",
-                                    st.session_state.ai_summary,
-                                    file_name="ai_summary.md",
-                                    mime="text/markdown",
-                                    width="stretch",
-                                )
-
                     else:
                         st.error("Failed to generate insights. Try again.")
+
+        if st.session_state.ai_summary:
+            if st.session_state.summary_type == "Full Report(Both)":
+                summary_type="Full Report"
+            else:
+                summary_type = st.session_state.summary_type
+
+            st.divider()
+            st.markdown(f'<div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;text-transform:uppercase;">{summary_type}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="color:#E5E7EB;margin-top:0.5rem;margin-bottom:1rem;"> {summary_type} generated successfully and is ready for view or download.</div>', unsafe_allow_html=True)
+
+            c1, c2 = st.columns([3,1])
+
+            with c1:
+                if st.button(f"📄 View {summary_type}", width="stretch"):
+                    show_summary()
+            
+            with c2:
+                st.download_button(
+                    f"📥 Download {summary_type}",
+                    st.session_state.ai_summary,
+                    file_name="ai_summary.md",
+                    mime="text/markdown",
+                    width="stretch",
+                )
 
 def render_observability():
 
