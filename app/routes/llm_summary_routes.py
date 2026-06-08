@@ -59,12 +59,6 @@ def generate_summary(
         return {
             "cached": True,
             "summary": existing_summary.summary,
-            "sections": existing_summary.summary.get("sections"),
-            "recommendations": existing_summary.summary.get("recommendations"),
-            "risk_assessment": existing_summary.summary.get("risk_assessment"),
-            "confidence_assessment": existing_summary.summary.get("confidence_assessment"),
-            "opportunity_assessment": existing_summary.summary.get("opportunity_assessment"),
-            "report_metadata": existing_summary.summary.get("report_metadata"),
             "provider": existing_summary.provider,
             "latency": existing_summary.llm_latency,
             "summary_type": existing_summary.summary_type
@@ -120,13 +114,7 @@ def generate_summary(
 
     return {
         "cached": False,
-        "summary": summary.get("executive_summary"),
-        "sections": summary.get("sections"),
-        "recommendations": summary.get("recommendations"),
-        "risk_assessment": summary.get("risk_assessment"),
-        "confidence_assessment": summary.get("confidence_assessment"),
-        "opportunity_assessment": summary.get("opportunity_assessment"),
-        "report_metadata": summary.get("report_metadata"),
+        "summary": summary,
         "provider": results["provider"],
         "latency": results["latency"],
         "summary_type": results["summary_type"]
