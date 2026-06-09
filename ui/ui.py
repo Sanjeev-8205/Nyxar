@@ -951,6 +951,7 @@ def render_ai_intelligence():
 
                         st.write(data)
                         st.session_state.ai_summary = data["summary"]["executive_summary"]
+                        st.session_state.ai_response = data["summary"]
                         st.toast("AI insights generated sucessfully.", icon="✅")
 
                     else:
@@ -989,14 +990,11 @@ def render_ai_intelligence():
 
     else:
         with st.container(border=True):
-            response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}/summary")
-
-            if response.status_code == 200:
-                data=response.json()
-                summary_data = data["summary"]
+            if st.session_state.ai_response:
+                summary_data = st.session_state.ai_response
 
             else:
-                st.error("Response timed out. No response from the server.")
+                st.error("No response from the server.")
 
             render_intelligence_sections(summary_data["sections"])
 
