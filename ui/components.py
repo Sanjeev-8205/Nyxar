@@ -483,18 +483,34 @@ def render_recommendations_card(recommendations):
 
     st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-left:4px solid #22C55E;border-radius:20px;padding:1.6rem;margin-bottom:1rem;"><div style="color:#F3F4F6;font-size:1.5rem;font-weight:700;margin-bottom:0.5rem;">Strategic Recommendations</div><div style="color:#9CA3AF;font-size:0.95rem;margin-bottom:1.5rem;">Evidence-based actions derived from intelligence findings.</div>{recommendations_html}</div>""", unsafe_allow_html=True)
 
+from datetime import datetime
+
 def render_metadata_card(metadata):
 
     sentiment = metadata["dominant_sentiment"]
+    distribution = metadata["sentiment_distribution_type"]
 
     sentiment_color = {
         "Positive": "#22C55E",
         "Negative": "#EF4444",
-        "Neutral": "#F59E0B",
-        "Polarized": "#EAB308"
+        "Neutral": "#F59E0B"
     }.get(sentiment, "#A855F7")
 
-    st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:1.5rem;margin-bottom:0.5rem;"><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1.75rem;">Intelligence Metadata</div><div style="display:grid;grid-template-columns:repeat(5,1fr);"><div style="padding-right:1rem;border-right:1px solid rgba(255,255,255,0.06);"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Dominant Sentiment</div><div style="display:inline-block;margin-top:0.7rem;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,0.05);color:{sentiment_color};font-size:0.85rem;font-weight:700;">{sentiment}</div></div><div style="padding:0 1rem;border-right:1px solid rgba(255,255,255,0.06);"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Analysis Scope</div><div style="color:#F3F4F6;font-weight:600;margin-top:0.7rem;line-height:1.7;">{metadata['analysis_scope']}</div></div><div style="padding:0 1rem;border-right:1px solid rgba(255,255,255,0.06);"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Evidence Source</div><div style="color:#F3F4F6;font-weight:600;margin-top:0.7rem;line-height:1.7;">{metadata['evidence_source']}</div></div><div style="padding:0 1rem;border-right:1px solid rgba(255,255,255,0.06);"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Reviews Analyzed</div><div style="color:#F3F4F6;font-weight:700;font-size:1.15rem;margin-top:0.7rem;">{metadata['reviews_analyzed']}</div></div><div style="padding-left:1rem;"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Report Mode</div><div style="color:#F3F4F6;font-weight:700;margin-top:0.7rem;text-transform:capitalize;">{metadata['analysis_mode']}</div></div></div></div>""", unsafe_allow_html=True)
+    distribution_color = {
+        "Positive Dominant": "#22C55E",
+        "Negative Dominant": "#EF4444",
+        "Neutral Dominant": "#F59E0B",
+        "Balanced": "#06B6D4",
+        "Polarized": "#EAB308",
+        "Mixed": "#A855F7"
+    }.get(distribution, "#A855F7")
+
+    generated_at = metadata.get(
+        "generated_at",
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    )
+
+    st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:1.5rem;margin-bottom:0.5rem;"><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1.75rem;">Intelligence Metadata</div><div style="display:grid;grid-template-columns:repeat(6,1fr);"><div style="padding-right:1rem;border-right:1px solid rgba(255,255,255,0.06);"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Dominant Sentiment</div><div style="display:inline-block;margin-top:0.7rem;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,0.05);color:{sentiment_color};font-size:0.85rem;font-weight:700;">{sentiment}</div></div><div style="padding:0 1rem;border-right:1px solid rgba(255,255,255,0.06);"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Sentiment Landscape</div><div style="display:inline-block;margin-top:0.7rem;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,0.05);color:{distribution_color};font-size:0.85rem;font-weight:700;">{distribution}</div></div><div style="padding:0 1rem;border-right:1px solid rgba(255,255,255,0.06);"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Analysis Scope</div><div style="color:#F3F4F6;font-weight:600;margin-top:0.7rem;line-height:1.7;">{metadata['analysis_scope']}</div></div><div style="padding:0 1rem;border-right:1px solid rgba(255,255,255,0.06);"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Evidence Source</div><div style="color:#F3F4F6;font-weight:600;margin-top:0.7rem;line-height:1.7;">{metadata['evidence_source']}</div></div><div style="padding:0 1rem;border-right:1px solid rgba(255,255,255,0.06);"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Reviews Analyzed</div><div style="color:#F3F4F6;font-weight:700;font-size:1.15rem;margin-top:0.7rem;">{metadata['reviews_analyzed']}</div></div><div style="padding-left:1rem;"><div style="color:#6B7280;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;">Report Mode</div><div style="color:#F3F4F6;font-weight:700;margin-top:0.7rem;text-transform:capitalize;">{metadata['analysis_mode']}</div></div></div><div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06);color:#6B7280;font-size:0.85rem;">Report generated on {generated_at}</div></div>""", unsafe_allow_html=True)
 
 def render_opportunity_assessment(assessment):
 
