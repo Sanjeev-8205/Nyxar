@@ -744,6 +744,7 @@ def report_to_markdown(report):
         md.append("")
         if confidence:
             md.append(f"**Confidence Level:** {confidence.get('confidence_level', 'N/A')}")
+            md.append(f"**Evidence Strength:** {confidence.get('evidence_strength', 'N/A')}")
             md.append("")
             if confidence.get("confidence_rationale"):
                 md.append(confidence["confidence_rationale"])
