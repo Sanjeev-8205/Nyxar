@@ -6,6 +6,7 @@ from models.batch_summary_model import BatchSummary
 from models.batch_result_model import BatchResult
 from models.batch_job_model import BatchJob
 from sqlalchemy import func
+from app.services.llm_service import report_to_markdown
 
 router = APIRouter()
 
@@ -59,6 +60,7 @@ def generate_summary(
         return {
             "cached": True,
             "summary": existing_summary.summary,
+            "converted_report": report_to_markdown(existing_summary.summary),
             "provider": existing_summary.provider,
             "latency": existing_summary.llm_latency,
             "summary_type": existing_summary.summary_type
@@ -92,6 +94,8 @@ def generate_summary(
     summary = results["summary"]
     print(f"AI response keys: {summary.keys()}")
 
+    
+
     new_summary = BatchSummary(
         job_id = job_id,
         summary_type = summary_type,
@@ -115,6 +119,7 @@ def generate_summary(
     return {
         "cached": False,
         "summary": summary,
+        "converted_report": report_to_markdown(summary),
         "provider": results["provider"],
         "latency": results["latency"],
         "summary_type": results["summary_type"]

@@ -251,7 +251,7 @@ Return ONLY valid JSON.
 JSON Schema:
 
 {{
-    "executive_summary": "string",
+    "intelligence_overview": "string",
     "sections": [
         {{
             "title": "string",
@@ -273,9 +273,11 @@ JSON Schema:
 REPORT REQUIREMENTS:
 
 * Generate 3 to 4 sections.
-* Maximum 3 findings per section.
-* Executive summary maximum 150 words.
+* Maximum 2 findings per section.
+* Each finding - minimum 10 words and maximum 20 words per section.
+* Intelligence overview maximum 100 words.
 * Generate exactly 3 recommendations.
+* Each recommendation - maximum 20 words. 
 * Focus only on the most important findings.
 * Prioritize readability over depth.
 * Suitable for a 30-second executive review.
@@ -308,7 +310,7 @@ Return ONLY valid JSON.
 JSON Schema:
 
 {{
-    "executive_summary": "string",
+    "intelligence_overview": "string",
 
     "sections": [
         {{
@@ -332,10 +334,12 @@ JSON Schema:
 
 REPORT REQUIREMENTS:
 
-* Generate 5 to 8 sections.
-* Generate 4 to 6 findings per section.
-* Executive summary maximum 150 words.
-* Generate 4 to 6 recommendations.
+* Generate 4 to 6 sections.
+* Generate exactly 4 findings per section.
+* Each finding must have minimum 15 words and maximum 35 words per section.
+* Intelligence overview maximum 150 words.
+* Generate 4 to 5 recommendations.
+* Each recommendation must have less than 30 words.
 * Separate strengths, concerns, risks, opportunities, and expectations whenever supported by evidence.
 * Identify recurring themes across review samples.
 * Provide richer explanations.
@@ -370,7 +374,7 @@ Return ONLY valid JSON.
 JSON Schema:
 
 {{
-    "executive_summary": "string",
+    "intelligence_overview": "string",
 
     "sections": [
         {{
@@ -397,6 +401,7 @@ JSON Schema:
 
     "confidence_assessment": {{
         "confidence_level": "High|Medium|Low",
+        "evidence_strength": "Weak|Moderate|Strong",
         "confidence_rationale": "string"
     }},
 
@@ -413,7 +418,9 @@ REPORT REQUIREMENTS:
 
 * Generate 6 to 10 sections.
 * Generate 5 to 8 findings per section.
-* Executive summary maximum 200 words.
+* Each finding must have minimum 20 words and maximum 50 words per section.
+* Each recommendation must have less than 40 words.
+* Intelligence overview maximum 200 words.
 * Generate 5 to 8 recommendations.
 
 Additionally generate:
@@ -640,3 +647,119 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, dat
                 "prompt_version": "v1",
                 "error": "Both Gemini and Groq failed."
             }
+        
+def report_to_markdown(report):
+    meta = report.get("report_metadata", {})
+    analysis_mode = meta.get("analysis_mode", "executive")
+    is_full = analysis_mode == "full"
+
+    opportunity = report.get("opportunity_assessment") if is_full else None
+    risk = report.get("risk_assessment") if is_full else None
+    confidence = report.get("confidence_assessment") if is_full else None
+
+    def importance_badge(level: str) -> str:
+        return {
+            "high": "🔴 High",
+            "medium": "🟡 Medium",
+            "low": "🟢 Low"
+        }.get((level or "").lower(), "⚪ Unknown")
+
+    md = []
+
+    # Header
+    md.append("# 🧠 Customer Intelligence Report")
+    md.append("")
+    md.append(f"> **Dominant Sentiment:** {meta.get('dominant_sentiment', 'N/A')}  ")
+    md.append(f"> **Reviews Analyzed:** {meta.get('reviews_analyzed', 'N/A')}  ")
+    md.append(f"> **Analysis Mode:** {analysis_mode.capitalize()}")
+    md.append("")
+
+    # Executive summary block
+    md.append("## Intelligence Overview")
+    md.append("")
+    md.append(report.get("intelligence_overview", "No intelligence overview available."))
+    md.append("")
+
+    # Key findings
+    md.append("## Key Findings")
+    md.append("")
+
+    for section in report.get("sections", []):
+        title = section.get("title", "Untitled Section")
+        description = section.get("description", "")
+        importance = importance_badge(section.get("importance", ""))
+        items = section.get("items", [])
+
+        md.append(f"### {title}")
+        md.append("")
+        md.append(f"**Priority:** {importance}")
+        md.append("")
+        if description:
+            md.append(f"> {description}")
+            md.append("")
+        for item in items:
+            md.append(f"- {item}")
+        md.append("")
+
+    # Recommendations
+    md.append("## Recommendations")
+    md.append("")
+    for rec in report.get("recommendations", []):
+        md.append(f"- {rec}")
+    md.append("")
+
+    # Full-report-only assessments
+    if is_full:
+        md.append("## Opportunity Assessment")
+        md.append("")
+        if opportunity:
+            md.append(f"**Potential:** {opportunity.get('potential', 'N/A')}")
+            md.append("")
+            if opportunity.get("summary"):
+                md.append(opportunity["summary"])
+                md.append("")
+            for item in opportunity.get("opportunities", []):
+                md.append(f"- {item}")
+            md.append("")
+        else:
+            md.append("_No opportunity assessment available._")
+            md.append("")
+
+        md.append("## Risk Assessment")
+        md.append("")
+        if risk:
+            md.append(f"**Severity:** {risk.get('severity', 'N/A')}")
+            md.append("")
+            if risk.get("summary"):
+                md.append(risk["summary"])
+                md.append("")
+            for item in risk.get("risks", []):
+                md.append(f"- {item}")
+            md.append("")
+        else:
+            md.append("_No risk assessment available._")
+            md.append("")
+
+        md.append("## Confidence Assessment")
+        md.append("")
+        if confidence:
+            md.append(f"**Confidence Level:** {confidence.get('confidence_level', 'N/A')}")
+            md.append("")
+            if confidence.get("confidence_rationale"):
+                md.append(confidence["confidence_rationale"])
+                md.append("")
+        else:
+            md.append("_No confidence assessment available._")
+            md.append("")
+
+    # Footer metadata
+    md.append("---")
+    md.append("")
+    md.append("### Report Metadata")
+    md.append("")
+    md.append(f"- **Evidence Source:** {meta.get('evidence_source', 'N/A')}")
+    md.append(f"- **Analysis Scope:** {meta.get('analysis_scope', 'N/A')}")
+    md.append(f"- **Analysis Mode:** {analysis_mode}")
+    md.append("")
+
+    return "\n".join(md)
