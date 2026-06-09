@@ -949,7 +949,6 @@ def render_ai_intelligence():
                     if response.status_code == 200:
                         data = response.json()
 
-                        st.write(data)
                         st.session_state.ai_summary = data["summary"]["executive_summary"]
                         st.session_state.ai_response = data["summary"]
                         st.toast("AI insights generated sucessfully.", icon="✅")
