@@ -456,17 +456,21 @@ def render_section_card(section):
     st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-left:4px solid {accent};border-radius:20px;padding:1.5rem;min-height:100%;margin-bottom:1rem;"><div style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.05);color:{accent};font-size:0.75rem;font-weight:600;margin-bottom:1rem;text-transform:uppercase;">{importance} Priority</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:0.8rem;">{section["title"]}</div><div style="color:#9CA3AF;font-size:0.95rem;line-height:1.7;margin-bottom:1.5rem;">{section["description"]}</div>{findings_html}</div>""", unsafe_allow_html=True)
 
 def render_intelligence_sections(sections):
-
     st.markdown("### Intelligence Findings")
 
     for i in range(0, len(sections), 2):
 
-        col1, col2 = st.columns(2)
+        remaining = len(sections) - i
 
-        with col1:
+        if remaining == 1:
             render_section_card(sections[i])
 
-        if i + 1 < len(sections):
+        else:
+            col1, col2 = st.columns(2)
+
+            with col1:
+                render_section_card(sections[i])
+
             with col2:
                 render_section_card(sections[i + 1])
 
