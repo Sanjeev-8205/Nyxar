@@ -262,7 +262,7 @@ JSON Schema:
     ],
     "recommendations": ["string"],
     "report_metadata": {{
-        "dominant_sentiment": "string",
+        "dominant_sentiment": "Positive|Negative|Neutral",
         "sentiment_distribution_type": "Positive Dominant|Negative Dominant|Neutral Dominant|Balanced|Polarized|Mixed",
         "analysis_scope": "string",
         "evidence_source": "string",
@@ -325,7 +325,7 @@ JSON Schema:
     "recommendations": ["string"],
 
     "report_metadata": {{
-        "dominant_sentiment": "string",
+        "dominant_sentiment": "Positive|Negative|Neutral",
         "sentiment_distribution_type": "Positive Dominant|Negative Dominant|Neutral Dominant|Balanced|Polarized|Mixed",
         "analysis_scope": "string",
         "evidence_source": "string",
@@ -408,7 +408,7 @@ JSON Schema:
     }},
 
     "report_metadata": {{
-        "dominant_sentiment": "string",
+        "dominant_sentiment": "Positive|Negative|Neutral",
         "sentiment_distribution_type": "Positive Dominant|Negative Dominant|Neutral Dominant|Balanced|Polarized|Mixed",
         "analysis_scope": "string",
         "evidence_source": "string",
