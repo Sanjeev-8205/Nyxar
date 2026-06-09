@@ -891,9 +891,6 @@ def render_ai_intelligence():
     with st.container(border=True):
         hero_header("AI Intelligence")
         hero_subtext("Generate LLM-powered summaries, topic insights, and enterprise-scale feedback intelligence.")
-
-    #telemetry_container = st.container()
-    #recommendation_container = st.container()
     
     with st.container(border=True):
         st.markdown("### Intelligence Control Center")
@@ -901,20 +898,20 @@ def render_ai_intelligence():
         st.markdown('<div style="color:#9CA3AF;font-size:1rem;line-height:1.8;margin-top:-0.25rem;margin-bottom:1rem;">Choose the depth of analysis to generate from batch prediction results.</div>',unsafe_allow_html=True,)
 
         SUMMARY_MAPPING = {
-            "Executive Summary": "executive",
+            "Overview Report": "executive",
             "Detailed Report": "detailed",
-            "Full Report(Both)": "full"
+            "Full Intelligence Report": "full"
         }
 
         selected_option = st.radio(
             "Summary Type",
             [
-                "Executive Summary",
+                "Overview Report",
                 "Detailed Report",
-                "Full Report(Both)"
+                "Full Intelligence Report"
             ],
             horizontal=True,
-            help = "Executive: 30 seconds read | Detailed: Full Breakdown | Full: Both"
+            help = "Overview: 2 mins read | Detailed: Better Breakdown | Full: Full Breakdown + Additional Assessments"
         )
 
         summary_type = SUMMARY_MAPPING[selected_option]
@@ -922,14 +919,14 @@ def render_ai_intelligence():
 
         #Description of the summary types
         descriptions = {
-            "Executive Summary":
-                "Quick overview of key findings, sentiment trends, and major themes (~30 second read).",
+            "Overview Report":
+                "High-level intelligence overview highlighting the most significant patterns, findings, and recommendations from the analyzed dataset.",
 
             "Detailed Report":
-                "Comprehensive analysis of customer strengths, pain points, sentiment drivers, emerging themes, and strategic opportunities.",
+                "Comprehensive intelligence report with deeper analysis, evidence-based findings, and structured insights derived from recurring patterns in the dataset.",
 
-            "Full Report(Both)":
-                "Includes both the Executive Summary and Detailed Report for complete intelligence coverage."
+            "Full Intelligence Report":
+                "Complete intelligence assessment including detailed findings, strategic opportunities, risk evaluation, confidence analysis, and actionable recommendations."
         }
 
         summary_description_card(title=st.session_state.summary_type, description=descriptions[selected_option])
@@ -949,38 +946,28 @@ def render_ai_intelligence():
                     if response.status_code == 200:
                         data = response.json()
 
-                        st.session_state.ai_summary = data["summary"]["executive_summary"]
+                        st.session_state.ai_summary = data["summary"]["intelligence_overview"]
                         st.session_state.ai_response = data["summary"]
+                        st.session_state.converted_report = data["converted_report"]
                         st.toast("AI insights generated sucessfully.", icon="✅")
 
                     else:
                         st.error("Failed to generate insights. Try again.")
 
         if st.session_state.ai_summary:
-            if st.session_state.summary_type == "Full Report(Both)":
-                summary_type="Full Report"
-            else:
-                summary_type = st.session_state.summary_type
+            summary_type = st.session_state.summary_type
 
             st.divider()
             st.markdown(f'<div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;text-transform:uppercase;">REPORT GENERATED</div>', unsafe_allow_html=True)
             st.markdown(f'<div style="color:#E5E7EB;margin-top:0.5rem;margin-bottom:0rem;"> {summary_type} generated successfully and is ready for view or download.</div>', unsafe_allow_html=True)
 
-            c1, c2 = st.columns(2)
-
-            with c1:
-                if st.button(f"📄 View {summary_type}", width="stretch"):
-                    show_summary()
-            
-            with c2:
-                st.markdown("<div style='height:27.4px;'></div>", unsafe_allow_html=True)
-                st.download_button(
-                    f"📥 Download {summary_type}",
-                    st.session_state.ai_summary,
-                    file_name="ai_summary.md",
-                    mime="text/markdown",
-                    width="stretch"
-                )
+            st.download_button(
+                f"📥 Download {summary_type}",
+                st.session_state.converted_report,
+                file_name=f"{summary_type.replace(" ","_")}.md",
+                mime="text/markdown",
+                width="stretch"
+            )
 
     
     if not st.session_state.ai_summary:
@@ -997,7 +984,7 @@ def render_ai_intelligence():
 
             render_intelligence_sections(summary_data["sections"])
 
-            if st.session_state.summary_type == "Full Report(Both)":
+            if st.session_state.summary_type == "Full Intelligence Report":
                 c1, c2 = st.columns(2)
                 with c1:
                     render_opportunity_assessment(summary_data["opportunity_assessment"])

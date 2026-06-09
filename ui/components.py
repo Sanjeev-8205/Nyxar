@@ -525,6 +525,7 @@ def render_risk_assessment(assessment):
 def render_confidence_assessment(assessment):
 
     confidence = assessment["confidence_level"]
+    evidence = assessment["evidence_strength"]
 
     confidence_color = {
         "High": "#22C55E",
@@ -532,5 +533,10 @@ def render_confidence_assessment(assessment):
         "Low": "#EF4444"
     }.get(confidence, "#22C55E")
 
-    st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-left:4px solid {confidence_color};border-radius:20px;padding:1.5rem;margin-bottom:1rem;"><div style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.05);color:{confidence_color};font-size:0.75rem;font-weight:600;margin-bottom:1rem;">{confidence} Confidence</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:0.8rem;">Confidence Assessment</div><div style="color:#9CA3AF;font-size:0.95rem;line-height:1.8;">{assessment['confidence_rationale']}</div></div>""", unsafe_allow_html=True)
-    
+    evidence_color = {
+        "Strong": "#22C55E",
+        "Moderate": "#EAB308",
+        "Weak": "#EF4444"
+    }.get(evidence, "#22C55E")
+
+    st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-left:4px solid {confidence_color};border-radius:20px;padding:1.5rem;margin-bottom:1rem;"><div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;"><div style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.05);color:{confidence_color};font-size:0.75rem;font-weight:600;">{confidence} Confidence</div><div style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.05);color:{evidence_color};font-size:0.75rem;font-weight:600;">{evidence} Evidence</div></div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:0.8rem;">Confidence Assessment</div><div style="color:#9CA3AF;font-size:0.95rem;line-height:1.8;">{assessment['confidence_rationale']}</div></div>""", unsafe_allow_html=True)
