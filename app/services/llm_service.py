@@ -314,7 +314,8 @@ JSON Schema:
         {{
             "title": "string",
             "description": "string",
-            "items": ["string"]
+            "items": ["string"],
+            "importance": "high|medium|low"
         }}
     ],
 
