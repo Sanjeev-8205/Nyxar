@@ -51,9 +51,13 @@ def generate_summary(
     )
 
     dataset_context = (
-        db.query(BatchJob.filename.label("filename"), BatchJob.all_columns.label("no_of_columns"),
+        db.query(
+            BatchJob.filename.label("filename"), BatchJob.all_columns.label("no_of_columns"),
             BatchJob.text_column.label("text_column"), BatchJob.total_rows.label("total_rows"),
-            BatchJob.model_name.label("model_name")).first()
+            BatchJob.model_name.label("model_name")
+        )
+        .filter(BatchJob.id == job_id)
+        .first()
     )
 
     if existing_summary:
