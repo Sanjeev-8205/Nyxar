@@ -11,6 +11,7 @@ from app.routes.llm_summary_routes import router as llm_router
 from app.routes.overview_insights_routes import router as overview_insights_router
 from app.routes.overview_insights_refresh_routes import router as overview_insights_refresh_router
 from app.routes.platform_status import router as platform_status_router
+from app.routes.prometheus_metrics_routes import router as prometheus_metrics_router
 from app.services.warmup_service import preload_models, warmup
 import threading
 import json
@@ -59,6 +60,7 @@ app.include_router(llm_router)
 app.include_router(overview_insights_router)
 app.include_router(overview_insights_refresh_router)
 app.include_router(platform_status_router)
+app.include_router(prometheus_metrics_router)
 
 @app.get("/")
 def home():

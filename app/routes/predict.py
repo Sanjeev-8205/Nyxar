@@ -5,10 +5,15 @@ from app.services.logging_service import log_predictions
 from app.services.insights_service.live_inference_insights import generate_ai_prediction_insights
 import time
 
+from app.core import prometheus_metrics as pm
+
 router = APIRouter()
 
 @router.post("/predict")
 def predict_route(data: InputData):
+    start_request = time.perf_counter()
+    pm.LIVE_INFERENCE_REQUEST_COUNT.inc()
+
     pred = None
     prob = None
     confidence = None
@@ -21,6 +26,8 @@ def predict_route(data: InputData):
         start = time.perf_counter()
         pred, prob, trace, total_time = predict(data.text, data.model)
         latency = time.perf_counter() - start
+
+        pm.LIVE_INFERENCE_PREDICTION_COUNT.inc()
 
         conf_score = max(prob)
         confidence=conf_score
@@ -76,5 +83,7 @@ def predict_route(data: InputData):
     finally:
         try:
             log_predictions(data.text, pred, confidence, prob, data.model, latency, status)
+            pm.REQUEST_LATENCY.observe(round(time.perf_counter() - start_request, 4))
         except Exception as log_error:
+            pm.LIVE_INFERENCE_ERROR_COUNT.inc()
             print(f"Logging Failed : {log_error}")

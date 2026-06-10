@@ -24,3 +24,4 @@ scipy
 groq
 google-genai
 apscheduler
+prometheus-client
