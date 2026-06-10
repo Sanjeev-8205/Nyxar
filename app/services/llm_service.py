@@ -264,8 +264,8 @@ JSON Schema:
     "report_metadata": {{
         "dominant_sentiment": "Positive|Negative|Neutral",
         "sentiment_distribution_type": "Positive Dominant|Negative Dominant|Neutral Dominant|Balanced|Polarized|Mixed",
-        "analysis_scope": "string",
-        "evidence_source": "string",
+        "analysis_scope": "Short dataset classification label (2-5 words) describing the primary review domain",
+        "evidence_source": "Reviews Only|Predictions Only|Reviews + Predictions",
         "reviews_analyzed": "string",
         "analysis_mode": "executive|detailed|full"
     }}
@@ -327,8 +327,8 @@ JSON Schema:
     "report_metadata": {{
         "dominant_sentiment": "Positive|Negative|Neutral",
         "sentiment_distribution_type": "Positive Dominant|Negative Dominant|Neutral Dominant|Balanced|Polarized|Mixed",
-        "analysis_scope": "string",
-        "evidence_source": "string",
+        "analysis_scope": "Short dataset classification label (2-5 words) describing the primary review domain",
+        "evidence_source": "Reviews Only|Predictions Only|Reviews + Predictions",
         "reviews_analyzed": "string",
         "analysis_mode": "executive|detailed|full"
     }}
@@ -410,8 +410,8 @@ JSON Schema:
     "report_metadata": {{
         "dominant_sentiment": "Positive|Negative|Neutral",
         "sentiment_distribution_type": "Positive Dominant|Negative Dominant|Neutral Dominant|Balanced|Polarized|Mixed",
-        "analysis_scope": "string",
-        "evidence_source": "string",
+        "analysis_scope": "Short dataset classification label (2-5 words) describing the primary review domain",
+        "evidence_source": "Reviews Only|Predictions Only|Reviews + Predictions",
         "reviews_analyzed": "string",
         "analysis_mode": "executive|detailed|full"
     }}
