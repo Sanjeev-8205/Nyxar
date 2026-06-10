@@ -654,11 +654,11 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, dat
 def report_to_markdown(report):
     meta = report.get("report_metadata", {})
     analysis_mode = meta.get("analysis_mode", "executive")
-    is_full = analysis_mode == "full"
+    is_full = analysis_mode.lower() == "full"
 
-    opportunity = report.get("opportunity_assessment") if is_full else None
-    risk = report.get("risk_assessment") if is_full else None
-    confidence = report.get("confidence_assessment") if is_full else None
+    opportunity = report.get("opportunity_assessment")
+    risk = report.get("risk_assessment")
+    confidence = report.get("confidence_assessment")
 
     def importance_badge(level: str) -> str:
         return {
@@ -673,56 +673,83 @@ def report_to_markdown(report):
     md.append("# 🧠 Customer Intelligence Report")
     md.append("")
     md.append(f"> **Dominant Sentiment:** {meta.get('dominant_sentiment', 'N/A')}  ")
+    md.append(
+        f"> **Sentiment Distribution:** "
+        f"{meta.get('sentiment_distribution_type', 'N/A')}  "
+    )
     md.append(f"> **Reviews Analyzed:** {meta.get('reviews_analyzed', 'N/A')}  ")
     md.append(f"> **Analysis Mode:** {analysis_mode.capitalize()}")
     md.append("")
 
-    # Executive summary block
+    # Intelligence Overview
     md.append("## Intelligence Overview")
     md.append("")
-    md.append(report.get("intelligence_overview", "No intelligence overview available."))
+    md.append(
+        report.get(
+            "intelligence_overview",
+            "No intelligence overview available."
+        )
+    )
     md.append("")
 
-    # Key findings
+    # Key Findings
     md.append("## Key Findings")
     md.append("")
 
-    for section in report.get("sections", []):
-        title = section.get("title", "Untitled Section")
-        description = section.get("description", "")
-        importance = importance_badge(section.get("importance", ""))
-        items = section.get("items", [])
+    sections = report.get("sections", [])
+    if sections:
+        for section in sections:
+            title = section.get("title", "Untitled Section")
+            description = section.get("description", "")
+            importance = importance_badge(section.get("importance", ""))
+            items = section.get("items", [])
 
-        md.append(f"### {title}")
-        md.append("")
-        md.append(f"**Priority:** {importance}")
-        md.append("")
-        if description:
-            md.append(f"> {description}")
+            md.append(f"### {title}")
             md.append("")
-        for item in items:
-            md.append(f"- {item}")
+            md.append(f"**Priority:** {importance}")
+            md.append("")
+
+            if description:
+                md.append(f"> {description}")
+                md.append("")
+
+            for item in items:
+                md.append(f"- {item}")
+
+            md.append("")
+    else:
+        md.append("_No key findings available._")
         md.append("")
 
     # Recommendations
     md.append("## Recommendations")
     md.append("")
-    for rec in report.get("recommendations", []):
-        md.append(f"- {rec}")
+
+    recommendations = report.get("recommendations", [])
+    if recommendations:
+        for rec in recommendations:
+            md.append(f"- {rec}")
+    else:
+        md.append("_No recommendations available._")
+
     md.append("")
 
-    # Full-report-only assessments
+    # Full Report Assessments
     if is_full:
         md.append("## Opportunity Assessment")
         md.append("")
+
         if opportunity:
             md.append(f"**Potential:** {opportunity.get('potential', 'N/A')}")
             md.append("")
+
             if opportunity.get("summary"):
                 md.append(opportunity["summary"])
                 md.append("")
+
             for item in opportunity.get("opportunities", []):
                 md.append(f"- {item}")
+
             md.append("")
         else:
             md.append("_No opportunity assessment available._")
@@ -730,14 +757,18 @@ def report_to_markdown(report):
 
         md.append("## Risk Assessment")
         md.append("")
+
         if risk:
             md.append(f"**Severity:** {risk.get('severity', 'N/A')}")
             md.append("")
+
             if risk.get("summary"):
                 md.append(risk["summary"])
                 md.append("")
+
             for item in risk.get("risks", []):
                 md.append(f"- {item}")
+
             md.append("")
         else:
             md.append("_No risk assessment available._")
@@ -745,10 +776,18 @@ def report_to_markdown(report):
 
         md.append("## Confidence Assessment")
         md.append("")
+
         if confidence:
-            md.append(f"**Confidence Level:** {confidence.get('confidence_level', 'N/A')}")
-            md.append(f"**Evidence Strength:** {confidence.get('evidence_strength', 'N/A')}")
+            md.append(
+                f"**Confidence Level:** "
+                f"{confidence.get('confidence_level', 'N/A')}"
+            )
+            md.append(
+                f"**Evidence Strength:** "
+                f"{confidence.get('evidence_strength', 'N/A')}"
+            )
             md.append("")
+
             if confidence.get("confidence_rationale"):
                 md.append(confidence["confidence_rationale"])
                 md.append("")
@@ -756,14 +795,36 @@ def report_to_markdown(report):
             md.append("_No confidence assessment available._")
             md.append("")
 
-    # Footer metadata
+    # Footer Metadata
     md.append("---")
     md.append("")
     md.append("### Report Metadata")
     md.append("")
-    md.append(f"- **Evidence Source:** {meta.get('evidence_source', 'N/A')}")
-    md.append(f"- **Analysis Scope:** {meta.get('analysis_scope', 'N/A')}")
-    md.append(f"- **Analysis Mode:** {analysis_mode}")
+
+    md.append(
+        f"- **Dominant Sentiment:** "
+        f"{meta.get('dominant_sentiment', 'N/A')}"
+    )
+    md.append(
+        f"- **Sentiment Distribution:** "
+        f"{meta.get('sentiment_distribution_type', 'N/A')}"
+    )
+    md.append(
+        f"- **Evidence Source:** "
+        f"{meta.get('evidence_source', 'N/A')}"
+    )
+    md.append(
+        f"- **Analysis Scope:** "
+        f"{meta.get('analysis_scope', 'N/A')}"
+    )
+    md.append(
+        f"- **Reviews Analyzed:** "
+        f"{meta.get('reviews_analyzed', 'N/A')}"
+    )
+    md.append(
+        f"- **Analysis Mode:** "
+        f"{meta.get('analysis_mode', 'N/A')}"
+    )
     md.append("")
 
     return "\n".join(md)
