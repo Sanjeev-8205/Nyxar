@@ -2,17 +2,17 @@ from prometheus_client import Counter, Histogram, Gauge
 
 # API Metrics
 
-REQUEST_COUNT = Counter(
+LIVE_INFERENCE_REQUEST_COUNT = Counter(
     "api_requests_total",
     "Total API requests"
 )
 
-PREDICTION_COUNT = Counter(
+LIVE_INFERENCE_PREDICTION_COUNT = Counter(
     "predictions_total",
     "Total successful predictions"
 )
 
-ERROR_COUNT = Counter(
+LIVE_INFERENCE_ERROR_COUNT = Counter(
     "prediction_errors_total",
     "Total prediction failures"
 )
@@ -21,6 +21,12 @@ REQUEST_LATENCY = Histogram(
     "request_latency_seconds",
     "Request latency in seconds"
 )
+
+LIVE_INFERENCE_PREDICTION_LATENCY = Histogram(
+    "prediction_latency_seconds",
+    "Prediction latency in seconds"
+)
+
 
 # Model Metrics
 
