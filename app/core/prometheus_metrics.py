@@ -24,8 +24,8 @@ REQUEST_LATENCY = Histogram(
 )
 
 LIVE_INFERENCE_PREDICTION_LATENCY = Histogram(
-    "prediction_latency_seconds",
-    "Prediction latency in seconds",
+    "prediction_latency_milliseconds",
+    "Prediction latency in milliseconds",
     ["model"]
 )
 
