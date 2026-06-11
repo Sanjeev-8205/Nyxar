@@ -1,6 +1,7 @@
 from app.core.model_loader import get_model
 from app.core.model_registry import models
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from app.core import prometheus_metrics as pm
 
 def preload_models():
     for name in models:
@@ -9,6 +10,8 @@ def preload_models():
             print(f"{name} loaded")
         except Exception as e:
             print(f"Error loading {name}: {e}")
+    
+    pm.ACTIVE_MODELS.set(len(models))
 
 def warmup():
     dummy = "This is a test"

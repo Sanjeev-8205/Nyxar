@@ -9,7 +9,8 @@ LIVE_INFERENCE_REQUEST_COUNT = Counter(
 
 LIVE_INFERENCE_PREDICTION_COUNT = Counter(
     "predictions_total",
-    "Total successful predictions"
+    "Total successful predictions",
+    ["model"]
 )
 
 LIVE_INFERENCE_ERROR_COUNT = Counter(
@@ -24,9 +25,15 @@ REQUEST_LATENCY = Histogram(
 
 LIVE_INFERENCE_PREDICTION_LATENCY = Histogram(
     "prediction_latency_seconds",
-    "Prediction latency in seconds"
+    "Prediction latency in seconds",
+    ["model"]
 )
 
+MODEL_PREDICTION_CONFIDENCE = Histogram(
+    "prediction_confidence",
+    "Prediction Confidence",
+    ["model"]
+)
 
 # Model Metrics
 
