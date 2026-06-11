@@ -69,6 +69,7 @@ def predict_route(data: InputData):
             word_count=words, sentence_count=sentences, complexity=complexity, text=data.text
         )
 
+
         return {
             "prediction":prediction,
             "confidence_scores":prob,
@@ -86,12 +87,16 @@ def predict_route(data: InputData):
             "llm_used": response["model"]
         }
 
+    except Exception as prediction_error:
+        pm.LIVE_INFERENCE_ERROR_COUNT.inc()
+        print(f"Prediction_failed: {prediction_error}")
+
     finally:
         try:
             log_predictions(data.text, pred, confidence, prob, data.model, latency, status)
             pm.REQUEST_LATENCY.labels(
                 model=data.model
             ).observe(round(time.perf_counter() - start_request, 4))
+
         except Exception as log_error:
-            pm.LIVE_INFERENCE_ERROR_COUNT.inc()
             print(f"Logging Failed : {log_error}")
