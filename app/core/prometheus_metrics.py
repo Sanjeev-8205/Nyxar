@@ -19,8 +19,8 @@ LIVE_INFERENCE_ERROR_COUNT = Counter(
 )
 
 REQUEST_LATENCY = Histogram(
-    "request_latency_seconds",
-    "Request latency in seconds"
+    "request_latency_milliseconds",
+    "Request latency in milliseconds"
 )
 
 LIVE_INFERENCE_PREDICTION_LATENCY = Histogram(

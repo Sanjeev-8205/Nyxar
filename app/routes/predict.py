@@ -31,6 +31,10 @@ def predict_route(data: InputData):
             model=data.model
         ).inc()
 
+        pm.LIVE_INFERENCE_PREDICTION_LATENCY.labels(
+            model=data.model
+        ).observe(round(latency*1000), 0)
+
         conf_score = max(prob)
         confidence=conf_score
 
@@ -96,7 +100,7 @@ def predict_route(data: InputData):
             log_predictions(data.text, pred, confidence, prob, data.model, latency, status)
             pm.REQUEST_LATENCY.labels(
                 model=data.model
-            ).observe(round(time.perf_counter() - start_request, 4))
+            ).observe(round((time.perf_counter() - start_request)*1000),0)
 
         except Exception as log_error:
             print(f"Logging Failed : {log_error}")
