@@ -42,6 +42,10 @@ def predict_route(data: InputData):
             model=data.model
         ).observe(confidence)
 
+        pm.MODEL_PREDICTION_CONFIDENCE_GAUGE.labels(
+            model=data.model
+        ).set(confidence)
+
         status = "success"
         
         pred_map = {"0":"Negative", "1":"Neutral", "2":"Positive"}

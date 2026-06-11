@@ -35,6 +35,11 @@ MODEL_PREDICTION_CONFIDENCE = Histogram(
     ["model"]
 )
 
+MODEL_PREDICTION_CONFIDENCE_GAUGE = Gauge(
+    "prediction_confidence_accurate",
+    "Prediction_Confidence_Accurate"
+)
+
 # Model Metrics
 
 ACTIVE_MODELS = Gauge(
