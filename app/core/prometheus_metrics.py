@@ -20,7 +20,8 @@ LIVE_INFERENCE_ERROR_COUNT = Counter(
 
 REQUEST_LATENCY = Histogram(
     "request_latency_milliseconds",
-    "Request latency in milliseconds"
+    "Request latency in milliseconds",
+    ["model"]
 )
 
 LIVE_INFERENCE_PREDICTION_LATENCY = Histogram(
@@ -37,7 +38,8 @@ MODEL_PREDICTION_CONFIDENCE = Histogram(
 
 MODEL_PREDICTION_CONFIDENCE_GAUGE = Gauge(
     "prediction_confidence_accurate",
-    "Prediction_Confidence_Accurate"
+    "Prediction_Confidence_Accurate",
+    ["model"]
 )
 
 # Model Metrics
