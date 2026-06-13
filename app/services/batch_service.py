@@ -5,6 +5,7 @@ from models.batch_job_model import BatchJob
 from models.batch_result_model import BatchResult
 from app.services.ml_service import predict_batch
 from app.services.insights_service.live_inference_insights import generate_batch_prediction_ai_insights
+from app.core import prometheus_metrics as pm
 
 import pandas as pd
 import time
@@ -139,10 +140,18 @@ def process_batch_job(job_id: int, file_path: str, model:str):
 
         db.commit()
 
+        pm.TOTAL_BATCH_JOBS.labels(model=model, status="completed").inc()
+        pm.TOTAL_PROCESSED_ROWS.labels(model=model).observe(job.processed_rows)
+        pm.JOB_DURATION.labels(model=model).observe((job.completed_at - job.created_at).total_seconds())
+        pm.JOB_THROUGHPUT.labels(model=model).observe(job.throughput)
+        pm.JOB_ML_PROCESSING_TIME.labels(model=model).observe(job.ml_processing_time)
+
     except Exception as e:
         job.status = "failed"
         job.error_message = str(e)
         db.commit()
+
+        pm.TOTAL_BATCH_JOBS.labels(model=model, status="failed").inc()
 
     finally:
         db.close()

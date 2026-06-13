@@ -1,6 +1,6 @@
 from prometheus_client import Counter, Histogram, Gauge
 
-# API Metrics
+# Inference Metrics
 
 LIVE_INFERENCE_REQUEST_COUNT = Counter(
     "api_requests_total",
@@ -42,9 +42,40 @@ MODEL_PREDICTION_CONFIDENCE_GAUGE = Gauge(
     ["model"]
 )
 
-# Model Metrics
+## Model Metrics
 
 ACTIVE_MODELS = Gauge(
     "active_models_loaded",
     "Number of loaded models"
+)
+
+# Batch Metrics
+TOTAL_BATCH_JOBS = Counter(
+    "total_batch_jobs",
+    "Total_Batch_Jobs",
+    ["model", "status"]
+)
+
+TOTAL_PROCESSED_ROWS = Histogram(
+    "total_rows_processed_per_batch_job",
+    "Total Rows Processed",
+    ["model"]
+)
+
+JOB_DURATION = Histogram(
+    "Total_job_time_in_seconds",
+    "Job Duration",
+    ["model"]
+)
+
+JOB_THROUGHPUT = Histogram(
+    "rows_processed_per_second",
+    "Job Throughput",
+    ["model"]
+)
+
+JOB_ML_PROCESSING_TIME = Histogram(
+    "ml_processing_time_per_job",
+    "ML Processing Time Distribution",
+    ["model"]
 )
