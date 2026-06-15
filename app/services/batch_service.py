@@ -145,7 +145,7 @@ def process_batch_job(job_id: int, file_path: str, model:str):
         pm.JOB_DURATION.labels(model=model).observe((job.completed_at - job.created_at).total_seconds())
         pm.JOB_THROUGHPUT.labels(model=model).observe(job.throughput)
         pm.JOB_ML_PROCESSING_TIME.labels(model=model).observe(job.ml_processing_time)
-        pm.JOB_ML_PROCESSING_TIME_GAUGE.labels(model=model).set(job.throughput)
+        pm.JOB_ML_PROCESSING_TIME_GAUGE.labels(model=model).set(job.ml_processing_time)
         pm.JOB_THROUGHPUT_GAUGE.labels(model=model).set(job.throughput)
 
     except Exception as e:
