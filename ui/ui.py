@@ -867,17 +867,20 @@ def render_batch_intelligence():
             placeholder.markdown("""<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Summary Not yet Available.</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Generate summary to view AI insights, sentiment trends, and prediction results</div></div></div>""", unsafe_allow_html=True)
 
             if st.session_state.completed_job_data:
-                if not st.session_state.get("cached_insights"):
+                cached_insight_job_id = st.session_state.get("cached_insights_job_id")
+
+                if cached_insight_job_id!=st.session_state.job_id:
                     placeholder.markdown("""<style>@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}.pulse{animation:pulse 1.5s ease-in-out infinite;}</style><div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div class="pulse" style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Generating Insights...</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">AI is analyzing pipeline performance.</div></div></div>""", unsafe_allow_html=True)
                     for _ in range(10):
                         response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}")
                         data = response.json()
                         raw_insights = data.get("insight")
 
-                        st.session_state.cached_insights = raw_insights
-
                         if raw_insights:
+                            st.session_state.cached_insights = raw_insights
+                            st.session_state.cached_insights_job_id = st.session_state.job_id
                             break
+
                         time.sleep(2)
                 
                 else:
