@@ -864,7 +864,7 @@ def render_batch_intelligence():
 
             raw_insights = None
             placeholder = st.empty()
-            placeholder.markdown("""<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">✅ Batch Prediction Complete</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">View AI insights, sentiment trends, and prediction results.</div></div></div>""", unsafe_allow_html=True)
+            placeholder.markdown("""<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Summary Not yet Available.</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Generate summary to view AI insights, sentiment trends, and prediction results</div></div></div>""", unsafe_allow_html=True)
 
             if st.session_state.completed_job_data:
                 if not st.session_state.get("cached_insights"):
