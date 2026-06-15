@@ -102,7 +102,7 @@ def predict_route(data: InputData):
     finally:
         try:
             log_predictions(data.text, pred, confidence, prob, data.model, latency, status)
-            pm.REQUEST_LATENCY.labels(
+            pm.REQUEST_LATENCY_SINGLE_INFERENCE.labels(
                 model=data.model
             ).observe(round((time.perf_counter() - start_request)*1000,0))
 

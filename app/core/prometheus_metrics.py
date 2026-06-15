@@ -18,8 +18,8 @@ LIVE_INFERENCE_ERROR_COUNT = Counter(
     "Total prediction failures"
 )
 
-REQUEST_LATENCY = Histogram(
-    "request_latency_milliseconds",
+REQUEST_LATENCY_SINGLE_INFERENCE = Histogram(
+    "request_latency_milliseconds(Single Inference)",
     "Request latency in milliseconds",
     ["model"]
 )
@@ -102,7 +102,7 @@ TOTAL_SUMMARY_REQUESTS = Counter(
 TOTAL_FALLBACKS = Counter(
     "llm_model_fallback",
     "Model Fallback count",
-    ["summary_type", "failed_model"]
+    ["summary_type", "failed_model", "fallback_model"]
 )
 
 LLM_LATENCY = Histogram(
