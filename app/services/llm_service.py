@@ -4,6 +4,7 @@ from google.genai import types
 from groq import Groq
 import time
 import json
+from app.core import prometheus_metrics as pm
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -564,6 +565,8 @@ def generate_with_groq(prompt, summary_type):
     }
 
 def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, dataset_context, prediction_distribution, summary_type="full"):
+    request_start_time = time.perf_counter()
+    
     positive_reviews = positive_reviews[:50]
     neutral_reviews = neutral_reviews[:50]
     negative_reviews = negative_reviews[:50]
@@ -588,9 +591,26 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, dat
     start_time = time.perf_counter()
 
     try:
+        
         gemini_results = generate_with_gemini(prompt, summary_type)
 
         latency = round(time.perf_counter() - start_time, 2)
+
+        pm.LLM_LATENCY.labels(
+            summary_type=summary_type, model_used=gemini_results["provider"]
+        ).observe(latency)
+        
+        pm.REQUEST_LATENCY.labels(model_used=gemini_results["provider"]).observe(
+            time.perf_counter() - request_start_time
+        )
+
+        pm.TOTAL_SUMMARY_REQUESTS.labels(
+            summary_type=summary_type, status="Success"
+        ).inc()
+
+        pm.LLM_REQUESTS_BY_MODEL.labels(
+            model_used=gemini_results["provider"]
+        ).inc()
 
         return {
             "summary": gemini_results["insights"],
@@ -616,6 +636,26 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, dat
             
             latency = round(time.perf_counter() - start_time, 2)
 
+            pm.LLM_LATENCY.labels(
+                summary_type=summary_type, model_used=groq_results["provider"]
+            ).observe(latency)
+
+            pm.REQUEST_LATENCY.labels(model_used=groq_results["provider"]).observe(
+                time.perf_counter() - request_start_time
+            )
+
+            pm.TOTAL_SUMMARY_REQUESTS.labels(
+                summary_type=summary_type, status="Success"
+            ).inc()
+
+            pm.LLM_REQUESTS_BY_MODEL.labels(
+                model_used=gemini_results["provider"]
+            ).inc()
+
+            pm.TOTAL_FALLBACKS.labels(
+                summary_type=summary_type, failed_model=gemini_results["provider"], fallback_model=groq_results["provider"]
+            ).inc()
+
             return {
                 "summary": groq_results["insights"],
                 "provider": groq_results["provider"],
@@ -634,6 +674,14 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, dat
     
         except Exception as groq_error:
             print(f"Groq Failed: {groq_error}")
+
+            pm.TOTAL_SUMMARY_REQUESTS.labels(
+                summary_type=summary_type, status="Failure"
+            ).inc()
+
+            pm.LLM_REQUESTS_BY_MODEL.labels(
+                model_used="None"
+            ).inc()
 
             return {
                 "summary": None,

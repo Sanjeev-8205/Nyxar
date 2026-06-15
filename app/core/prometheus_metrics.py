@@ -74,8 +74,51 @@ JOB_THROUGHPUT = Histogram(
     ["model"]
 )
 
+JOB_THROUGHPUT_GAUGE = Gauge(
+    "rows_processed_per_second_gauge",
+    "Job Throughput Gauge",
+    ["model"]
+)
+
 JOB_ML_PROCESSING_TIME = Histogram(
     "ml_processing_time_per_job",
     "ML Processing Time Distribution",
     ["model"]
+)
+
+JOB_ML_PROCESSING_TIME_GAUGE = Gauge(
+    "ml_processing_time_per_job_gauge",
+    "ML Processing Time Distribution Gauge",
+    ["model"]
+)
+
+#LLM - AI Intelligence Page
+TOTAL_SUMMARY_REQUESTS = Counter(
+    "llm_summary_requests",
+    "Total LLM Requests",
+    ["summary_type", "status"]
+)
+
+TOTAL_FALLBACKS = Counter(
+    "llm_model_fallback",
+    "Model Fallback count",
+    ["summary_type", "failed_model"]
+)
+
+LLM_LATENCY = Histogram(
+    "llm_latency_seconds",
+    "LLM Latency(Seconds)",
+    ["summary_type", "model_used"] 
+)
+
+LLM_REQUESTS_BY_MODEL = Counter(
+    "llm_requests_by_model",
+    "Requests by LLM",
+    ["model_used"]
+)
+
+REQUEST_LATENCY = Histogram(
+    "full_request_latency_seconds",
+    "Full Request Latency(Seconds)",
+    ["model_used"]
 )
