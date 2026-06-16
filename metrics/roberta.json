@@ -1,0 +1,9 @@
+{
+    "model": "RoBERTa Transformer",
+    "version": "v1",
+    "timestamp": "2026-05-29T12:07:58.733358",
+    "accuracy": 0.7756,
+    "precision": 0.7799795322193036,
+    "recall": 0.7756,
+    "f1-score": 0.7776493776699466
+}

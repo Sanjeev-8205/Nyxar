@@ -1,0 +1,27 @@
+from fastapi import APIRouter, Depends, HTTPException
+from app.services.insights_service.platform_status_strip import get_overview_status
+from app.core.database import SessionLocal
+from sqlalchemy.orm import Session
+
+router  =APIRouter()
+
+def get_db():
+    try:
+        db = SessionLocal()
+
+        yield db
+    
+    finally:
+        db.close()
+
+@router.get("/platform_status")
+def get_platform_status(
+    db: Session = Depends(get_db)
+):
+    try:
+        result = get_overview_status(db)
+        print(f"Platform status result: {result}")
+        return result
+    except Exception as e:
+        print(f"Platform status error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
