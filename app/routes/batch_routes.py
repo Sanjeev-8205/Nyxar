@@ -105,6 +105,8 @@ async def get_batch_job(job_id: int):
         if not job:
             raise HTTPException(status_code=404, detail = "Job Not Found")
         
+        
+        
         return {
             "job_id": job.id,
             "filename": job.filename,
