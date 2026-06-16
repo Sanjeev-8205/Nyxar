@@ -1,0 +1,41 @@
+from app.core.database import Base
+from sqlalchemy import Column, Float, String, Text, DateTime, Boolean, Integer, UniqueConstraint, ForeignKey
+from datetime import datetime, UTC
+from sqlalchemy.dialects.postgresql import JSON
+
+class BatchSummary(Base):
+    __tablename__ = "batch_summaries"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    job_id = Column(Integer, ForeignKey("batch_jobs.id"))
+
+    summary_type = Column(String, default="full")
+
+    summary = Column(JSON, nullable=True)
+
+    provider = Column(String)
+
+    fallback_used = Column(Boolean, default=False)
+
+    fallback_reason = Column(String, nullable=True)
+
+    llm_latency = Column(Float, nullable=True)
+
+    estimated_token = Column(Integer, nullable=True)
+
+    input_tokens = Column(Integer, nullable=True)
+
+    thoughts_tokens = Column(Integer, nullable=True)
+
+    output_tokens = Column(Integer, nullable=True)
+    
+    total_tokens = Column(Integer, nullable=True)
+
+    prompt_version = Column(String, default="v1")
+
+    error = Column(Text, nullable=True)
+
+    created_at = Column(DateTime, default = lambda: datetime.now(UTC))
+
+    __table_args__ = (UniqueConstraint("job_id", "summary_type", name="unique_job_summary_type"), )

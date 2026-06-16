@@ -1,0 +1,9 @@
+{
+    "model": "Bi-LSTM",
+    "version": "v1",
+    "timestamp": "2026-05-29T12:05:06.772241",
+    "accuracy": 0.7282,
+    "precision": 0.7055921298308738,
+    "recall": 0.7282,
+    "f1-score": 0.7129558168626264
+}
