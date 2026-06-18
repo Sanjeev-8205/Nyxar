@@ -1095,16 +1095,6 @@ def render_observability():
             else:
                 st.info("You have not made any predictions yet. Make predictions to view the results.")
 
-            #Recent Activity Feed
-            activity_ = dashboard_metrics["analytics"]["recent_activity"]
-
-            activity_feed = pd.DataFrame([activity_])
-
-            st.subheader("Recent Activity")
-            st.dataframe(
-                activity_feed, width = "stretch"
-            )
-
     with obs_tab2:
         subtitle("Advanced ML Metrics")
         subtitle_subtext("Production-grade performance and observability insights")

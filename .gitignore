@@ -25,3 +25,6 @@ app/cache/
 
 #OS
 .DS_Store
+
+#Codebase
+codebase.txt
