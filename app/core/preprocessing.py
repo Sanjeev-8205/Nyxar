@@ -1,6 +1,4 @@
 import re
-import spacy
-nlp=spacy.load("en_core_web_sm", disable=["parser", "ner"])
 
 #Single Inference
 def textProcess_lr(text):
