@@ -28,3 +28,6 @@ app/cache/
 
 #Codebase
 codebase.txt
+
+#performance evaluation
+/performance
