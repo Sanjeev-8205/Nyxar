@@ -42,6 +42,15 @@ MODEL_PREDICTION_CONFIDENCE_GAUGE = Gauge(
     ["model"]
 )
 
+<<<<<<< HEAD
+=======
+LATENCY_BREAKDOWN = Histogram(
+    "nyxar_components_latency_breakdown",
+    "Latency by component",
+    ["latency_type"]
+)
+
+>>>>>>> nyxar-backend/main
 ## Model Metrics
 
 ACTIVE_MODELS = Gauge(

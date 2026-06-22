@@ -1,4 +1,9 @@
 import re
+<<<<<<< HEAD
+=======
+import spacy
+nlp=spacy.load("en_core_web_sm", disable=["parser", "ner"])
+>>>>>>> nyxar-backend/main
 
 #Single Inference
 def textProcess_lr(text):

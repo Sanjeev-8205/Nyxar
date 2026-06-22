@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from fastapi import APIRouter, HTTPException
+=======
+from fastapi import APIRouter, HTTPException, BackgroundTasks
+>>>>>>> nyxar-backend/main
 from app.schemas.request_schema import InputData
 from app.services.ml_service import predict
 from app.services.logging_service import log_predictions
@@ -9,8 +13,21 @@ from app.core import prometheus_metrics as pm
 
 router = APIRouter()
 
+<<<<<<< HEAD
 @router.post("/predict")
 def predict_route(data: InputData):
+=======
+async def log_predictions_with_metrics(text, pred, confidence, prob, model, latency, status):
+        try:
+            async with pm.LATENCY_BREAKDOWN.labels(latency_type = "DB_write").time():
+                await log_predictions(text, pred, confidence, prob, model, latency, status)
+
+        except Exception as log_error:
+            print(f"Logging Failed : {log_error}")
+
+@router.post("/predict")
+async def predict_route(data: InputData, background_tasks: BackgroundTasks):
+>>>>>>> nyxar-backend/main
     start_request = time.perf_counter()
     pm.LIVE_INFERENCE_REQUEST_COUNT.inc()
 
@@ -18,23 +35,38 @@ def predict_route(data: InputData):
     prob = None
     confidence = None
     status = "failure"
+<<<<<<< HEAD
+=======
+    latency = 0
+>>>>>>> nyxar-backend/main
 
     try:
         if not data.text.strip():
             raise HTTPException(status_code=400, detail="Input text cannot be empty.")
         
+<<<<<<< HEAD
         start = time.perf_counter()
         pred, prob, trace, total_time = predict(data.text, data.model)
         latency = time.perf_counter() - start
+=======
+        start_time=time.perf_counter()
+        async with pm.LIVE_INFERENCE_PREDICTION_LATENCY.labels(model=data.model).time():
+            async with pm.LATENCY_BREAKDOWN.labels(latency_type = "ML_Inference").time():
+                pred, prob, trace, total_time = await predict(data.text, data.model)
+        latency = time.perf_counter() - start_time
+>>>>>>> nyxar-backend/main
 
         pm.LIVE_INFERENCE_PREDICTION_COUNT.labels(
             model=data.model
         ).inc()
 
+<<<<<<< HEAD
         pm.LIVE_INFERENCE_PREDICTION_LATENCY.labels(
             model=data.model
         ).observe(round(latency*1000), 0)
 
+=======
+>>>>>>> nyxar-backend/main
         conf_score = max(prob)
         confidence=conf_score
 
@@ -72,11 +104,19 @@ def predict_route(data: InputData):
         else:
             complexity = "HIGH"
 
+<<<<<<< HEAD
         response = generate_ai_prediction_insights(
             prediction=prediction, confidence=conf_score, prob=prob,
             word_count=words, sentence_count=sentences, complexity=complexity, text=data.text
         )
 
+=======
+        async with pm.LATENCY_BREAKDOWN.labels(latency_type = "llm").time():
+            response = await generate_ai_prediction_insights(
+                prediction=prediction, confidence=conf_score, prob=prob,
+                word_count=words, sentence_count=sentences, complexity=complexity, text=data.text
+            )
+>>>>>>> nyxar-backend/main
 
         return {
             "prediction":prediction,
@@ -100,6 +140,7 @@ def predict_route(data: InputData):
         print(f"Prediction_failed: {prediction_error}")
 
     finally:
+<<<<<<< HEAD
         try:
             log_predictions(data.text, pred, confidence, prob, data.model, latency, status)
             pm.REQUEST_LATENCY_SINGLE_INFERENCE.labels(
@@ -108,3 +149,13 @@ def predict_route(data: InputData):
 
         except Exception as log_error:
             print(f"Logging Failed : {log_error}")
+=======
+        pm.REQUEST_LATENCY_SINGLE_INFERENCE.labels(
+                model=data.model
+            ).observe(round((time.perf_counter() - start_request)*1000,0))
+        
+        background_tasks.add_task(
+            log_predictions_with_metrics,
+            data.text, pred, confidence, prob, data.model, latency, status
+        )
+>>>>>>> nyxar-backend/main
