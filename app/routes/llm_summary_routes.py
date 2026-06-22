@@ -8,6 +8,8 @@ from models.batch_job_model import BatchJob
 from sqlalchemy import func
 from app.services.llm_service import report_to_markdown
 
+from app.core.security import verify_api_key
+
 router = APIRouter()
 
 def get_db():
@@ -35,7 +37,8 @@ def get_top(sentiment, job_id, db):
 def generate_summary(
     job_id: int,
     summary_type: str="full",
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _:bool=Depends(verify_api_key)
 ):
     existing_summary = db.query(BatchSummary).filter(
         BatchSummary.job_id == job_id,

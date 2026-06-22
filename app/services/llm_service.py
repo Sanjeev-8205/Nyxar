@@ -644,6 +644,8 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, dat
                 time.perf_counter() - request_start_time
             )
 
+            pm.LATENCY_BREAKDOWN.labels(latency_type = "llm").observe(latency)
+
             pm.TOTAL_SUMMARY_REQUESTS.labels(
                 summary_type=summary_type, status="Success"
             ).inc()
@@ -653,7 +655,7 @@ def generate_ai_summary(positive_reviews, negative_reviews, neutral_reviews, dat
             ).inc()
 
             pm.TOTAL_FALLBACKS.labels(
-                summary_type=summary_type, failed_model=gemini_results["provider"], fallback_model=groq_results["provider"]
+                summary_type=summary_type, failed_model="gemini/gemini-3.1-flash-lite", fallback_model=groq_results["provider"]
             ).inc()
 
             return {
