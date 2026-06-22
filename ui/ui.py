@@ -35,12 +35,13 @@ apply_container_background()
 progress_bar_modified()
 
 BASE_URL = "https://sanjeev2501-nyxar.hf.space"
+headers = {"X-API-key": st.secrets["NYXAR_API_KEY"]}
 
 #Get the loaded models
 @st.cache_data
 def get_models():
     try:
-        return requests.get(f"{BASE_URL}/models", timeout=30).json()
+        return requests.get(f"{BASE_URL}/models", headers=headers, timeout=30).json()
     except:
         return ["Backend not available!"]
     
@@ -99,6 +100,7 @@ def get_dashboard_metrics():
     try:
         response = requests.get(
             f"{BASE_URL}/dashboard",
+            headers=headers,
             timeout=30
         )
 
@@ -190,7 +192,7 @@ def render_overview():
             else:
                 st.info("No data yet.")
 
-        platform_status = requests.get(f"{BASE_URL}/platform_status")
+        platform_status = requests.get(f"{BASE_URL}/platform_status", headers=headers)
 
         if platform_status.status_code == 200:
             data = platform_status.json()
@@ -246,14 +248,14 @@ def render_overview():
 
         with right_col:
             if st.button("🔄", help="Click to refresh insights."):
-                response = requests.post(f"{BASE_URL}/overview_insights/refresh")
+                response = requests.post(f"{BASE_URL}/overview_insights/refresh", headers=headers)
                 if response.status_code == 200:
                     st.toast("Insights refreshed!", icon="✅")
                     st.rerun()
                 else:
                     st.toast("Failed to refresh insights.", icon="❌")
 
-        response = requests.get(f"{BASE_URL}/overview_insights")
+        response = requests.get(f"{BASE_URL}/overview_insights", headers=headers)
 
         if response.status_code == 200:
             data = response.json()
@@ -309,7 +311,8 @@ def render_live_inference():
                 with st.spinner("Running model inference......."):
                     response = requests.post(
                         f"{BASE_URL}/predict",
-                        json={"text":user_input, "model":model_choice}
+                        json={"text":user_input, "model":model_choice},
+                        headers=headers
                     )
 
                     try:
@@ -551,6 +554,7 @@ def render_batch_intelligence():
                 response = requests.post(
                     f"{BASE_URL}/batch/upload",
                     params={"model": selected_model},
+                    headers=headers,
                     files={
                         "file":(
                             uploaded_file.name,
@@ -590,7 +594,7 @@ def render_batch_intelligence():
 
             try:
                 response = requests.get(
-                    f"{BASE_URL}/batch/job/{job_id}", timeout=30
+                    f"{BASE_URL}/batch/job/{job_id}", headers=headers, timeout=30
                 )
 
                 if response.status_code != 200:
@@ -661,7 +665,7 @@ def render_batch_intelligence():
             dataset_intelligence_card(rows=results["total_rows"], columns=results["all_columns"], file_size=st.session_state.file_size, model=results["model_name"], text_column=results["text_column"])
     with c2:
         if st.session_state.completed_job_data:
-            response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}/results", timeout=30)
+            response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}/results", headers=headers, timeout=30)
 
             if response.status_code == 200:
                 data = response.json()
@@ -872,7 +876,7 @@ def render_batch_intelligence():
                 if cached_insight_job_id!=st.session_state.job_id:
                     placeholder.markdown("""<style>@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}.pulse{animation:pulse 1.5s ease-in-out infinite;}</style><div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div class="pulse" style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Generating Insights...</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">AI is analyzing pipeline performance.</div></div></div>""", unsafe_allow_html=True)
                     for _ in range(10):
-                        response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}")
+                        response = requests.get(f"{BASE_URL}/batch/job/{st.session_state.job_id}", headers=headers)
                         data = response.json()
                         raw_insights = data.get("insight")
 
@@ -952,6 +956,7 @@ def render_ai_intelligence():
                     response = requests.get(
                         f"{BASE_URL}/batch/job/{st.session_state.job_id}/summary",
                         params={"summary_type":summary_type},
+                        headers=headers,
                         timeout=120
                     )
 
