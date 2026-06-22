@@ -12,6 +12,7 @@ import uuid
 import time
 
 from app.services.insights_service.live_inference_insights import generate_batch_prediction_ai_insights
+from app.core.security import verify_api_key\
 
 router = APIRouter()
 
@@ -29,7 +30,8 @@ async def upload_batch_file(
     background_tasks: BackgroundTasks,
     model: str,
     file: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _:bool=Depends(verify_api_key)
 ):
     created_at = datetime.now(UTC)
 
@@ -96,7 +98,7 @@ async def upload_batch_file(
     }
 
 @router.get("/batch/job/{job_id}")
-async def get_batch_job(job_id: int):
+async def get_batch_job(job_id: int, _:bool=Depends(verify_api_key)):
     db = SessionLocal()
 
     try:
@@ -139,7 +141,7 @@ async def get_batch_job(job_id: int):
         db.close()
 
 @router.get("/batch/job/{job_id}/results")
-async def get_batch_job_results(job_id: int):
+async def get_batch_job_results(job_id: int, _:bool=Depends(verify_api_key)):
     db = SessionLocal()
 
     try:

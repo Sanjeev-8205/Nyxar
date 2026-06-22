@@ -1,6 +1,9 @@
 from google import genai
 from groq import Groq
 import os
+import asyncio
+import time
+from app.core import prometheus_metrics as pm
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -33,7 +36,7 @@ def generate_with_groq(prompt):
 
     return (response.choices[0].message.content, "llama-3.1-8b-instant")
 
-def generate_ai_prediction_insights(prediction, confidence, prob, word_count, sentence_count, complexity, text):
+async def generate_ai_prediction_insights(prediction, confidence, prob, word_count, sentence_count, complexity, text):
     INSIGHTS_PROMPT = f"""
         Prediction: {prediction}
         Confidence: {confidence:.1%}%
@@ -67,7 +70,11 @@ def generate_ai_prediction_insights(prediction, confidence, prob, word_count, se
         """
     
     try:
-        insight, model_used = generate_with_gemini(prompt=INSIGHTS_PROMPT)
+        start = time.perf_counter()
+        insight, model_used = await asyncio.to_thread(
+            generate_with_gemini, INSIGHTS_PROMPT
+        )
+        pm.LATENCY_BREAKDOWN.labels(latency_type = "llm").observe(time.perf_counter - start)
 
         return {"insight": insight, "model": model_used}
     
@@ -75,7 +82,10 @@ def generate_ai_prediction_insights(prediction, confidence, prob, word_count, se
         print(f"Gemini failed: {gemini_error}")
 
         try:
-            insight, model_used = generate_with_groq(prompt=INSIGHTS_PROMPT)
+            insight, model_used = await asyncio.to_thread(
+                generate_with_groq, INSIGHTS_PROMPT
+            )
+            pm.LATENCY_BREAKDOWN.labels(latency_type = "llm").observe(time.perf_counter() - start)
         
             return {"insight": insight, "model": model_used}
         

@@ -3,6 +3,8 @@ from app.services.insights_service.platform_status_strip import get_overview_sta
 from app.core.database import SessionLocal
 from sqlalchemy.orm import Session
 
+from app.core.security import verify_api_key
+
 router  =APIRouter()
 
 def get_db():
@@ -16,7 +18,7 @@ def get_db():
 
 @router.get("/platform_status")
 def get_platform_status(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db), _:bool=Depends(verify_api_key)
 ):
     try:
         result = get_overview_status(db)
