@@ -23,7 +23,7 @@ from components import (metric_card, status_card, insights_card, platform_status
 
 #setting the page title
 st.set_page_config(
-    page_title="AI Observability and Intelligence Platform",
+    page_title="Nyxar - AI Systems and Observability Platform",
     page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -138,8 +138,10 @@ if "job_id" not in st.session_state:
 if "ai_summary" not in st.session_state:
     st.session_state.ai_summary = None
 
-st.title("✨ AI Observability and Intelligence Platform")
-st.caption("Real-time monitoring, inference analytics, and AI-driven operational intelligence for production-scale ML systems.")
+with st.container(border=True):
+    st.title("✨ Nyxar")
+    hero_subtext("AI Systems and Observability Platform")
+    st.caption("Real-time inference, batch intelligence, AI-powered insights, and operational observability for modern AI workflows.")
 
 def render_overview():
 
