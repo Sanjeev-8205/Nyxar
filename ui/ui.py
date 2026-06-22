@@ -140,15 +140,16 @@ if "ai_summary" not in st.session_state:
 
 with st.container(border=True):
     st.title("✨ Nyxar")
-    hero_subtext("AI Systems and Observability Platform")
+    st.markdown("""<div style="font-size: 1.8rem;font-weight: 500;color: rgba(255,255,255,0.85);margin-top: 8px;margin-bottom: 0rem">AI Systems and Observability Platform</div>""", unsafe_allow_html=True)
     st.caption("Real-time inference, batch intelligence, AI-powered insights, and operational observability for modern AI workflows.")
+
+st.markdown('<div style="width:140px;height:1px;background:linear-gradient(90deg,rgba(255,180,80,0.8),rgba(255,180,80,0.2));margin:12px 0 20px 0;box-shadow:0 0 8px rgba(255,180,80,0.25);"></div>', unsafe_allow_html=True)
 
 def render_overview():
 
     dashboard_metrics = st.session_state.dashboard_metrics
 
     hero_header("Overview")
-    hero_subtext("Real-time AI inference, observability, and intelligence monitoring for production-scale ML workflows.")
 
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
@@ -158,7 +159,7 @@ def render_overview():
         metric_card("Avg Latency", f"{dashboard_metrics["inference"]["inference_metrics"]["average_latency"]}ms")
     
     with col3:
-        metric_card("RPM", dashboard_metrics["inference"]["inference_metrics"]["rpm"])
+        metric_card("RPM", f"{dashboard_metrics["inference"]["inference_metrics"]["rpm"]} req/min")
     
     with col4:
         metric_card("Active Models", dashboard_metrics["health"]["models_count"])
