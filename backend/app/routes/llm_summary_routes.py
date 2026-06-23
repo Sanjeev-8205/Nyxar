@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from app.services.llm_service import generate_ai_summary
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
@@ -62,6 +62,9 @@ def generate_summary(
         .filter(BatchJob.id == job_id)
         .first()
     )
+
+    if not dataset_context:
+        raise HTTPException(404, details="Job not found error!")
 
     if existing_summary:
         return {
