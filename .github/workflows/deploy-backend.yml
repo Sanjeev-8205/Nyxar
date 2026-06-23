@@ -1,0 +1,41 @@
+name: "Deploy Backend to HF Spaces"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+
+job:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Clone HF Spaces repo
+        env:
+          HF_TOKEN: ${{secrets.HF_TOKEN}}
+        run: |
+          git clone https://Sanjeev2501:$HF_TOKEN@huggingface.co/spaces/Sanjeev2501/nyxar hf-space
+      
+      - name: Sync backend/ to HF Spaces root
+        run: |
+          rsync -av --delete \
+            --exclude='.git' \
+            backend/ hf-space/
+        
+      - name: Commit and push to HF Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          cd hf-space
+          git config user.email "sanjeev.820525@gmail.com"
+          git config user.name "Sanjeev2501"
+          git add .
+          git diff --cached --quiet || git commit -m "sync: from GitHub main @ ${{ github.sha }}"
+          git push
