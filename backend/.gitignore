@@ -8,6 +8,12 @@ __pycache__/
 dragon/
 venv/
 
+#logs
+logs/
+
+#data
+data/
+
 #Cache
 app/cache/
 
@@ -17,5 +23,8 @@ app/cache/
 #OS
 .DS_Store
 
-#Performance Testing
+#Codebase
+codebase.txt
+
+#performance evaluation
 /performance
