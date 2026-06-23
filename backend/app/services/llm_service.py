@@ -9,8 +9,12 @@ from app.core import prometheus_metrics as pm
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-groq_client = Groq(api_key=GROQ_API_KEY)
+if not os.getenv("TESTING"):
+    gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+    groq_client = Groq(api_key=GROQ_API_KEY)
+else:
+    gemini_client=None
+    groq_client=None
 
 BASE_PROMPT = """
 Your task is to analyze the provided dataset information, prediction distributions, batch analytics, and representative customer reviews and generate an evidence-based intelligence report.

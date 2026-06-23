@@ -16,6 +16,7 @@ from app.services.warmup_service import preload_models, warmup
 import threading
 import json
 
+import os
 from app.core.database import Base, engine
 from models.log_models import Log
 from models.batch_job_model import BatchJob
@@ -27,26 +28,29 @@ from app.services.insights_service.overview_insights import generate_and_save_in
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    def run():
-        preload_models()
-        warmup()
+    if not os.getenv("TESTING"):
+        def run():
+            preload_models()
+            warmup()
 
-    t = threading.Thread(target=run)
-    t.start()
-    t.join()
+        t = threading.Thread(target=run)
+        t.start()
+        t.join()
 
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(generate_and_save_insights, "interval", minutes=30)
-    scheduler.start()
-    generate_and_save_insights()
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(generate_and_save_insights, "interval", minutes=30)
+        scheduler.start()
+        generate_and_save_insights()
 
     yield
 
-    scheduler.shutdown()
+    if not os.getenv("TESTING"):
+        scheduler.shutdown()
 
 app = FastAPI(lifespan=lifespan)
 
-Base.metadata.create_all(bind=engine)
+if not os.getenv("TESTING"):
+    Base.metadata.create_all(bind=engine)
 
 app.include_router(models_router)
 app.include_router(prediction_router)

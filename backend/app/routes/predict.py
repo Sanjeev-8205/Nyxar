@@ -108,6 +108,9 @@ async def predict_route(data: InputData, background_tasks: BackgroundTasks, _:bo
             "llm_used": response["model"]
         }
 
+    except Exception:
+        raise
+
     except Exception as prediction_error:
         pm.LIVE_INFERENCE_ERROR_COUNT.inc()
         
@@ -118,11 +121,14 @@ async def predict_route(data: InputData, background_tasks: BackgroundTasks, _:bo
         )
 
     finally:
-        pm.REQUEST_LATENCY_SINGLE_INFERENCE.labels(
-            model=data.model
-        ).observe(round((time.perf_counter() - start_request)*1000,0))
-        
-        background_tasks.add_task(
-            log_predictions_with_metrics,
-            data.text, pred, confidence, prob, data.model, latency, status
-        )
+        try:
+            pm.REQUEST_LATENCY_SINGLE_INFERENCE.labels(
+                model=data.model
+            ).observe(round((time.perf_counter() - start_request)*1000,0))
+            
+            background_tasks.add_task(
+                log_predictions_with_metrics,
+                data.text, pred, confidence, prob, data.model, latency, status
+            )
+        except Exception:
+            pass

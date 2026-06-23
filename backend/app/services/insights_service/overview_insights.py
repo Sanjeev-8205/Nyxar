@@ -13,13 +13,17 @@ from app.services.metrics_service.health_metrics_service import get_ram_usage, g
 from app.core.database import SessionLocal
 from models.overview_insights_model import OverviewInsights
 
-db=SessionLocal()
-
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-groq_client = Groq(api_key=GROQ_API_KEY)
+if not os.getenv("TESTING"):
+    db=SessionLocal()
+    gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+    groq_client = Groq(api_key=GROQ_API_KEY)
+else:
+    db=None
+    gemini_client=None
+    groq_client=None
 
 SYSTEM_INSIGHTS_PROMPT = """
 You are an AI operations intelligence system analyzing ML inference telemetry.

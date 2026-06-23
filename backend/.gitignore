@@ -3,16 +3,11 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+.pytest_cache
 
 #virtualenv
 dragon/
 venv/
-
-#logs
-logs/
-
-#data
-data/
 
 #Cache
 app/cache/
@@ -23,8 +18,5 @@ app/cache/
 #OS
 .DS_Store
 
-#Codebase
-codebase.txt
-
-#performance evaluation
-/performance
+#upload
+app/upload/
