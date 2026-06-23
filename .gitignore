@@ -9,20 +9,10 @@ dragon/
 venv/
 
 #logs
-<<<<<<< HEAD
-backend/logs/
-
-#Models
-backend/models/bert_base_uncased/
-backend/models/bert_base_uncased/v1/
-backend/models/bilstm/
-backend/models/bilstm/v1/
-=======
 logs/
 
 #data
 data/
->>>>>>> nyxar-backend/main
 
 #Cache
 app/cache/
@@ -31,7 +21,6 @@ app/cache/
 .vscode/
 
 #OS
-<<<<<<< HEAD
 .DS_Store
 
 #Codebase
@@ -39,6 +28,3 @@ codebase.txt
 
 #performance evaluation
 /performance
-=======
-.DS_Store
->>>>>>> nyxar-backend/main

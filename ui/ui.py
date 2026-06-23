@@ -159,7 +159,7 @@ def render_overview():
         metric_card("Avg Latency", f"{dashboard_metrics["inference"]["inference_metrics"]["average_latency"]}ms")
     
     with col3:
-        metric_card("RPM", f"{dashboard_metrics["inference"]["inference_metrics"]["rpm"]} req/min")
+        metric_card("Requests Per Minute", f"{dashboard_metrics["inference"]["inference_metrics"]["rpm"]}")
     
     with col4:
         metric_card("Active Models", dashboard_metrics["health"]["models_count"])

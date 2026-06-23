@@ -186,7 +186,12 @@ def get_insights(prompt):
             print(f"Groq failed with: {type(groq_error).__name__}: {groq_error}")
             print("Both gemini and groq failed.")
             return {
-                "ai_insights": None,
+                "ai_insights": {
+                    "inference_insights": "Insights unavailable.",
+                    "recent_activity": "Insights unavailable.",
+                    "anomaly_detection": "Insights unavailable.",
+                    "health_metrics": "Insights unavailable."
+                },
                 "provider": None,
                 "fallback_used": True,
                 "fallback_reason": str(groq_error),
