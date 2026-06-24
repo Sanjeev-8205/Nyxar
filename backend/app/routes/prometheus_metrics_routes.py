@@ -4,7 +4,7 @@ from fastapi.responses import Response
 import secrets
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-import os
+from app.core.settings import get_settings
 
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 
@@ -12,12 +12,13 @@ router = APIRouter()
 
 security = HTTPBasic()
 def verify_metrics_auth(credentials: HTTPBasicCredentials = Depends(security)):
+    settings=get_settings()
     correct_username = secrets.compare_digest(
-        credentials.username, os.getenv("PROMETHEUS_METRICS_USERNAME", "")
+        credentials.username, settings.PROMETHEUS_METRICS_USERNAME
     )
 
     correct_password = secrets.compare_digest(
-        credentials.password, os.getenv("PROMETHEUS_METRICS_PASSWORD", "")
+        credentials.password, settings.PROMETHEUS_METRICS_PASSWORD
     )
 
     if not (correct_username and correct_password):

@@ -1,16 +1,15 @@
 from google import genai
 from groq import Groq
-import os
 import asyncio
 import time
 from app.core import prometheus_metrics as pm
+from app.core.settings import get_settings
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+settings = get_settings()
 
-if not os.getenv("TESTING"):
-    gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-    groq_client = Groq(api_key=GROQ_API_KEY)
+if not settings.USE_MOCK_LLM:
+    gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
+    groq_client = Groq(api_key=settings.GROQ_API_KEY)
 else:
     gemini_client=None
     groq_client=None
@@ -44,10 +43,7 @@ async def generate_ai_prediction_insights(prediction, confidence, prob, word_cou
 
     #-----------------------------------------------------------------#
 
-    USE_MOCK_LLM = os.getenv("USE_MOCK_LLM", "false").lower() == "true"
-
-    if USE_MOCK_LLM:
-        
+    if settings.USE_MOCK_LLM: 
         pm.LLM_REQUEST_COUNT.labels(provider="mock_llm").inc()
         mock_start=time.perf_counter()
 

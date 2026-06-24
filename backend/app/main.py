@@ -16,7 +16,6 @@ from app.services.warmup_service import preload_models, warmup
 import threading
 import json
 
-import os
 from app.core.database import Base, engine
 from models.log_models import Log
 from models.batch_job_model import BatchJob
@@ -25,10 +24,14 @@ from models.overview_insights_model import OverviewInsights
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from app.services.insights_service.overview_insights import generate_and_save_insights
+from app.core.settings import get_settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if not os.getenv("TESTING"):
+    settings = get_settings()
+
+    if not settings.USE_MOCK_LLM:
+        Base.metadata.create_all(bind=engine)
         def run():
             preload_models()
             warmup()
@@ -44,13 +47,10 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    if not os.getenv("TESTING"):
+    if not settings.USE_MOCK_LLM:
         scheduler.shutdown()
 
 app = FastAPI(lifespan=lifespan)
-
-if not os.getenv("TESTING"):
-    Base.metadata.create_all(bind=engine)
 
 app.include_router(models_router)
 app.include_router(prediction_router)

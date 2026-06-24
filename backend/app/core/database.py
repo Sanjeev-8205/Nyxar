@@ -1,14 +1,14 @@
 from dotenv import load_dotenv
-import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from app.core.settings import get_settings
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+settings = get_settings()
 
-if not os.getenv("TESTING"):
-    engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
+if not settings.USE_MOCK_LLM:
+    engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 else:
     engine=None

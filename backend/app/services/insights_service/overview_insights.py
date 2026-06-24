@@ -1,7 +1,6 @@
 from google import genai
 from google.genai import types
 from groq import Groq
-import os
 import json
 import time
 
@@ -12,14 +11,14 @@ from app.services.metrics_service.health_metrics_service import get_ram_usage, g
 
 from app.core.database import SessionLocal
 from models.overview_insights_model import OverviewInsights
+from app.core.settings import get_settings
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+settings = get_settings()
 
-if not os.getenv("TESTING"):
+if not settings.USE_MOCK_LLM:
     db=SessionLocal()
-    gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-    groq_client = Groq(api_key=GROQ_API_KEY)
+    gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
+    groq_client = Groq(api_key=settings.GROQ_API_KEY)
 else:
     db=None
     gemini_client=None
