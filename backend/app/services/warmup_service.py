@@ -1,7 +1,11 @@
 from app.core.model_loader import get_model
 from app.core.model_registry import models
-from tensorflow.keras.preprocessing.sequence import pad_sequences
 from app.core import prometheus_metrics as pm
+from app.core.settings import get_settings
+
+settings=get_settings()
+if not settings.TESTING:
+    from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 def preload_models():
     print("ENTERED PRELOAD")

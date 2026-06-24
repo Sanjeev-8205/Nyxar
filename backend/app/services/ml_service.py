@@ -2,14 +2,17 @@ from app.schemas.request_schema import InputData
 from app.core.model_loader import get_model
 from app.core.model_registry import models
 from app.core.preprocessing import textProcess_lr, textProcess_bilstm, textPreprocess_RoBERTa, preprocess_batch_lr, preprocess_batch_bilstm, preprocess_batch_RoBERTa
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-import numpy as np
-import torch
-import onnxruntime as ort
-from scipy.special import softmax
 import time
+from app.core.settings import get_settings
 
-torch.set_num_threads(1)
+settings=get_settings()
+if not settings.TESTING:
+    from tensorflow.keras.preprocessing.sequence import pad_sequences
+    import numpy as np
+    import torch
+    import onnxruntime as ort
+    from scipy.special import softmax
+    torch.set_num_threads(1)
 
 def predict(text, model_name):
 
