@@ -4,6 +4,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from app.core import prometheus_metrics as pm
 
 def preload_models():
+    print("ENTERED PRELOAD")
     for name in models:
         try:
             get_model(name)
@@ -49,3 +50,14 @@ def warmup():
 
         except Exception as e:
             print(e)
+
+def run():
+    print("PRELOAD THREAD STARTED")
+
+    preload_models()
+
+    print("PRELOAD COMPLETE")
+
+    warmup()
+
+    print("WARMUP COMPLETE")
