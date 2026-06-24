@@ -3,8 +3,8 @@ import re
 #Single Inference
 def textProcess_lr(text):
     text = text.lower()
-    text = re.sub('[^a-z0-9\s]+', "", text)
-    text = re.sub("\s+", " ", text).split()
+    text = re.sub(r'[^a-z0-9\s]+', "", text)
+    text = re.sub(r"\s+", " ", text).split()
 
     return [" ".join(text)]
 
@@ -21,8 +21,8 @@ def preprocess_batch_lr(df_texts):
     df_texts = (
         df_texts
         .str.lower()
-        .str.replace('[^a-z0-9\s]+', "", regex=True)
-        .str.replace('\s+', " ", regex=True)
+        .str.replace(r'[^a-z0-9\s]+', "", regex=True)
+        .str.replace(r'\s+', " ", regex=True)
         .str.strip()
     )
 
