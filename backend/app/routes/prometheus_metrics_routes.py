@@ -15,7 +15,7 @@ def verify_metrics_auth(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(
         credentials.username, os.getenv("PROMETHEUS_METRICS_USERNAME", "")
     )
-    
+
     correct_password = secrets.compare_digest(
         credentials.password, os.getenv("PROMETHEUS_METRICS_PASSWORD", "")
     )

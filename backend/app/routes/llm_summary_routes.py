@@ -9,17 +9,9 @@ from sqlalchemy import func
 from app.services.llm_service import report_to_markdown
 
 from app.core.security import verify_api_key
+from app.core.dependencies import get_db
 
 router = APIRouter()
-
-def get_db():
-    try:
-        db = SessionLocal()
-
-        yield db
-
-    finally:
-        db.close()
 
 def get_top(sentiment, job_id, db):
     results = db.query(

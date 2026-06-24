@@ -4,17 +4,9 @@ from app.core.database import SessionLocal
 from sqlalchemy.orm import Session
 
 from app.core.security import verify_api_key
+from app.core.dependencies import get_db
 
 router  =APIRouter()
-
-def get_db():
-    try:
-        db = SessionLocal()
-
-        yield db
-    
-    finally:
-        db.close()
 
 @router.get("/platform_status")
 def get_platform_status(

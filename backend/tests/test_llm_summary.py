@@ -2,21 +2,12 @@ from unittest.mock import MagicMock, patch
 
 HEADERS = {'x-api-key': 'test-key'}
 
-def make_mock_db():
-    mock_db = MagicMock()
-    mock_db.__enter__ = MagicMock(return_value = mock_db)
-    mock_db.__exit__ = MagicMock(return_value=False)
-    return mock_db
-
 @patch("app.routes.llm_summary_routes.report_to_markdown")
 @patch("app.routes.llm_summary_routes.generate_ai_summary")
-@patch("app.routes.llm_summary_routes.SessionLocal")
 
 def test_summary_returns_cached_results(
-    mock_session, mock_generate, mock_markdown, client 
+    mock_generate, mock_markdown, client, mock_db
 ):  
-
-    mock_db = make_mock_db()
 
     mock_summary = MagicMock()
     mock_summary.summary = {"overview": "cached_summary"}
@@ -25,7 +16,6 @@ def test_summary_returns_cached_results(
     mock_summary.summary_type = 'full'
 
     mock_db.query.return_value.filter.return_value.first.return_value = mock_summary
-    mock_session.return_value = mock_db
     
     mock_markdown.return_value = "# Cached Report"
 
@@ -47,14 +37,12 @@ def test_summary_returns_cached_results(
     mock_generate.assert_not_called()
 
 @patch('app.routes.llm_summary_routes.generate_ai_summary')
-@patch('app.routes.llm_summary_routes.SessionLocal')
 @patch('app.routes.llm_summary_routes.report_to_markdown')
 @patch("app.routes.llm_summary_routes.get_top")
 
 def test_generate_ai_summary(
-    mock_get_top, mock_markdown, mock_session, mock_generate, client, 
+    mock_get_top, mock_markdown, mock_generate, client, mock_db
 ):
-    mock_db=make_mock_db()
 
     mock_generate.return_value = {
         "summary": {"overview": "summary"},
@@ -91,8 +79,6 @@ def test_generate_ai_summary(
     ]
 
     mock_get_top.return_value = [("Amazing", "2", 0.95)]
-
-    mock_session.return_value = mock_db
 
     mock_markdown.return_value = "# New Summary"
 

@@ -3,17 +3,9 @@ from app.core.database import SessionLocal
 from sqlalchemy.orm import Session
 from models.overview_insights_model import OverviewInsights
 from app.core.security import verify_api_key
+from app.core.dependencies import get_db
 
 router = APIRouter()
-
-def get_db():
-    try:
-        db = SessionLocal()
-
-        yield db
-
-    finally:
-        db.close()
 
 @router.get("/overview_insights")
 def get_insights(

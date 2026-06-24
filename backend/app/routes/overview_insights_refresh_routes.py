@@ -4,17 +4,9 @@ from sqlalchemy.orm import Session
 from app.services.insights_service.overview_insights import generate_and_save_insights
 
 from app.core.security import verify_api_key
+from app.core.dependencies import get_db
 
 router = APIRouter()
-
-def get_db():
-    try:
-        db=SessionLocal()
-
-        yield
-
-    finally:
-        db.close()
 
 @router.post("/overview_insights/refresh")
 def refresh_insights(db: Session = Depends(get_db), _:bool=Depends(verify_api_key)):
