@@ -1,8 +1,5 @@
 from pathlib import Path
-from transformers import AutoTokenizer
 import joblib
-import tensorflow as tf
-import onnxruntime as ort
 import os
 from huggingface_hub import snapshot_download
 from functools import lru_cache
@@ -10,18 +7,13 @@ from functools import lru_cache
 os.environ["HF_HUB_DISABLE_XET"] = "1"
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
 
-@lru_cache(maxsize=None)
-def get_repo_path(model_key):
-    return snapshot_download(
-        repo_id=HF_MODELS[model_key]
-    )
-
 HF_MODELS= {
     "logistic": "Sanjeev2501/nyxar-logistic-sentiment",
     "bilstm": "Sanjeev2501/nyxar-bilstm-sentiment",
     "roberta": "Sanjeev2501/nyxar-roberta-sentiment"
 }
 
+@lru_cache(maxsize=None)
 def get_repo_path(model_key):
     local_path=snapshot_download(
         repo_id=HF_MODELS[model_key],
@@ -38,8 +30,11 @@ def get_bilstm_path():
 
 def get_roberta_path():
     return Path(get_repo_path("roberta"))
-
+ 
 def load_RoBERTa_model():
+    import onnxruntime as ort
+    from transformers import AutoTokenizer
+
     path = get_roberta_path()
 
     session = ort.InferenceSession(str(path/"model_quantized.onnx"))  # ← onnx session
@@ -60,6 +55,8 @@ def load_logistic_model():
     }
 
 def load_bilstm_model():
+    import tensorflow as tf
+
     path = get_bilstm_path()
 
     return {
