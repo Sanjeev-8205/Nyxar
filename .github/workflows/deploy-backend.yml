@@ -23,7 +23,7 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
           cache-dependency-path: |
-            backend/requirements.txt
+            backend/requirements-ci.txt
             backend/requirements-test.txt
       
       - name: Install dependencies
