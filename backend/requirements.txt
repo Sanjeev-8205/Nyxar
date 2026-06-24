@@ -25,3 +25,4 @@ groq
 google-genai
 apscheduler
 prometheus-client
+pydantic-settings
