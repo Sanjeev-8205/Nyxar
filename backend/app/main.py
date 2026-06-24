@@ -13,7 +13,7 @@ from app.routes.overview_insights_refresh_routes import router as overview_insig
 from app.routes.platform_status import router as platform_status_router
 from app.routes.prometheus_metrics_routes import router as prometheus_metrics_router
 from app.services.warmup_service import preload_models, warmup
-import threading
+import asyncio
 import json
 
 from app.core.database import Base, engine
@@ -30,15 +30,13 @@ from app.core.settings import get_settings
 async def lifespan(app: FastAPI):
     settings = get_settings()
 
-    if not settings.USE_MOCK_LLM:
+    if not settings.TESTING:
         Base.metadata.create_all(bind=engine)
-        def run():
-            preload_models()
-            warmup()
 
-        t = threading.Thread(target=run)
-        t.start()
-        t.join()
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, preload_models)
+        await loop.run_in_executor(None, warmup)
+
 
         scheduler = BackgroundScheduler()
         scheduler.add_job(generate_and_save_insights, "interval", minutes=30)
@@ -47,7 +45,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    if not settings.USE_MOCK_LLM:
+    if not settings.TESTING:
         scheduler.shutdown()
 
 app = FastAPI(lifespan=lifespan)

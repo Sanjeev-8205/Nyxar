@@ -50,14 +50,3 @@ def warmup():
 
         except Exception as e:
             print(e)
-
-def run():
-    print("PRELOAD THREAD STARTED")
-
-    preload_models()
-
-    print("PRELOAD COMPLETE")
-
-    warmup()
-
-    print("WARMUP COMPLETE")
