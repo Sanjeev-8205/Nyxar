@@ -16,11 +16,9 @@ from app.core.settings import get_settings
 settings = get_settings()
 
 if not settings.TESTING:
-    db=SessionLocal()
     gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
     groq_client = Groq(api_key=settings.GROQ_API_KEY)
 else:
-    db=None
     gemini_client=None
     groq_client=None
 
@@ -112,6 +110,7 @@ def build_prompt(prompt, data):
     return template.format(data=json.dumps(data, indent=2))
 
 def get_insights(prompt):
+    db=SessionLocal()
 
     #-------------------All the necessary metrics for overview_insights------------------#
     inference_metrics = get_inference_metrics(db)
@@ -206,9 +205,14 @@ def get_insights(prompt):
                 "prompt_version": "v1",
                 "error": "Both Gemini and Groq failed."
             }
+    finally:
+        db.close()
         
 def generate_and_save_insights():
+    db=None
+
     try:
+        db=SessionLocal()
         result = get_insights(SYSTEM_INSIGHTS_PROMPT)
 
         insight = OverviewInsights(
