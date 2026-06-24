@@ -55,6 +55,47 @@ ACTIVE_MODELS = Gauge(
     "Number of loaded models"
 )
 
+LLM_LATENCY_BREAKDOWN = Histogram(
+    "llm_latency_breakdown",
+    "Latency Breakdown by llm",
+    ["provider"]
+)
+
+LLM_STATUS_COUNT = Counter(
+    "status_count",
+    "llm status by model",
+    ["provider", "status"]
+)
+
+LLM_FALLBACK_COUNT = Counter(
+    "fallback_count",
+    "LLM fallback count",
+)
+
+LLM_INPUT_TOKENS = Histogram(
+    "llm_input_tokens",
+    "Input tokens by provider",
+    ["provider"]
+)
+
+LLM_OUTPUT_TOKENS = Histogram(
+    "llm_output_tokens",
+    "Output tokens by provider",
+    ["provider"]
+)
+
+LLM_REQUEST_COUNT = Counter(
+    "llm_count",
+    "LLM Count",
+    ["provider"]
+)
+
+LLM_INSIGHT_GENERATION_LATENCY = Histogram(
+    "llm_insight_generation_latency",
+    "End-to-end insight generation latency"
+)
+
+
 # Batch Metrics
 TOTAL_BATCH_JOBS = Counter(
     "total_batch_jobs",
