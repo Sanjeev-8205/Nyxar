@@ -64,7 +64,7 @@ def generate_summary(
     )
 
     if not dataset_context:
-        raise HTTPException(404, details="Job not found error!")
+        raise HTTPException(404, details="Job not found error")
 
     if existing_summary:
         return {

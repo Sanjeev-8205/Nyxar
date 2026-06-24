@@ -2,7 +2,6 @@ from fastapi import Header, HTTPException
 import os
 
 NYXAR_API_KEY = os.getenv("PROTECT_API_KEY")
-os.environ["PROTECT_API_KEY"] = "test-key"
 
 async def verify_api_key(
         x_api_key:str = Header(default=None)

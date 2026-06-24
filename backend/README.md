@@ -9,4 +9,6 @@ license: mit
 short_description: AI Inference and Observability Platform
 ---
 
+# Nyxar — AI Inference & Observability Platform
+
 Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
