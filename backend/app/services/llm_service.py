@@ -8,7 +8,7 @@ from app.core.settings import get_settings
 
 settings = get_settings()
 
-if not settings.USE_MOCK_LLM:
+if not settings.TESTING:
     gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
     groq_client = Groq(api_key=settings.GROQ_API_KEY)
 else:

@@ -2,6 +2,7 @@ from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
+    TESTING: bool=False
     DATABASE_URL: str
     GEMINI_API_KEY: str
     GROQ_API_KEY: str
