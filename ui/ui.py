@@ -143,7 +143,7 @@ with st.container(border=True):
     st.markdown("""<div style="font-size: 1.8rem;font-weight: 500;color: rgba(255,255,255,0.85);margin-top: 8px;margin-bottom: 0rem">AI Systems and Observability Platform</div>""", unsafe_allow_html=True)
     st.caption("Real-time inference, batch intelligence, AI-powered insights, and operational observability for modern AI workflows.")
 
-st.markdown('<div style="width:140px;height:1px;background:linear-gradient(90deg,rgba(255,180,80,0.8),rgba(255,180,80,0.2));margin:12px 0 20px 0;box-shadow:0 0 8px rgba(255,180,80,0.25);"></div>', unsafe_allow_html=True)
+st.markdown("""<style>@keyframes glowSweep{0%{background-position:-220px 0;}100%{background-position:220px 0;}}.glow-divider{width:140px;height:2px;margin:12px 0 20px 0;border-radius:999px;background:linear-gradient(90deg,rgba(255,180,80,0.15) 0%,rgba(255,180,80,0.35) 30%,rgba(255,230,160,1) 50%,rgba(255,180,80,0.35) 70%,rgba(255,180,80,0.15) 100%);background-size:300px 100%;animation:glowSweep 2.2s linear infinite;box-shadow:0 0 6px rgba(255,180,80,.5),0 0 12px rgba(255,180,80,.35),0 0 20px rgba(255,180,80,.2);}</style><div class="glow-divider"></div>""", unsafe_allow_html=True)
 
 def render_overview():
 
