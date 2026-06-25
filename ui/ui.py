@@ -900,7 +900,7 @@ def render_batch_intelligence():
                         st.markdown('<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Oops. Unexpected error occured</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Insights could not be generated.</div></div></div>', unsafe_allow_html=True)
 
 def render_ai_intelligence():
-
+    st.write("Reached AI Intelligence")
     dashboard_metrics = st.session_state.dashboard_metrics
 
     @st.dialog("AI Intelligence Summary", width="large")
@@ -908,10 +908,12 @@ def render_ai_intelligence():
         st.markdown(st.session_state.ai_summary)
 
     with st.container(border=True):
+        st.write("Header rendered")
         hero_header("AI Reports")
         hero_subtext("Generate LLM-powered summaries, topic insights, and enterprise-scale feedback intelligence.")
     
     with st.container(border=True):
+        st.write("Control center rendered")
         st.markdown("### Intelligence Control Center")
 
         st.markdown('<div style="color:#9CA3AF;font-size:1rem;line-height:1.8;margin-top:-0.25rem;margin-bottom:1rem;">Choose the depth of analysis to generate from batch prediction results.</div>',unsafe_allow_html=True,)
@@ -949,7 +951,7 @@ def render_ai_intelligence():
         }
 
         summary_description_card(title=st.session_state.summary_type, description=descriptions[selected_option])
-
+        st.write("Before Generate button")
         if st.button("Generate AI Insights"):
             if not st.session_state.completed_job_data:
                 st.toast("Run a batch prediction before generating AI insights.", icon="⚠️")
