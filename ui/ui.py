@@ -900,122 +900,128 @@ def render_batch_intelligence():
                         st.markdown('<div style="min-height:272.5px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Oops. Unexpected error occured</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;">Insights could not be generated.</div></div></div>', unsafe_allow_html=True)
 
 def render_ai_intelligence():
-    st.write("Reached AI Intelligence")
-    dashboard_metrics = st.session_state.dashboard_metrics
+    try:
+        st.write("Reached AI Intelligence")
+        dashboard_metrics = st.session_state.dashboard_metrics
 
-    @st.dialog("AI Intelligence Summary", width="large")
-    def show_summary():
-        st.markdown(st.session_state.ai_summary)
+        @st.dialog("AI Intelligence Summary", width="large")
+        def show_summary():
+            st.markdown(st.session_state.ai_summary)
 
-    with st.container(border=True):
-        st.write("Header rendered")
-        hero_header("AI Reports")
-        hero_subtext("Generate LLM-powered summaries, topic insights, and enterprise-scale feedback intelligence.")
-    
-    with st.container(border=True):
-        st.write("Control center rendered")
-        st.markdown("### Intelligence Control Center")
+        with st.container(border=True):
+            st.write("Header rendered")
+            hero_header("AI Reports")
+            hero_subtext("Generate LLM-powered summaries, topic insights, and enterprise-scale feedback intelligence.")
+        
+        with st.container(border=True):
+            st.write("Control center rendered")
+            st.markdown("### Intelligence Control Center")
 
-        st.markdown('<div style="color:#9CA3AF;font-size:1rem;line-height:1.8;margin-top:-0.25rem;margin-bottom:1rem;">Choose the depth of analysis to generate from batch prediction results.</div>',unsafe_allow_html=True,)
+            st.markdown('<div style="color:#9CA3AF;font-size:1rem;line-height:1.8;margin-top:-0.25rem;margin-bottom:1rem;">Choose the depth of analysis to generate from batch prediction results.</div>',unsafe_allow_html=True,)
 
-        SUMMARY_MAPPING = {
-            "Overview Report": "executive",
-            "Detailed Report": "detailed",
-            "Full Intelligence Report": "full"
-        }
+            SUMMARY_MAPPING = {
+                "Overview Report": "executive",
+                "Detailed Report": "detailed",
+                "Full Intelligence Report": "full"
+            }
 
-        selected_option = st.radio(
-            "Summary Type",
-            [
-                "Overview Report",
-                "Detailed Report",
-                "Full Intelligence Report"
-            ],
-            horizontal=True,
-            help = "Overview: 2 mins read | Detailed: Better Breakdown | Full: Full Breakdown + Additional Assessments"
-        )
-
-        summary_type = SUMMARY_MAPPING[selected_option]
-        st.session_state.summary_type = selected_option
-
-        #Description of the summary types
-        descriptions = {
-            "Overview Report":
-                "High-level intelligence overview highlighting the most significant patterns, findings, and recommendations from the analyzed dataset.",
-
-            "Detailed Report":
-                "Comprehensive intelligence report with deeper analysis, evidence-based findings, and structured insights derived from recurring patterns in the dataset.",
-
-            "Full Intelligence Report":
-                "Complete intelligence assessment including detailed findings, strategic opportunities, risk evaluation, confidence analysis, and actionable recommendations."
-        }
-
-        summary_description_card(title=st.session_state.summary_type, description=descriptions[selected_option])
-        st.write("Before Generate button")
-        if st.button("Generate AI Insights"):
-            if not st.session_state.completed_job_data:
-                st.toast("Run a batch prediction before generating AI insights.", icon="⚠️")
-
-            else:
-                with st.spinner("Analyzing reviews with AI..."):
-                    response = requests.get(
-                        f"{BASE_URL}/batch/job/{st.session_state.job_id}/summary",
-                        params={"summary_type":summary_type},
-                        headers=headers,
-                        timeout=120
-                    )
-
-                    if response.status_code == 200:
-                        data = response.json()
-
-                        st.session_state.ai_summary = data["summary"]["intelligence_overview"]
-                        st.session_state.ai_response = data["summary"]
-                        st.session_state.converted_report = data["converted_report"]
-                        st.toast("AI insights generated sucessfully.", icon="✅")
-
-                    else:
-                        st.error("Failed to generate insights. Try again.")
-
-        if st.session_state.ai_summary:
-            summary_type = st.session_state.summary_type
-
-            st.divider()
-            st.markdown(f'<div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;text-transform:uppercase;">REPORT GENERATED</div>', unsafe_allow_html=True)
-            st.markdown(f'<div style="color:#E5E7EB;margin-top:0.5rem;margin-bottom:0.5rem;"> {summary_type} generated successfully and is ready for view or download.</div>', unsafe_allow_html=True)
-
-            st.download_button(
-                f"📥 Download {summary_type}",
-                st.session_state.converted_report,
-                file_name=f"{st.session_state.last_job_data['filename'].rsplit(".", 1)[0]}_{summary_type.replace(" ","_")}.md",
-                mime="text/markdown",
-                width="stretch"
+            selected_option = st.radio(
+                "Summary Type",
+                [
+                    "Overview Report",
+                    "Detailed Report",
+                    "Full Intelligence Report"
+                ],
+                horizontal=True,
+                help = "Overview: 2 mins read | Detailed: Better Breakdown | Full: Full Breakdown + Additional Assessments"
             )
 
+            summary_type = SUMMARY_MAPPING[selected_option]
+            st.session_state.summary_type = selected_option
+
+            #Description of the summary types
+            descriptions = {
+                "Overview Report":
+                    "High-level intelligence overview highlighting the most significant patterns, findings, and recommendations from the analyzed dataset.",
+
+                "Detailed Report":
+                    "Comprehensive intelligence report with deeper analysis, evidence-based findings, and structured insights derived from recurring patterns in the dataset.",
+
+                "Full Intelligence Report":
+                    "Complete intelligence assessment including detailed findings, strategic opportunities, risk evaluation, confidence analysis, and actionable recommendations."
+            }
+
+            summary_description_card(title=st.session_state.summary_type, description=descriptions[selected_option])
+            st.write("Before Generate button")
+            if st.button("Generate AI Insights"):
+                if not st.session_state.completed_job_data:
+                    st.toast("Run a batch prediction before generating AI insights.", icon="⚠️")
+
+                else:
+                    with st.spinner("Analyzing reviews with AI..."):
+                        response = requests.get(
+                            f"{BASE_URL}/batch/job/{st.session_state.job_id}/summary",
+                            params={"summary_type":summary_type},
+                            headers=headers,
+                            timeout=120
+                        )
+
+                        if response.status_code == 200:
+                            data = response.json()
+
+                            st.session_state.ai_summary = data["summary"]["intelligence_overview"]
+                            st.session_state.ai_response = data["summary"]
+                            st.session_state.converted_report = data["converted_report"]
+                            st.toast("AI insights generated sucessfully.", icon="✅")
+
+                        else:
+                            st.error("Failed to generate insights. Try again.")
+
+            if st.session_state.ai_summary:
+                summary_type = st.session_state.summary_type
+
+                st.divider()
+                st.markdown(f'<div style="font-size:0.75rem;font-weight:600;letter-spacing:1px;color:#94A3B8;text-transform:uppercase;">REPORT GENERATED</div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="color:#E5E7EB;margin-top:0.5rem;margin-bottom:0.5rem;"> {summary_type} generated successfully and is ready for view or download.</div>', unsafe_allow_html=True)
+
+                st.download_button(
+                    f"📥 Download {summary_type}",
+                    st.session_state.converted_report,
+                    file_name=f"{st.session_state.last_job_data['filename'].rsplit(".", 1)[0]}_{summary_type.replace(" ","_")}.md",
+                    mime="text/markdown",
+                    width="stretch"
+                )
+
+        
+        if not st.session_state.ai_summary:
+            with st.container(border=True):
+                st.markdown("""<div style="min-height:320px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="font-size:2rem;margin-bottom:1rem;filter:drop-shadow(0 0 10px rgba(255,255,255,0.2));">🧠</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting Intelligence Generation</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;max-width:650px;">Generate an AI-powered intelligence report from completed batch analysis.<br><br>The report will automatically organize findings into relevant analytical sections and provide structured insights based on the observed patterns within the dataset.</div></div></div>""", unsafe_allow_html=True)
+
+        else:
+            with st.container(border=True):
+                if st.session_state.ai_response:
+                    summary_data = st.session_state.ai_response
+
+                else:
+                    st.error("No response from the server.")
+
+                render_intelligence_sections(summary_data["sections"])
+
+                if st.session_state.summary_type == "Full Intelligence Report":
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        render_opportunity_assessment(summary_data["opportunity_assessment"])
+                    with c2:
+                        render_risk_assessment(summary_data["risk_assessment"])
+                    render_confidence_assessment(summary_data["confidence_assessment"])
+
+                render_recommendations_card(summary_data["recommendations"])
+                render_metadata_card(summary_data["report_metadata"])
     
-    if not st.session_state.ai_summary:
-        with st.container(border=True):
-            st.markdown("""<div style="min-height:320px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="font-size:2rem;margin-bottom:1rem;filter:drop-shadow(0 0 10px rgba(255,255,255,0.2));">🧠</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting Intelligence Generation</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;max-width:650px;">Generate an AI-powered intelligence report from completed batch analysis.<br><br>The report will automatically organize findings into relevant analytical sections and provide structured insights based on the observed patterns within the dataset.</div></div></div>""", unsafe_allow_html=True)
-
-    else:
-        with st.container(border=True):
-            if st.session_state.ai_response:
-                summary_data = st.session_state.ai_response
-
-            else:
-                st.error("No response from the server.")
-
-            render_intelligence_sections(summary_data["sections"])
-
-            if st.session_state.summary_type == "Full Intelligence Report":
-                c1, c2 = st.columns(2)
-                with c1:
-                    render_opportunity_assessment(summary_data["opportunity_assessment"])
-                with c2:
-                    render_risk_assessment(summary_data["risk_assessment"])
-                render_confidence_assessment(summary_data["confidence_assessment"])
-
-            render_recommendations_card(summary_data["recommendations"])
-            render_metadata_card(summary_data["report_metadata"])
+    except Exception as e:
+        st.error(f"Page crashed: {e}")
+        import traceback
+        st.code(traceback.format_exc())
 
 def render_observability():
 
