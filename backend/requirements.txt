@@ -26,3 +26,4 @@ google-genai
 apscheduler
 prometheus-client
 pydantic-settings
+structlog

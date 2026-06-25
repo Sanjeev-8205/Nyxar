@@ -4,7 +4,9 @@ from app.core.model_registry import models
 from app.core.preprocessing import textProcess_lr, textProcess_bilstm, textPreprocess_RoBERTa, preprocess_batch_lr, preprocess_batch_bilstm, preprocess_batch_RoBERTa
 import time
 from app.core.settings import get_settings
+from app.core.logging_config import setup_logging
 
+logger=setup_logging()
 settings=get_settings()
 if not settings.TESTING:
     from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -25,6 +27,7 @@ def predict(text, model_name):
 
     try:
         if model_type == "sklearn":
+            logger.debug("inference_preprocessing_started")
             pipeline_start = time.perf_counter()
 
             #Preprocessing
@@ -36,6 +39,7 @@ def predict(text, model_name):
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
                 }
             )
+            logger.debug("inference_preprocessing_completed", processing_length=len(text), duration_ms=round((time.perf_counter() - start)*1000, 4))
 
             #Vectorization
             start = time.perf_counter()
@@ -48,6 +52,7 @@ def predict(text, model_name):
             )
 
             #Prediciton
+            logger.debug("inference_model_started")
             start = time.perf_counter()
             prediction = pipeline["model"].predict(transformed)[0]
             prob = pipeline["model"].predict_proba(transformed)[0]
@@ -64,6 +69,7 @@ def predict(text, model_name):
             pipeline_start = time.perf_counter()
 
             #Preprocessing
+            logger.debug("inference_preprocessing_started")
             start = time.perf_counter()
             text = textProcess_bilstm(text)
             trace.append(
@@ -72,6 +78,7 @@ def predict(text, model_name):
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
                 }
             )
+            logger.debug("inference_preprocessing_completed", processing_length=len(text), duration_ms=round((time.perf_counter() - start)*1000, 4))
             
             tokenizer = pipeline["tokenizer"]
             model = pipeline["model"]
@@ -98,6 +105,7 @@ def predict(text, model_name):
             )
 
             #Prediction
+            logger.debug("inference_model_started")
             start = time.perf_counter()
             prob = model.predict(pad, verbose=0)[0]
             prediction = int(np.argmax(prob))
@@ -113,6 +121,7 @@ def predict(text, model_name):
         elif model_type == "transformer":
             pipeline_start = time.perf_counter()
 
+            logger.debug("inference_preprocessing_started")
             start = time.perf_counter()
             text = textPreprocess_RoBERTa(text)
             trace.append(
@@ -121,6 +130,7 @@ def predict(text, model_name):
                     "duration_ms": round((time.perf_counter() - start)*1000, 1)
                 }
             )
+            logger.debug("inference_preprocessing_completed", processing_length=len(text), duration_ms=round((time.perf_counter() - start)*1000, 4))
 
             tokenizer = pipeline["tokenizer"]
             session = pipeline["session"]   # ← onnx session instead of model
@@ -142,6 +152,7 @@ def predict(text, model_name):
             )
 
             start = time.perf_counter()
+            logger.debug("inference_model_started")
             outputs = session.run(
                 ["logits"],
                 {

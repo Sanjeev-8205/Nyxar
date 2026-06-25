@@ -908,7 +908,7 @@ def render_ai_intelligence():
         st.markdown(st.session_state.ai_summary)
 
     with st.container(border=True):
-        hero_header("AI Intelligence")
+        hero_header("AI Reports")
         hero_subtext("Generate LLM-powered summaries, topic insights, and enterprise-scale feedback intelligence.")
     
     with st.container(border=True):
@@ -1430,8 +1430,8 @@ def render_observability():
 
 #set the sidebar
 with st.sidebar:
-    st.markdown("✨ AI Sentiment System")
-    st.caption("Real-time AI Sentiment Intelligence Platform")
+    st.markdown("✨ Nyxar")
+    st.caption("AI Inference & Observability Platform")
 
     st.divider()
 
@@ -1457,7 +1457,7 @@ elif page=="Live Inference":
 elif page=="Batch Intelligence":
     render_batch_intelligence()
 
-elif page=="AI Intelligence":
+elif page=="AI Reports":
     render_ai_intelligence()
 
 elif page=="Observability":

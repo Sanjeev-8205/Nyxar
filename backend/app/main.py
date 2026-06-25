@@ -25,9 +25,12 @@ from models.overview_insights_model import OverviewInsights
 from apscheduler.schedulers.background import BackgroundScheduler
 from app.services.insights_service.overview_insights import generate_and_save_insights
 from app.core.settings import get_settings
+from app.core.logging_config import setup_logging
+from app.middleware.logging_middleware import LoggingMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    setup_logging()
     settings = get_settings()
 
     if not settings.TESTING:
@@ -50,6 +53,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+app.add_middleware(LoggingMiddleware)
 app.include_router(models_router)
 app.include_router(prediction_router)
 
