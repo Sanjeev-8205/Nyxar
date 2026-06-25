@@ -1,7 +1,6 @@
 name: "Deploy Backend to HF Spaces"
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
