@@ -4,9 +4,10 @@ from app.core.model_registry import models
 from app.core.preprocessing import textProcess_lr, textProcess_bilstm, textPreprocess_RoBERTa, preprocess_batch_lr, preprocess_batch_bilstm, preprocess_batch_RoBERTa
 import time
 from app.core.settings import get_settings
-from app.core.logging_config import setup_logging
+import structlog
 
-logger=setup_logging()
+logger=structlog.get_logger()
+
 settings=get_settings()
 if not settings.TESTING:
     from tensorflow.keras.preprocessing.sequence import pad_sequences
