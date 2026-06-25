@@ -984,7 +984,7 @@ def render_ai_intelligence():
             st.download_button(
                 f"📥 Download {summary_type}",
                 st.session_state.converted_report,
-                file_name=f"{summary_type.replace(" ","_")}.md",
+                file_name=f"{st.session_state.last_job_data['filename'].rsplit(".", 1)[0]}_{summary_type.replace(" ","_")}.md",
                 mime="text/markdown",
                 width="stretch"
             )
@@ -1441,7 +1441,7 @@ with st.sidebar:
             "Overview",
             "Live Inference",
             "Batch Intelligence",
-            "AI Intelligence",
+            "AI Reports",
             "Observability"
         ],
         index=0)
