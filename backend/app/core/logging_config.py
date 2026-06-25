@@ -14,7 +14,8 @@ def setup_logging():
             structlog.processors.TimeStamper(fmt="iso"),
             structlog.processors.format_exc_info,
             structlog.processors.JSONRenderer()
-        ]
-    )
+        ],
 
-    wrapper_class=structlog.stdlib.BoundLogger
+        wrapper_class=structlog.stdlib.BoundLogger,
+        logger_factory=structlog.stdlib.LoggerFactory()
+    )
