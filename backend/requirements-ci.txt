@@ -15,3 +15,4 @@ joblib
 huggingface_hub
 pandas
 httpx==0.27.0
+structlog
