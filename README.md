@@ -1,6 +1,6 @@
 # Nyxar — AI Inference and Observability Platform
 
-Nyxar is an AI Intelligence & Observability Platform that combines multi-model sentiment inference, batch analytics, LLM-generated insights, and operational monitoring. A Streamlit frontend provides live inference, batch processing, AI intelligence reports, and platform observability, while a FastAPI backend handles model execution, telemetry collection, AI-powered analysis, and data persistence.
+Nyxar is an AI Inference & Observability Platform that combines multi-model sentiment inference, batch analytics, LLM-generated insights, and operational monitoring. A Streamlit frontend provides live inference, batch processing, AI intelligence reports, and platform observability, while a FastAPI backend handles model execution, telemetry collection, AI-powered analysis, and data persistence.
 
 ---
 

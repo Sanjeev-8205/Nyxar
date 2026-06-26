@@ -117,6 +117,12 @@ def predict(text, model_name):
                 }
             )
 
+            logger.debug(
+                "bilstm_raw_prediction",
+                probabilities=prob.tolist(),
+                has_nan=bool(np.isnan(prob).any())
+            )
+
             total_time = round((time.perf_counter() - pipeline_start)*1000, 1)
 
         elif model_type == "transformer":
