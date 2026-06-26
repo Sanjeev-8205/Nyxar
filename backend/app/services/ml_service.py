@@ -17,6 +17,9 @@ if not settings.TESTING:
     from scipy.special import softmax
     torch.set_num_threads(1)
 
+class EmptyTokenSequenceError(Exception):
+    pass
+
 def predict(text, model_name):
 
     if model_name not in models:
@@ -26,164 +29,170 @@ def predict(text, model_name):
 
     trace = []
 
-    try:
-        if model_type == "sklearn":
-            logger.debug("inference_preprocessing_started")
-            pipeline_start = time.perf_counter()
 
-            #Preprocessing
-            start = time.perf_counter()
-            text = textProcess_lr(text)
-            trace.append(
-                {
-                    "step": "Text Preprocessing",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
+    if model_type == "sklearn":
+        logger.debug("inference_preprocessing_started")
+        pipeline_start = time.perf_counter()
+
+        #Preprocessing
+        start = time.perf_counter()
+        text = textProcess_lr(text)
+        trace.append(
+            {
+                "step": "Text Preprocessing",
+                "duration_ms": round((time.perf_counter() - start)*1000, 1)
+            }
+        )
+        logger.debug("inference_preprocessing_completed", processing_length=len(text), duration_ms=round((time.perf_counter() - start)*1000, 4))
+
+        #Vectorization
+        start = time.perf_counter()
+        transformed = pipeline["vectorizer"].transform(text)
+        trace.append(
+            {
+                "step": "TF-IDF Vectorization",
+                "duration_ms": round((time.perf_counter() - start)*1000, 1)
+            }
+        )
+
+        #Prediciton
+        logger.debug("inference_model_started")
+        start = time.perf_counter()
+        prediction = pipeline["model"].predict(transformed)[0]
+        prob = pipeline["model"].predict_proba(transformed)[0]
+        trace.append(
+            {
+                "step": "Logistic Prediction",
+                "duration_ms": round((time.perf_counter() - start)*1000, 1)
+            }
+        )
+
+        total_time = round((time.perf_counter() - pipeline_start)*1000, 1)
+
+    elif model_type == "keras":
+        pipeline_start = time.perf_counter()
+
+        #Preprocessing
+        logger.debug("inference_preprocessing_started")
+        start = time.perf_counter()
+        text = textProcess_bilstm(text)
+        trace.append(
+            {
+                "step": "Text Prerocessing",
+                "duration_ms": round((time.perf_counter() - start)*1000, 1)
+            }
+        )
+        logger.debug("inference_preprocessing_completed", processing_length=len(text), duration_ms=round((time.perf_counter() - start)*1000, 4))
+        
+        tokenizer = pipeline["tokenizer"]
+        model = pipeline["model"]
+        maxlen = pipeline["maxlen"]
+
+        #Tokenization
+        start = time.perf_counter()
+        seq = tokenizer.texts_to_sequences([text])
+        trace.append(
+            {
+                "step": "Tokenization",
+                "duration_ms": round((time.perf_counter() - start)*1000, 1)
+            }
+        )
+
+        if len(seq[0]) == 0:
+            logger.warning(
+                "inference_empty_token_sequence",
+                processed_length=len(seq[0])
             )
-            logger.debug("inference_preprocessing_completed", processing_length=len(text), duration_ms=round((time.perf_counter() - start)*1000, 4))
-
-            #Vectorization
-            start = time.perf_counter()
-            transformed = pipeline["vectorizer"].transform(text)
-            trace.append(
-                {
-                    "step": "TF-IDF Vectorization",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
-            )
-
-            #Prediciton
-            logger.debug("inference_model_started")
-            start = time.perf_counter()
-            prediction = pipeline["model"].predict(transformed)[0]
-            prob = pipeline["model"].predict_proba(transformed)[0]
-            trace.append(
-                {
-                    "step": "Logistic Prediction",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
-            )
-
-            total_time = round((time.perf_counter() - pipeline_start)*1000, 1)
-
-        elif model_type == "keras":
-            pipeline_start = time.perf_counter()
-
-            #Preprocessing
-            logger.debug("inference_preprocessing_started")
-            start = time.perf_counter()
-            text = textProcess_bilstm(text)
-            trace.append(
-                {
-                    "step": "Text Prerocessing",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
-            )
-            logger.debug("inference_preprocessing_completed", processing_length=len(text), duration_ms=round((time.perf_counter() - start)*1000, 4))
-            
-            tokenizer = pipeline["tokenizer"]
-            model = pipeline["model"]
-            maxlen = pipeline["maxlen"]
-
-            #Tokenization
-            start = time.perf_counter()
-            seq = tokenizer.texts_to_sequences([text])
-            trace.append(
-                {
-                    "step": "Tokenization",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
-            )
-
-            #Sequence Padding
-            start = time.perf_counter()
-            pad = pad_sequences(seq, maxlen=maxlen, padding="post")
-            trace.append(
-                {
-                    "step": "Sequence Padding",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
-            )
-
-            #Prediction
-            logger.debug("inference_model_started")
-            start = time.perf_counter()
-            prob = model.predict(pad, verbose=0)[0]
-            prediction = int(np.argmax(prob))
-            trace.append(
-                {
-                    "step": "Bi-LSTM Inference",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
+            raise EmptyTokenSequenceError(
+                "Input contains no valid tokens after preprocessing."
             )
 
-            logger.info(
-                "bilstm_raw_prediction",
-                probabilities=prob.tolist(),
-                has_nan=bool(np.isnan(prob).any())
-            )
+        #Sequence Padding
+        start = time.perf_counter()
+        pad = pad_sequences(seq, maxlen=maxlen, padding="post")
+        trace.append(
+            {
+                "step": "Sequence Padding",
+                "duration_ms": round((time.perf_counter() - start)*1000, 1)
+            }
+        )
 
-            total_time = round((time.perf_counter() - pipeline_start)*1000, 1)
+        #Prediction
+        logger.debug("inference_model_started")
+        start = time.perf_counter()
+        prob = model.predict(pad, verbose=0)[0]
+        prediction = int(np.argmax(prob))
+        trace.append(
+            {
+                "step": "Bi-LSTM Inference",
+                "duration_ms": round((time.perf_counter() - start)*1000, 1)
+            }
+        )
 
-        elif model_type == "transformer":
-            pipeline_start = time.perf_counter()
+        logger.info(
+            "bilstm_raw_prediction",
+            probabilities=prob.tolist(),
+            has_nan=bool(np.isnan(prob).any())
+        )
 
-            logger.debug("inference_preprocessing_started")
-            start = time.perf_counter()
-            text = textPreprocess_RoBERTa(text)
-            trace.append(
-                {
-                    "step": "Text Prerocessing",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
-            )
-            logger.debug("inference_preprocessing_completed", processing_length=len(text), duration_ms=round((time.perf_counter() - start)*1000, 4))
+        total_time = round((time.perf_counter() - pipeline_start)*1000, 1)
 
-            tokenizer = pipeline["tokenizer"]
-            session = pipeline["session"]   # ← onnx session instead of model
-            maxlen = pipeline["maxlen"]
+    elif model_type == "transformer":
+        pipeline_start = time.perf_counter()
 
-            start = time.perf_counter()
-            inputs = tokenizer(
-                text,
-                max_length=maxlen,
-                return_tensors="np",        # ← numpy instead of pt
-                truncation=True,
-                padding=True
-            )
-            trace.append(
-                {
-                    "step": "Tokenization",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
-            )
+        logger.debug("inference_preprocessing_started")
+        start = time.perf_counter()
+        text = textPreprocess_RoBERTa(text)
+        trace.append(
+            {
+                "step": "Text Prerocessing",
+                "duration_ms": round((time.perf_counter() - start)*1000, 1)
+            }
+        )
+        logger.debug("inference_preprocessing_completed", processing_length=len(text), duration_ms=round((time.perf_counter() - start)*1000, 4))
 
-            start = time.perf_counter()
-            logger.debug("inference_model_started")
-            outputs = session.run(
-                ["logits"],
-                {
-                    "input_ids": inputs["input_ids"],
-                    "attention_mask": inputs["attention_mask"]
-                }
-            )
+        tokenizer = pipeline["tokenizer"]
+        session = pipeline["session"]   # ← onnx session instead of model
+        maxlen = pipeline["maxlen"]
 
-            prob = softmax(outputs[0][0])   # ← scipy softmax on numpy
-            prediction = int(np.argmax(prob))
+        start = time.perf_counter()
+        inputs = tokenizer(
+            text,
+            max_length=maxlen,
+            return_tensors="np",        # ← numpy instead of pt
+            truncation=True,
+            padding=True
+        )
+        trace.append(
+            {
+                "step": "Tokenization",
+                "duration_ms": round((time.perf_counter() - start)*1000, 1)
+            }
+        )
 
-            trace.append(
-                {
-                    "step": "Onnx Inference",
-                    "duration_ms": round((time.perf_counter() - start)*1000, 1)
-                }
-            )
+        start = time.perf_counter()
+        logger.debug("inference_model_started")
+        outputs = session.run(
+            ["logits"],
+            {
+                "input_ids": inputs["input_ids"],
+                "attention_mask": inputs["attention_mask"]
+            }
+        )
 
-            total_time = round((time.perf_counter() - pipeline_start)*1000, 1)
+        prob = softmax(outputs[0][0])   # ← scipy softmax on numpy
+        prediction = int(np.argmax(prob))
 
-        return int(prediction), prob.tolist(), trace, total_time
+        trace.append(
+            {
+                "step": "Onnx Inference",
+                "duration_ms": round((time.perf_counter() - start)*1000, 1)
+            }
+        )
 
-    except Exception as e:
-        raise RuntimeError(str(e))
+        total_time = round((time.perf_counter() - pipeline_start)*1000, 1)
+
+    return int(prediction), prob.tolist(), trace, total_time
 
 def predict_batch(texts, model_name):
     

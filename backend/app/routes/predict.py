@@ -7,9 +7,13 @@ import time
 import asyncio
 import traceback
 import structlog
+from app.services.ml_service import EmptyTokenSequenceError
 
 from app.core import prometheus_metrics as pm
 from app.core.security import verify_api_key
+from app.core.settings import get_settings
+
+settings=get_settings()
 
 router = APIRouter()
 
@@ -129,10 +133,16 @@ async def predict_route(data: InputData, background_tasks: BackgroundTasks, _:bo
             "llm_used": response["model"]
         }
 
-    except Exception:
-        raise
+    except EmptyTokenSequenceError as e:
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
 
     except Exception as prediction_error:
+        if settings.TESTING:
+            raise
+        
         log.error("inference_failed", error=str(prediction_error), exc_info=True)
         pm.LIVE_INFERENCE_ERROR_COUNT.inc()
         
