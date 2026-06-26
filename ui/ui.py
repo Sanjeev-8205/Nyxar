@@ -339,7 +339,7 @@ def render_live_inference():
                         error = response.json()
 
                         st.toast(
-                            "⚠️ " + error["detail"],
+                            error["detail"],
                             icon="⚠️"
                         )
 
