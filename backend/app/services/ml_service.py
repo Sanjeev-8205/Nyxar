@@ -104,7 +104,7 @@ def predict(text, model_name):
                 processed_length=len(seq[0])
             )
             raise EmptyTokenSequenceError(
-                "Input contains no valid tokens after preprocessing."
+                "Only symbols or punctuation were detected. Please enter text containing at least one letter or number."
             )
 
         #Sequence Padding
