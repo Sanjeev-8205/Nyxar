@@ -117,7 +117,7 @@ def predict(text, model_name):
                 }
             )
 
-            logger.debug(
+            logger.info(
                 "bilstm_raw_prediction",
                 probabilities=prob.tolist(),
                 has_nan=bool(np.isnan(prob).any())
