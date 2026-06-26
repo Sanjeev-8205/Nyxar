@@ -325,7 +325,7 @@ def render_live_inference():
                         headers=headers
                     )
 
-                    if response.status == 200:
+                    if response.status_code == 200:
                         result = response.json()
                     
                         st.session_state.prediction_result = result
