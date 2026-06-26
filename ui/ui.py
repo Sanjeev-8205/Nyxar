@@ -288,6 +288,13 @@ def render_live_inference():
             st.markdown("### Inference Control Center")
 
             user_input = st.text_area("Enter review text for live inference...", height=200, placeholder="Type review text here......")
+            with st.expander("💡 Input Guidelines", width='stretch'):
+                st.markdown("""
+            - ✅ Letters and numbers are supported
+            - ✅ Sentences and reviews work best
+            - ❌ Inputs containing only symbols or punctuation cannot be analyzed
+                """)
+
             st.markdown("##### &nbsp;")
 
             c1, c2 = st.columns([1.5,0.5])
@@ -318,7 +325,7 @@ def render_live_inference():
                         headers=headers
                     )
 
-                    try:
+                    if response.status == 200:
                         result = response.json()
                     
                         st.session_state.prediction_result = result
@@ -327,11 +334,22 @@ def render_live_inference():
                         get_dashboard_metrics.clear()
                         st.session_state.dashboard_metrics = get_dashboard_metrics()
                         dashboard_metrics = st.session_state.dashboard_metrics
-                    
-                    except Exception as e:
-                        st.error(
-                            f"Prediction failed: {str(e)}"
+                
+                    elif response.status_code == 400:
+                        error = response.json()
+
+                        st.toast(
+                            "⚠️ " + error["detail"],
+                            icon="⚠️"
                         )
+
+                        st.stop()
+
+                    else:
+                        st.error(
+                            "Prediction service is temporarily unavailable. Please try again."
+                        )
+                        st.stop()
                     
         col1, col2 = st.columns(2)
         if st.session_state.prediction_result is not None:
