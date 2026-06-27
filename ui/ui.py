@@ -23,7 +23,7 @@ from components import (metric_card, status_card, insights_card, platform_status
 
 #setting the page title
 st.set_page_config(
-    page_title="Nyxar - AI Systems and Observability Platform",
+    page_title="Nyxar - AI Inference and Observability Platform",
     page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -54,46 +54,32 @@ def get_dashboard_metrics():
 
     empty_dashboard = {
         "inference": {
-            "total_predictions": 0,
-            "average_latency": 0,
-            "rpm": 0
+            "inference_metrics": {},
+            "inference_row_metrics": {}
         },
-
         "health": {
-            "db_health": {
-                "database": "disconnected"
-            },
-
+            "db_health": {},
             "models_count": 0,
-
-            "cpu_usage": [0, "Unknown"],
-
-            "uptime": "Unavailable"
+            "uptime": "Unavailable",
+            "cpu_usage": 0,
+            "ram_usage": 0
         },
-
         "analytics": {
-            "sentiment_distribution": {},
+            "sentiment_distribution": [],
             "predictions_over_time": [],
             "model_usage_distribution": [],
-            "latency_trends": [None, []],
+            "latency_trends": [],
             "confidence_distribution": [],
-            "recent_activity": {}
+            "recent_activity": [],
+            "throughput_per_hour": []
         },
-
         "advanced": {
-            "failure_rate": {
-                "failure_percent": 0
-            },
-
             "p95_latency": 0,
-
+            "failure_rate": 0,
             "model_metrics": {},
-
             "latency_per_model": [],
-
             "drift_indicators": {}
         },
-
         "logs": []
     }
 
@@ -104,18 +90,29 @@ def get_dashboard_metrics():
             timeout=30
         )
 
-        response.raise_for_status()
+        if response.status_code != 200:
+            error=response.json()
+            st.toast(
+                error["details"],
+                icon="⚠️"
+            )
+            return empty_dashboard
 
         return response.json()
 
     except Exception:
+        st.toast(
+            "Unable to connect to the backend.",
+            icon="⚠️"
+        )
+
         return empty_dashboard
 
 if "dashboard_metrics" not in st.session_state:
     st.session_state.dashboard_metrics = get_dashboard_metrics()
 
 dashboard_metrics = st.session_state.dashboard_metrics
-
+st.write(dashboard_metrics)
 # =========================
 # SESSION STATE INIT
 # =========================
@@ -140,7 +137,7 @@ if "ai_summary" not in st.session_state:
 
 with st.container(border=True):
     st.title("✨ Nyxar")
-    st.markdown("""<div style="font-size: 1.8rem;font-weight: 500;color: rgba(255,255,255,0.85);margin-top: 8px;margin-bottom: 0rem">AI Systems and Observability Platform</div>""", unsafe_allow_html=True)
+    st.markdown("""<div style="font-size: 1.8rem;font-weight: 650;color: rgba(255,255,255,0.85);margin-top: 8px;margin-bottom: 0rem">AI Inference and Observability Platform</div>""", unsafe_allow_html=True)
     st.caption("Real-time inference, batch intelligence, AI-powered insights, and operational observability for modern AI workflows.")
 
 st.markdown('<div style="width:140px;height:1px;background:linear-gradient(90deg,rgba(255,180,80,0.8),rgba(255,180,80,0.2));margin:12px 0 20px 0;box-shadow:0 0 8px rgba(255,180,80,0.25);"></div>', unsafe_allow_html=True)
