@@ -5,6 +5,12 @@ import app.services.metrics_service.health_metrics_service as health_ms
 import app.services.metrics_service.advanced_metrics_service as adv_ms
 import app.services.metrics_service.logs_metrics_service as logs_ms
 import traceback
+import structlog
+
+logger=structlog.get_logger()
+
+class DashboardMetricsError(Exception):
+    pass
 
 def dashboard_metrics_aggregator():
     db = SessionLocal()
@@ -42,9 +48,14 @@ def dashboard_metrics_aggregator():
         }
     
     except Exception as e:
-        return {
-            "error": traceback.format_exc()
-        }
+        logger.error(
+            "dashboard_metrics_aggregation_failed",
+            exc_info=True
+        )
+
+        raise DashboardMetricsError(
+            "Unable to load dashboard metrics."
+        ) from e
 
     finally:
         db.close()
