@@ -36,7 +36,7 @@ Neon was chosen as the hosted provider for its serverless connection model and p
 
 ## Why ONNX Runtime for RoBERTa
 
-The original RoBERTa model ran under PyTorch. On CPU, a 500-row batch took approximately 70 seconds. After converting to ONNX and applying INT8 dynamic quantization, the same workload runs in approximately 25 seconds.
+The original RoBERTa model ran under PyTorch. On CPU, a 500-row batch took approximately 70 seconds. After converting to ONNX and applying INT8 dynamic quantization, the same workload now runs in 25–35 seconds on average.
 
 The conversion path:
 1. Export to ONNX via `optimum.onnxruntime.ORTModelForSequenceClassification`
@@ -78,6 +78,48 @@ HTTP Basic Auth on the endpoint prevents the inference volume, model usage, and 
 
 ---
 
+## Why structlog for Structured Logging
+
+Plain `print()` statements and Python's standard `logging` module produce unstructured text. When multiple concurrent requests are in flight, their log lines are interleaved with no way to group them by request.
+
+`structlog` solves this in two ways:
+
+**JSON output** — every log line is a machine-readable JSON object with consistent fields (`event`, `level`, `timestamp`, plus any bound context). This makes logs greppable and parseable in HF Spaces logs without regex.
+
+**`contextvars` integration** — `LoggingMiddleware` binds a `request_id` to the current async task's context at the start of every request. Every `logger.info/warning/error` call anywhere in the call chain — including in `ml_service.py`, `logging_service.py`, or any other module — automatically includes the `request_id` without it being passed as a parameter. This makes it possible to filter all log lines for a single request out of a busy log stream.
+
+For background tasks (DB writes, batch processing), `contextvars` is not inherited because the task runs after the request context is destroyed. The `request_id` is extracted from `contextvars` inside the route handler before the response is sent and passed explicitly as a function parameter, maintaining traceability across the request/background-task boundary.
+
+`structlog` was chosen over `python-json-logger` because it has a cleaner API for binding contextual fields, native `contextvars` support, and composable processor pipelines.
+
+---
+
+## Why API Key Auth (and Not JWT)
+
+JWT authentication requires issuing tokens, managing expiry, and validating signatures on every request. For an API with a single trusted client (the Streamlit frontend), this is unnecessary complexity.
+
+A pre-shared API key stored in HF Spaces Secrets and Streamlit Cloud Secrets achieves the same goal: only the authorized client can hit the API. The implementation is a single FastAPI dependency injected at the router level.
+
+`secrets.compare_digest` is used instead of `==` for string comparison. Direct string comparison in Python short-circuits as soon as it finds a differing character, which leaks timing information that can be exploited to brute-force the key one character at a time. `compare_digest` takes constant time regardless of where the strings differ, eliminating this attack vector.
+
+Missing key and wrong key both return 401. Failed attempts are logged at `warning` level so brute-force attempts are visible in logs.
+
+---
+
+## Why Tag-Based Deploys
+
+Auto-deploying on every push to `main` means a one-line comment fix and a major feature ship through the same pipeline with the same weight. There is no concept of a deliberate release decision.
+
+Tag-based deploys (`v*` tags) introduce an explicit "I am ready to ship this" signal. Regular pushes to `main` run the test suite only. A deploy only happens when a tag is pushed or the workflow is triggered manually.
+
+This also makes the HF Spaces deployment history meaningful — each commit on the Space corresponds to a tagged release, not every incremental change.
+
+`workflow_dispatch` is kept alongside the tag trigger so a forced redeploy (e.g. after rotating a secret on HF Spaces) is possible without creating a dummy tag.
+
+The commit message on HF Spaces is derived from `git log -1 --pretty=%s ${{ github.sha }}` rather than `github.event.head_commit.message`. The `head_commit` field is not populated for tag-triggered workflows, which would produce empty commit messages. The `git log` approach works correctly for all three trigger types: tag push, branch push, and manual dispatch.
+
+---
+
 ## Why Three Models
 
 Three models were included to serve different tradeoffs explicitly, rather than picking one.
@@ -102,6 +144,20 @@ Three separate LLM use cases exist in the system: live inference insights, batch
 
 **Groq (`llama-3.1-8b-instant` / `meta-llama/llama-4-scout-17b-16e-instruct`)** is the fallback because it has different rate limits and availability characteristics. When Gemini fails (rate limits, API errors), Groq handles the request. The fallback is transparent to the user.
 
-Fallback events are tracked in Prometheus (`llm_model_fallback` counter with `failed_model` and `fallback_model` labels) so the frequency and pattern of failures is observable in Grafana.
+Fallback events are tracked in two places: Prometheus (`llm_model_fallback` counter with `failed_model` and `fallback_model` labels) for Grafana visibility, and structlog (`warning` level with `provider`, `error`, and fallback provider fields) for per-request traceability in HF Spaces logs.
 
 LLM reports (`batch_summaries`) are cached in PostgreSQL with a unique constraint on `(job_id, summary_type)`. Requesting the same report twice returns the cached version, avoiding redundant LLM calls and ensuring consistent results for the same dataset.
+
+---
+
+## V2 Planned Decisions
+
+**Grafana Loki for structured log storage.** structlog currently emits JSON to stdout, readable in HF Spaces logs panel but not queryable or alertable. Loki is the natural v2 addition — it is already available in Grafana Cloud alongside the existing Prometheus setup, requires no new account or infrastructure, and is purpose-built for JSON structured logs. Every field structlog emits (`request_id`, `model`, `confidence`, `duration_ms`) becomes a queryable label in LogQL. The key capability this unlocks is log-metric correlation in Grafana — clicking a latency spike on a Prometheus panel can show the exact structlog lines from that time window. Integration is via the Loki HTTP push endpoint called from a structlog processor, avoiding the need for a Promtail sidecar on HF Spaces.
+
+**Alembic for schema migrations.** `Base.metadata.create_all()` handles initial table creation but cannot alter existing tables. As the schema evolves — new columns on `batch_jobs`, additional telemetry fields on `logs` — manual DDL on Neon becomes a reliability risk. Alembic with autogenerate against SQLAlchemy models produces versioned migration scripts that run at deploy time and are fully reversible.
+
+**Per-model latency SLOs.** Prometheus already collects per-model p95 histograms. SLO monitoring is adding Grafana alert rules on top of existing data — no new instrumentation required. Alert thresholds will be model-specific (RoBERTa tolerates higher latency than Logistic Regression) and will fire to a notification channel when sustained p95 exceeds the defined budget.
+
+**Confidence calibration.** The current confidence scores are raw softmax outputs, which are not guaranteed to be calibrated — a 90% confidence score does not necessarily mean the model is correct 90% of the time. A reliability diagram (plotting mean predicted confidence vs actual accuracy in bins) run against the held-out test set will quantify whether scores are trustworthy as probability estimates. If miscalibrated, temperature scaling can be applied post-hoc without retraining.
+
+**Drift alerting.** Drift detection currently runs on every `/dashboard` call and is displayed as a passive chart. v2 will add Grafana alert rules on the Prometheus confidence gauge and sentiment metrics, firing when rolling shift values exceed configured thresholds. This converts passive drift visibility into an active signal — as an internal tool operator you should not have to check a dashboard to know the model is drifting.

@@ -2,27 +2,114 @@
 
 ## Telemetry Architecture
 
-Observability is split across two layers: a relational telemetry layer (PostgreSQL, queried at request time) and a metrics scrape layer (Prometheus, scraped by Grafana).
+Observability is split across three layers: a relational telemetry layer (PostgreSQL, queried at request time), a metrics scrape layer (Prometheus, scraped by Grafana), and a structured log layer (structlog, written to stdout and captured by HF Spaces).
 
 ```
 Inference requests
        │
-       ├──► PostgreSQL logs table     ← structured, queryable, drives dashboard
-       └──► Prometheus counters/      ← time-series, drives Grafana
-            histograms/gauges
+       ├──► PostgreSQL logs table      ← structured, queryable, drives dashboard
+       ├──► Prometheus counters/       ← time-series, drives Grafana
+       │    histograms/gauges
+       └──► structlog JSON to stdout   ← per-request trace with request_id
 
 Batch jobs
        │
-       ├──► batch_jobs table          ← job metadata, timing, throughput
-       ├──► batch_results table       ← per-row predictions
+       ├──► batch_jobs table           ← job metadata, timing, throughput
+       ├──► batch_results table        ← per-row predictions
        └──► Prometheus batch metrics
 
 LLM calls
-       ├──► batch_summaries table     ← cached reports, token counts
-       └──► Prometheus LLM metrics
+       ├──► batch_summaries table      ← cached reports, token counts
+       ├──► Prometheus LLM metrics
+       └──► structlog warnings on fallback
 ```
 
 The `/dashboard` endpoint aggregates from PostgreSQL across six metric service modules and returns everything in a single response. The Streamlit frontend calls this once per page load (with a 15-second TTL cache) rather than making separate calls per chart.
+
+---
+
+## Structured Logging
+
+`structlog` is configured at lifespan startup to emit JSON to stdout. HF Spaces captures stdout and exposes it in the Space logs panel.
+
+### Log Processors
+
+```
+structlog.stdlib.add_log_level       → adds "level" field
+structlog.processors.TimeStamper     → adds "timestamp" (ISO format)
+structlog.processors.format_exc_info → captures full traceback on exc_info=True
+structlog.processors.JSONRenderer    → serializes to JSON string
+```
+
+### Request ID Tracing
+
+`LoggingMiddleware` generates an 8-character `request_id` for every incoming request and binds it to the current async task via `structlog.contextvars.bound_contextvars`. All log calls in the request chain — across any module — automatically include the `request_id` without it being passed as a parameter.
+
+For background tasks (DB writes after inference), the `request_id` is extracted from contextvars inside the route handler before the response is sent, then passed explicitly to the background task function. This preserves traceability across the request/background-task boundary.
+
+### Log Events by Component
+
+**Predict route:**
+
+| Event | Level | Key Fields |
+|---|---|---|
+| `inference_request_received` | info | `model`, `input_length`, `has_text` |
+| `inference_input_invalid` | warning | `model`, `input_length`, `reason` |
+| `inference_preprocessing_started` | debug | `model`, `input_length` |
+| `inference_preprocessing_completed` | debug | `model`, `original_length`, `processed_length`, `duration_ms` |
+| `inference_model_started` | info | `model`, `processed_input_length` |
+| `inference_completed` | info | `model`, `label`, `confidence`, `duration_ms` |
+| `inference_low_confidence` | warning | `model`, `label`, `confidence` |
+| `inference_failed` | error | `model`, `input_length`, `error`, `exc_info` |
+
+**DB write (background task):**
+
+| Event | Level | Key Fields |
+|---|---|---|
+| `inference_result_saved` | info | `model`, `prediction`, `db_write_duration_ms`, `request_id` |
+| `inference_db_write_failed` | error | `model`, `prediction`, `error`, `exc_info`, `request_id` |
+
+**LLM fallback:**
+
+| Event | Level | Key Fields |
+|---|---|---|
+| `llm_insights_generated` | info | `provider` |
+| `gemini_failed_falling_back_to_groq` | warning | `error` |
+| `llm_both_providers_failed` | error | `gemini_error`, `groq_error`, `exc_info` |
+
+**Middleware:**
+
+| Event | Level | Key Fields |
+|---|---|---|
+| `request_started` | info | `request_id`, `method`, `path` |
+| `request_finished` | info | `request_id`, `status_code`, `duration_ms` |
+
+### Log Levels Reference
+
+| Level | Meaning in Nyxar |
+|---|---|
+| `debug` | Preprocessing stages, raw inputs — filtered out at production log level |
+| `info` | Normal successful operations |
+| `warning` | Recovered failures — Gemini fallback, low confidence, wrong API key |
+| `error` | Unrecovered failures — both LLMs failed, DB write failed, inference crashed |
+| `critical` | Startup failures that make the app non-functional |
+
+### Example Log Line
+
+```json
+{
+  "event": "inference_completed",
+  "model": "RoBERTa Transformer",
+  "label": "Positive",
+  "confidence": 0.9341,
+  "duration_ms": 87.4,
+  "request_id": "a3f9c1b2",
+  "path": "/predict",
+  "method": "POST",
+  "timestamp": "2026-06-25T10:41:03Z",
+  "level": "info"
+}
+```
 
 ---
 
@@ -131,6 +218,8 @@ Two separate insight generation flows exist:
 
 ## Design Decisions
 
+**Three observability layers.** PostgreSQL covers queryable analytical history. Prometheus covers time-series metrics for Grafana. Structlog covers per-request event trails with full context. Each layer answers a different question: "what is the aggregate trend" (PostgreSQL/Prometheus), "what happened in this specific request" (structlog).
+
 **PostgreSQL as the telemetry store.** All inference logs are structured relational data with known schemas. The analytics queries (drift windows, latency percentiles, distribution aggregates) are well-suited to SQL. A time-series database would be appropriate at higher volume but adds operational overhead that isn't justified at this scale.
 
 **P95 latency via SQL percentile functions.** `func.percentile_cont(0.95).within_group(Log.latency)` computes the p95 directly in the database rather than pulling all rows into Python. This keeps the query efficient even as the logs table grows.
@@ -138,3 +227,7 @@ Two separate insight generation flows exist:
 **Prometheus for Grafana integration.** Prometheus metrics are collected in-process using the `prometheus_client` library. The `/prometheus_metrics` endpoint exposes them in the standard text format. This allows any Prometheus-compatible scraper (Grafana Cloud, self-hosted Prometheus) to collect metrics without changes to the application.
 
 **Auth on the metrics endpoint.** The `/prometheus_metrics` endpoint is protected with HTTP Basic Auth. Without this, the endpoint would expose inference volumes, model usage patterns, and system health data publicly.
+
+**structlog over standard logging.** Python's standard logging module produces unstructured text. When multiple requests are in-flight, their log lines interleave with no grouping mechanism. `structlog` with `contextvars` solves this — every log line for a request shares a `request_id`, making per-request filtering possible in HF Spaces logs without any log aggregation infrastructure.
+
+**Grafana Loki planned for v2.** structlog currently writes JSON to stdout, which HF Spaces captures in the logs panel. This is readable but not queryable or alertable. v2 will push logs directly to Grafana Cloud Loki via the Loki HTTP push endpoint, implemented as a structlog processor. Since Grafana Cloud is already in use for Prometheus, no new infrastructure is required. Loki will enable LogQL queries over structured fields (`request_id`, `model`, `level`), log-based alert rules (e.g. alert when `inference_db_write_failed` appears more than N times in 5 minutes), and correlated log-metric panels in the existing Grafana dashboard.
