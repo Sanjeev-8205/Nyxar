@@ -19,3 +19,6 @@ app/cache/
 
 #Performance Testing
 /performance
+
+#streamlit_secrets
+.streamlit
