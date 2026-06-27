@@ -4,7 +4,9 @@ import asyncio
 import time
 from app.core import prometheus_metrics as pm
 from app.core.settings import get_settings
+import structlog
 
+logger=structlog.get_logger()
 settings = get_settings()
 
 if not settings.TESTING:
@@ -110,12 +112,23 @@ async def generate_ai_prediction_insights(prediction, confidence, prob, word_cou
         pm.LLM_INPUT_TOKENS.labels(provider="gemini").observe(input_tokens)
         pm.LLM_OUTPUT_TOKENS.labels(provider="gemini").observe(output_tokens)
 
+        logger.info(
+            "inference_llm_insights_generated",
+            provider="gemini",
+            duration_ms=round(llm_lat*1000, 2)
+        )
+
         return {"insight": insight, "model": model_used}
     
     except Exception as gemini_error:
         pm.LLM_STATUS_COUNT.labels(provider="gemini", status="failure").inc()
         pm.LLM_FALLBACK_COUNT.inc()
         print(f"Gemini failed: {gemini_error}")
+        logger.warning(
+            "inference_gemini_failed_falling_back_to_groq",
+            provider="groq",
+            error=str(gemini_error)
+        )
 
         try:
             pm.LLM_REQUEST_COUNT.labels(provider="groq").inc()
@@ -131,9 +144,21 @@ async def generate_ai_prediction_insights(prediction, confidence, prob, word_cou
             pm.LLM_INPUT_TOKENS.labels(provider="groq").observe(input_tokens)
             pm.LLM_OUTPUT_TOKENS.labels(provider="groq").observe(output_tokens)
 
+            logger.info(
+                "inference_llm_insights_generated",
+                provider="groq",
+                duration_ms=round(llm_lat*1000, 2)
+            )
+
             return {"insight": insight, "model": model_used}
         
         except Exception as groq_error:
+            logger.error(
+                "inference_llm_both_providers_failed",
+                gemini_error=str(gemini_error),
+                groq_error=str(groq_error),
+                exc_info=True
+            )
             pm.LLM_INSIGHT_GENERATION_LATENCY.observe(time.perf_counter() - start)
             pm.LLM_STATUS_COUNT.labels(provider="groq", status="failure").inc()
             print(f"Groq failed: {groq_error}")
