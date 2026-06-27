@@ -54,32 +54,123 @@ def get_dashboard_metrics():
 
     empty_dashboard = {
         "inference": {
-            "inference_metrics": {},
-            "inference_row_metrics": {}
+            "inference_metrics": {
+            "total_predictions": 0,
+            "average_latency": 0,
+            "rpm": 0,
+            "throughput": 0,
+            "success_rate": 0,
+            "failure-rate": 0
+            },
+            "inference_row_metrics": {
+            "latency_ms": 0,
+            "latency_label": "",
+            "rpm": 0,
+            "throughput_label": "",
+            "processing_time": "",
+            "model_name": "",
+            "model_family": "",
+            "model_runtime": ""
+            }
         },
+
         "health": {
-            "db_health": {},
+            "db_health": {
+            "database": ""
+            },
             "models_count": 0,
-            "uptime": "Unavailable",
-            "cpu_usage": 0,
-            "ram_usage": 0
+            "uptime": "",
+            "cpu_usage": [
+            0,
+            ""
+            ],
+            "ram_usage": [
+            0,
+            ""
+            ]
         },
+
         "analytics": {
-            "sentiment_distribution": [],
-            "predictions_over_time": [],
+            "sentiment_distribution": {
+            "Negative": 0,
+            "Neutral": 0,
+            "Positive": 0
+            },
+
+            "predictions_over_time": [
+            [],
+            []
+            ],
+
             "model_usage_distribution": [],
-            "latency_trends": [],
+
+            "latency_trends": [
+            [],
+            []
+            ],
+
             "confidence_distribution": [],
-            "recent_activity": [],
+
+            "recent_activity": {
+            "single_inference": {
+                "prediction": "",
+                "recent_activity": "",
+                "Latency": 0
+            },
+            "batch_jobs": {
+                "id": "",
+                "status": "",
+                "rows_processed": 0,
+                "model_used": ""
+            }
+            },
+
             "throughput_per_hour": []
         },
+
         "advanced": {
             "p95_latency": 0,
-            "failure_rate": 0,
-            "model_metrics": {},
+
+            "failure_rate": {
+            "failure_percent": 0,
+            "failure_count": 0,
+            "total_requests": 0
+            },
+
+            "model_metrics": {
+            "Logistic Regression": {
+                "accuracy": 0,
+                "precision": 0,
+                "recall": 0,
+                "f1_score": 0
+            },
+            "Bi-LSTM": {
+                "accuracy": 0,
+                "precision": 0,
+                "recall": 0,
+                "f1_score": 0
+            },
+            "RoBERTa Transformer": {
+                "accuracy": 0,
+                "precision": 0,
+                "recall": 0,
+                "f1_score": 0
+            }
+            },
+
             "latency_per_model": [],
-            "drift_indicators": {}
+
+            "drift_indicators": {
+            "text_length_rolling": [],
+            "sentiment_score_rolling": [],
+            "confidence_score_rolling": [],
+            "text_len_shift": 0,
+            "sentiment_shift": 0,
+            "confidence_shift": 0,
+            "timestamp": []
+            }
         },
+
         "logs": []
     }
 
