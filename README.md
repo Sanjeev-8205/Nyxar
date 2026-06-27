@@ -1,6 +1,6 @@
 # Nyxar — AI Inference and Observability Platform
 
-Nyxar is an AI Inference & Observability Platform that combines multi-model sentiment inference, batch analytics, LLM-generated insights, and operational monitoring. A Streamlit frontend provides live inference, batch processing, AI intelligence reports, and platform observability, while a FastAPI backend handles model execution, telemetry collection, AI-powered analysis, and data persistence.
+Nyxar is an AI Inference & Observability Platform that combines multi-model sentiment inference, batch analytics, LLM-generated insights, and operational monitoring. A Streamlit frontend provides live inference, batch processing, AI reports, and platform observability, while a FastAPI backend handles model execution, telemetry collection, AI-powered analysis, and data persistence.
 
 ---
 
@@ -10,7 +10,10 @@ Nyxar is an AI Inference & Observability Platform that combines multi-model sent
 - Batch inference pipeline with background job tracking, progress polling, and buffered DB writes
 - LLM-powered summaries via Gemini with Groq fallback — three report depths
 - Real-time drift detection across confidence, sentiment, and input length
+- API key authentication on all endpoints via constant-time `secrets.compare_digest`
+- Structured JSON logging via `structlog` with per-request `request_id` tracing
 - Prometheus metrics with HTTP Basic Auth for Grafana scraping
+- Tag-based CI/CD pipeline — deploys triggered by `v*` tags or manual dispatch
 - Fully containerized backend on Hugging Face Spaces (CPU-only)
 - Models stored on Hugging Face Hub, downloaded at startup via `snapshot_download`
 
@@ -64,27 +67,32 @@ Nyxar is an AI Inference & Observability Platform that combines multi-model sent
 User submits text
        │
        ▼
-POST /predict
+POST /predict  (X-Api-Key header required)
        │
-       ├── Input Validation
+       ├── API key verification (secrets.compare_digest)
+       ├── Request ID assigned (LoggingMiddleware)
+       ├── Input validation
        ├── Text preprocessing (model-specific)
        ├── Model inference (sklearn / Keras / ONNX)
        ├── Confidence scoring + certainty classification
        ├── LLM insight generation (Gemini → Groq fallback)
-       ├── Log to PostgreSQL
+       ├── Log to PostgreSQL (background task, carries request_id)
        ├── Prometheus metrics updated
        │
        ▼
 Response: prediction, confidence scores, latency, execution trace, insight
 ```
 
+All log lines for a request share the same `request_id`, including the background DB write that runs after the response is sent.
+
 ---
 
 ## Batch Processing Workflow
 
 ```
-CSV upload via POST /batch/upload
+CSV upload via POST /batch/upload  (X-Api-Key header required)
        │
+       ├── API key verification
        ├── CSV validation (structure + column check)
        ├── BatchJob record created (status: pending)
        └── Background task dispatched
@@ -108,12 +116,14 @@ CSV upload via POST /batch/upload
 |---|---|
 | Live Inference | Single-text prediction with confidence scores, execution trace, and LLM insight |
 | Batch Processing | CSV upload → background inference → buffered writes → results retrieval |
-| AI Intelligence | LLM-generated reports (Executive / Detailed / Full) from batch results |
+| AI Reports | LLM-generated reports (Executive / Detailed / Full) from batch results |
 | Overview Dashboard | System KPIs, latency trends, throughput, LLM-generated operational insights |
 | Observability | Sentiment distribution, model usage, drift indicators, confidence tracking |
 | Infrastructure Health | CPU/RAM usage, DB connectivity, model load status, uptime |
 | Prometheus Metrics | Counters, histograms, gauges for inference, batch, and LLM operations |
 | Platform Status | Composite health score across failure rate, latency shift, CPU, drift signals |
+| API Authentication | Constant-time API key verification on all endpoints except `/health` |
+| Structured Logging | JSON logs via structlog with `request_id`, `model`, `duration_ms` per request |
 
 ---
 
@@ -121,8 +131,8 @@ CSV upload via POST /batch/upload
 
 | Model | Runtime | Accuracy | Primary Tradeoff |
 |---|---|---|---|
-| Logistic Regression | scikit-learn | 69.3% | Fastest Inference |
-| Bi-LSTM | TensorFlow/Keras | 72.8% | Accuracy vs Latency balance |
+| Logistic Regression | scikit-learn | 69.3% | Fastest inference |
+| Bi-LSTM | TensorFlow/Keras | 72.8% | Accuracy vs latency balance |
 | RoBERTa Transformer | ONNX Runtime (INT8) | 77.6% | Highest accuracy |
 
 All metrics sourced from `metrics/*.json`, evaluated on a held-out test set.
@@ -134,6 +144,11 @@ All metrics sourced from `metrics/*.json`, evaluated on a held-out test set.
 ```
 ├── app/
 │   ├── core/               # Model loader, registry, preprocessing, DB, metrics
+│   │   ├── logging_config.py       # structlog setup — called once at lifespan startup
+│   │   ├── security.py             # verify_api_key dependency (secrets.compare_digest)
+│   │   └── settings.py             # Pydantic BaseSettings with lru_cache
+│   ├── middleware/
+│   │   └── logging_middleware.py   # Request ID generation + request/response logging
 │   ├── routes/             # FastAPI route handlers
 │   ├── schemas/            # Pydantic request models
 │   └── services/
@@ -144,12 +159,16 @@ All metrics sourced from `metrics/*.json`, evaluated on a held-out test set.
 │       ├── insights_service/       # Live insights, overview insights, platform status
 │       └── metrics_service/        # Dashboard, analytics, health, drift metrics
 ├── models/                 # SQLAlchemy ORM models
-├── metrics/                # Stored ml model evaluation JSON files
+├── metrics/                # Stored ML model evaluation JSON files
 ├── ui/                     # Streamlit frontend (separate deployment)
 │   ├── ui.py               # Main application, all page rendering
 │   ├── components.py       # Reusable HTML/CSS component functions
 │   └── styles.py           # Global CSS injection
+├── tests/                  # pytest test suite
 ├── Dockerfile              # Backend container definition
+├── requirements.txt        # Full dependency list
+├── requirements-ci.txt     # CI-only dependencies (ML packages stripped)
+├── requirements-test.txt   # Test-only dependencies
 ├── evaluate.py             # Offline model evaluation script
 └── docs/                   # Architecture and engineering documentation
 ```
@@ -161,8 +180,8 @@ All metrics sourced from `metrics/*.json`, evaluated on a held-out test set.
 | Document | Contents |
 |---|---|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System topology, request lifecycle, model runtime, concurrency |
-| [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) | Prometheus metrics, drift detection, platform health scoring |
-| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Hugging Face Spaces, model storage, environment variables |
+| [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) | Prometheus metrics, structured logging, drift detection, platform health |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Hugging Face Spaces, CI/CD pipeline, environment variables, security |
 | [docs/ENGINEERING_DECISIONS.md](docs/ENGINEERING_DECISIONS.md) | Architectural tradeoffs and technology choices |
 
 ---
@@ -191,17 +210,34 @@ GEMINI_API_KEY=
 GROQ_API_KEY=
 PROMETHEUS_METRICS_USERNAME=
 PROMETHEUS_METRICS_PASSWORD=
+PROTECT_API_KEY=
 ```
+
+---
+
+## CI/CD
+
+Deploys are triggered by pushing a `v*` tag or via manual workflow dispatch in GitHub Actions. Regular pushes to `main` run tests only — no automatic deploy.
+
+```bash
+# to deploy
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+The pipeline runs the full test suite before deploying. A failing test blocks the deploy.
 
 ---
 
 ## Future Improvements
 
-- JWT/API-key authentication
-- Alembic schema migrations
-- Per-model latency SLO monitoring
-- Server-Sent Events for long-running AI reports
-- Request rate limiting and quota controls
+- Alembic schema migrations — versioned, reversible schema changes as the data model evolves
+- Grafana Loki integration — ship structlog JSON to Loki for queryable, alertable log dashboards correlated with Prometheus metrics
+- Per-model latency SLO monitoring — Grafana alert rules on p95 histograms already collected
+- Model confidence calibration — reliability diagrams to validate whether confidence scores reflect true accuracy
+- Drift alerting — Grafana alerts when confidence or sentiment distribution shifts beyond threshold
+- Server-Sent Events for AI reports — replace polling loop with push-based report delivery
+- Request rate limiting — sliding window protection on inference and LLM endpoints
 
 ---
 
