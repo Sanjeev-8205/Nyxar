@@ -8,7 +8,7 @@ from collections import Counter
 from datetime import datetime
 
 from styles import load_global_styles
-from components import (metric_card, status_card, insights_card, platform_status_card,
+from components import (metric_card, insights_card, platform_status_card,
                         hero_header, subtitle, hero_subtext, subtitle_subtext, 
                         chart_container, apply_button_style, render_model_info, apply_container_background, 
                         inference_output_card, render_confidence_analysis_card, telemetry_card,
@@ -18,9 +18,9 @@ from components import (metric_card, status_card, insights_card, platform_status
                         dataset_intelligence_card, prediction_distribution_card,
                         processing_analytics_card, processing_breakdown_card, 
                         render_trace_placeholder_batch_inference, batch_trace_row, batch_trace_header, batch_ai_insight_card,
-                        summary_description_card, render_section_card, render_intelligence_sections, render_recommendations_card, render_metadata_card,
+                        summary_description_card, render_intelligence_sections, render_recommendations_card, render_metadata_card,
                         render_opportunity_assessment, render_risk_assessment, render_confidence_assessment, system_events_card,
-                        platform_status_bar)
+                        platform_status_bar, sidebar_header, apply_sidebar_styles, sidebar_footer)
 
 #setting the page title
 st.set_page_config(
@@ -33,6 +33,7 @@ st.set_page_config(
 load_global_styles()
 apply_button_style()
 apply_container_background()
+apply_sidebar_styles()
 progress_bar_modified()
 
 BASE_URL = "https://sanjeev2501-nyxar.hf.space"
@@ -229,7 +230,7 @@ if "ai_summary" not in st.session_state:
 with st.container(border=True):
     st.title("✨ Nyxar")
     st.markdown("""<div style="font-size: 1.8rem;font-weight: 650;color: rgba(255,255,255,0.85);margin-top: 8px;margin-bottom: 0rem">AI Inference and Observability Platform</div>""", unsafe_allow_html=True)
-    st.caption("Real-time inference, batch intelligence, AI-powered insights, and operational observability for modern AI workflows.")
+    st.caption("Real-time inference, batch processing, AI-powered insights, and operational observability for modern AI workflows.")
 
 st.markdown('<div style="width:140px;height:1px;background:linear-gradient(90deg,rgba(255,180,80,0.8),rgba(255,180,80,0.2));margin:12px 0 20px 0;box-shadow:0 0 8px rgba(255,180,80,0.25);"></div>', unsafe_allow_html=True)
 
@@ -607,11 +608,11 @@ def render_live_inference():
                         unsafe_allow_html=True
                     )
 
-def render_batch_intelligence():
+def render_batch_processing():
 
     dashboard_metrics = st.session_state.dashboard_metrics
 
-    hero_header("Batch Intelligence")
+    hero_header("Batch Processing")
     hero_subtext("Track large-scale dataset processing, asynchronous AI workflows, job analytics, and batch inference performance.")
 
     with st.container(border=True):
@@ -690,7 +691,7 @@ def render_batch_intelligence():
             with c2:
                 input_analysis_metrics_card("Processed Rows", "--")
             with c3:
-                input_analysis_metrics_card("Throughput", "-- Rows/Sec")
+                input_analysis_metrics_card("Average Throughput", "-- Rows/Sec")
             with c4:
                 input_analysis_metrics_card("Status", "WAITING")
 
@@ -1014,7 +1015,7 @@ def render_ai_intelligence():
 
     with st.container(border=True):
         hero_header("AI Reports")
-        hero_subtext("Generate LLM-powered summaries, topic insights, and enterprise-scale feedback intelligence.")
+        hero_subtext("Generate LLM-powered summaries and intelligence reports from batch prediction results.")
     
     with st.container(border=True):
         st.markdown("### Intelligence Control Center")
@@ -1533,21 +1534,23 @@ def render_observability():
 
 #set the sidebar
 with st.sidebar:
-    st.markdown("✨ Nyxar")
-    st.caption("AI Inference & Observability Platform")
+    #Header
+    sidebar_header()
 
-    st.divider()
+    st.markdown('<div style="font-size:0.7rem;font-weight:600;color:#475569;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Platform</div>', unsafe_allow_html=True)
 
     page = st.radio(
-        "Platform",
+        "",
         [
             "Overview",
             "Live Inference",
-            "Batch Intelligence",
+            "Batch Processing",
             "AI Reports",
             "Observability"
         ],
         index=0)
+    
+    sidebar_footer()
 
 #--------------------------------------#
 #-------------Page Routing-------------#
@@ -1557,8 +1560,8 @@ if page=="Overview":
 elif page=="Live Inference":
     render_live_inference()
 
-elif page=="Batch Intelligence":
-    render_batch_intelligence()
+elif page=="Batch Processing":
+    render_batch_processing()
 
 elif page=="AI Reports":
     render_ai_intelligence()

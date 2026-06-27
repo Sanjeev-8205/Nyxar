@@ -601,3 +601,33 @@ def platform_status_bar(all_healthy,db_status, models_count, failure_rate):
 
     elif failure_rate >= 5:
         st.markdown(f'<div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.4);border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;"><div style="width:12px;height:12px;border-radius:50%;background:#F59E0B;box-shadow:0 0 8px #F59E0B,0 0 16px rgba(245,158,11,0.5);flex-shrink:0;"></div><div><div style="color:#F59E0B;font-weight:600;font-size:0.95rem;letter-spacing:0.5px;">DEGRADED — ELEVATED FAILURE RATE</div><div style="color:#FCD34D;font-size:0.82rem;margin-top:2px;">Failure rate at {failure_rate:.2f}% · Investigate recent inference errors</div></div></div>', unsafe_allow_html=True)
+
+def sidebar_header():
+    st.markdown("""
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+        <span style="font-size:1.4rem;">✨</span>
+        <span style="font-size:1.2rem;font-weight:700;color:white;letter-spacing:0.5px;">Nyxar</span>
+    </div>
+    <div style="font-size:0.78rem;color:#64748B;letter-spacing:0.3px;margin-bottom:1rem;">AI Inference & Observability</div>
+    <div style="width:100%;height:1px;background:linear-gradient(90deg,rgba(255,180,80,0.6),rgba(255,180,80,0));margin-bottom:1.5rem;"></div>
+    """, unsafe_allow_html=True
+    )
+
+def apply_sidebar_styles():
+    st.markdown('''<style>
+        section[data-testid="stSidebar"]{background:linear-gradient(180deg,rgba(17,24,39,0.98),rgba(8,12,24,0.98)) !important;}
+        section[data-testid="stSidebar"]>div{background:transparent !important;}
+        section[data-testid="stSidebar"] div[data-testid="stRadio"]>div{gap:2px;}
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] label{background:transparent;border-radius:8px;padding:8px 10px;width:100%;transition:background 0.15s;cursor:pointer;border-left:2px solid transparent;outline:none !important;box-shadow:none !important;}
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] label:hover{background:rgba(255,255,255,0.04);}
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] label:focus{outline:none !important;box-shadow:none !important;}
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] label[data-selected="true"]{background:rgba(255,180,80,0.07);border-left:2px solid rgba(255,180,80,0.8);box-shadow:inset 0 0 12px rgba(255,180,80,0.06) !important;}
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] label p{font-size:0.88rem;color:#64748B;margin:0;}
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] label[data-selected="true"] p{color:#F8FAFC;font-weight:500;}
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] input[type="radio"]{accent-color:rgba(255,180,80,0.9) !important;}
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] input[type="radio"]:checked{accent-color:rgba(255,180,80,0.9) !important;}
+        </style>''', unsafe_allow_html=True)
+    
+def sidebar_footer():
+    st.markdown("<div style='height:1px;background:rgba(255,255,255,0.06);margin:1.5rem 0 1rem 0;'></div>", unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.72rem;color:#334155;text-align:center;">v1.0.0 · Internal Tool</div>', unsafe_allow_html=True)
