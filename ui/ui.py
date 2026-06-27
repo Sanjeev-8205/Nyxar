@@ -19,7 +19,8 @@ from components import (metric_card, status_card, insights_card, platform_status
                         processing_analytics_card, processing_breakdown_card, 
                         render_trace_placeholder_batch_inference, batch_trace_row, batch_trace_header, batch_ai_insight_card,
                         summary_description_card, render_section_card, render_intelligence_sections, render_recommendations_card, render_metadata_card,
-                        render_opportunity_assessment, render_risk_assessment, render_confidence_assessment)
+                        render_opportunity_assessment, render_risk_assessment, render_confidence_assessment, system_events_card,
+                        platform_status_bar)
 
 #setting the page title
 st.set_page_config(
@@ -727,7 +728,7 @@ def render_batch_intelligence():
                     input_analysis_metrics_card("Processed Rows", st.session_state.last_job_data['processed_rows'])
                 with c3:
                     if st.session_state.last_job_data['processed_rows']:
-                        input_analysis_metrics_card("Throughput", f"{int((st.session_state.last_job_data['processed_rows'])/st.session_state.last_job_data['processing_time'])} Rows/Sec")
+                        input_analysis_metrics_card("Average Throughput", f"{int((st.session_state.last_job_data['processed_rows'])/st.session_state.last_job_data['processing_time'])} Rows/Sec")
                     else:
                         input_analysis_metrics_card("Throughput", "0 Rows/Sec")
                 with c4:
@@ -1054,7 +1055,7 @@ def render_ai_intelligence():
 
         summary_description_card(title=st.session_state.summary_type, description=descriptions[selected_option])
         
-        if st.button("Generate AI Insights"):
+        if st.button("Generate Report"):
             if not st.session_state.completed_job_data:
                 st.toast("Run a batch prediction before generating AI insights.", icon="⚠️")
 
@@ -1073,6 +1074,7 @@ def render_ai_intelligence():
                         st.session_state.ai_summary = data["summary"]["intelligence_overview"]
                         st.session_state.ai_response = data["summary"]
                         st.session_state.converted_report = data["converted_report"]
+                        st.session_state.ai_response_type = selected_option 
                         st.toast("AI insights generated sucessfully.", icon="✅")
 
                     else:
@@ -1096,7 +1098,7 @@ def render_ai_intelligence():
     
     if not st.session_state.ai_summary:
         with st.container(border=True):
-            st.markdown("""<div style="min-height:320px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="font-size:2rem;margin-bottom:1rem;filter:drop-shadow(0 0 10px rgba(255,255,255,0.2));">🧠</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting Intelligence Generation</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;max-width:650px;">Generate an AI-powered intelligence report from completed batch analysis.<br><br>The report will automatically organize findings into relevant analytical sections and provide structured insights based on the observed patterns within the dataset.</div></div></div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="min-height:320px;display:flex;align-items:center;justify-content:center;text-align:center;"><div><div style="font-size:2rem;margin-bottom:1rem;filter:drop-shadow(0 0 10px rgba(255,255,255,0.2));">📑</div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Awaiting Reports Generation</div><div style="color:#9CA3AF;font-size:1rem;line-height:1.8;max-width:650px;">Generate an AI-powered intelligence report from completed batch analysis.<br><br>The report will automatically organize findings into relevant analytical sections and provide structured insights based on the observed patterns within the dataset.</div></div></div>""", unsafe_allow_html=True)
 
     else:
         with st.container(border=True):
@@ -1108,7 +1110,7 @@ def render_ai_intelligence():
 
             render_intelligence_sections(summary_data["sections"])
 
-            if st.session_state.summary_type == "Full Intelligence Report":
+            if st.session_state.summary_type == "Full Intelligence Report" and st.session_state.get("ai_response_type") == "Full Intelligence Report":
                 c1, c2 = st.columns(2)
                 with c1:
                     render_opportunity_assessment(summary_data["opportunity_assessment"])
@@ -1330,7 +1332,7 @@ def render_observability():
         if logs_df.empty:
             st.info("No logs available yet. Make predictions to populate inference logs.")
         else:
-            col1, col2 = st.columns(2)
+            col1, col2 = st.columns([2,1])
             with col1:
                 st.markdown("### Filters")
             with col2:
@@ -1343,9 +1345,10 @@ def render_observability():
                         dashboard_metrics = st.session_state.dashboard_metrics
 
                 with refresh_col2:
-                    auto_refresh = st.toggle("Auto Refresh", help="Refreshes dashboard every 10 seconds")
+                    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+                    auto_refresh = st.toggle("Auto Refresh", help="Refreshes dashboard every 1m seconds")
                     if auto_refresh:
-                        st_autorefresh(interval=10000, key="refresh")
+                        st_autorefresh(interval=60000, key="refresh")
 
             filter_col1, filter_col2, filter_col3 = st.columns(3)
 
@@ -1384,7 +1387,8 @@ def render_observability():
                 ]
             
             #Log Metrics
-            st.markdown("### 📈 Log Metrics")
+            st.markdown("### Log Metrics")
+            st.caption(f"Showing {len(filtered_logs)} recent logs")
 
             metric_col1, metric_col2, metric_col3, metric_col4 = st.columns([1,1,1,2])
 
@@ -1433,44 +1437,30 @@ def render_observability():
             st.markdown("### Inference Logs")
 
             if filtered_logs.empty:
-                st.warning("No logs match the selected filters.")
+                st.toast("No logs match the selected filters.")
             else:
                 st.dataframe(
                     filtered_logs,
                     width="stretch",
-                    height=400
-                )
-
-            # recent failures section
-            failure_logs = filtered_logs[
-                filtered_logs["status"] == "failure"
-            ]
-
-            st.markdown("### Recent Failures")
-            if failure_logs.empty:
-                st.success("No recent failures detected.")
-            else:
-                st.dataframe(
-                    failure_logs, width="stretch"
-                )
-
-            #System Events
-            st.markdown("### System Events")
-            system_events = [
-                "Model registry initialized",
-                "Database connection established",
-                "Inference service operational",
-                "Analytics pipeline refreshed"
-            ]
-
-            for event in system_events:
-                st.info(event)
+                    height=300
+                )   
 
     with obs_tab4:
         hero_header("System Health Monitoring")
         hero_subtext("Infrastructure status and operational monitoring")
 
         db_status = dashboard_metrics["health"]["db_health"]["database"]
+        models_count = dashboard_metrics["health"]["models_count"]
+        total_predictions = dashboard_metrics["inference"]["inference_metrics"]["total_predictions"]
+        failure_rate = dashboard_metrics["advanced"]["failure_rate"]["failure_percent"]
+
+        all_healthy = (
+            models_count == 3 and
+            db_status == "connected" and
+            failure_rate < 5
+        )
+
+        platform_status_bar(all_healthy=all_healthy, db_status=db_status, models_count=models_count, failure_rate=failure_rate)
 
         c1, c2, c3 = st.columns(3)
         
@@ -1495,42 +1485,51 @@ def render_observability():
                 f"{dashboard_metrics["health"]["cpu_usage"][0]:.2f}%"
             )
         
-        left_col, right_col = st.columns(2)
-        with left_col:
-            if db_status == "connected":
-                status_card("Database", "Connected", "green")
-            else:
-                status_card("Database", "Connection issue", "red")
+        with st.container(border=True):
+            st.write("CPU Utilization")
+            st.progress(dashboard_metrics["health"]["cpu_usage"][0] / 100)
+            st.caption(f"{dashboard_metrics["health"]["cpu_usage"][0]}% utilization")
 
-        with right_col:
-            with st.container(border=True):
-                st.write("CPU Utilization")
-                st.progress(dashboard_metrics["health"]["cpu_usage"][0] / 100)
-                st.caption(f"{dashboard_metrics["health"]["cpu_usage"][0]}% utilization")
+        #System Events
 
-        #Health table
-        health_table =pd.DataFrame(
-            {
-                "Components":[
-                    "Database", "Inference Models", "CPU", "System Uptime"
-                ],
-                "Status":[
-                    db_status.capitalize(),
-                    f"{dashboard_metrics["health"]["models_count"]} Model Avalilable"
-                    if dashboard_metrics["health"]["models_count"] 
-                    else "No models available",
-                    f"{dashboard_metrics["health"]["cpu_usage"][0]}%",
-                    dashboard_metrics["health"]["uptime"]
-                ]
-            }
-        )
+        ##model health
+        if models_count > 0 and models_count==3:
+            model_text = f"Model registry initialized — all {models_count} model(s) loaded"
+            model_status = "Success"
+        elif 0<models_count<3:
+            model_text = f"Model registry initialized — only {models_count} model(s) loaded"
+            model_status = "Warning"
+        else:
+            model_text = "Model registry failed — no models loaded"
+            model_status = "Error"
+        
+        ##db health
+        if db_status == "connected":
+            db_text = "Database connection established"
+            db_st = "Success"
+        else:
+            db_text = "Database connection failed"
+            db_st = "Error"
 
-        st.subheader("Operational Summary")
-        st.dataframe(
-            health_table, width="stretch"
-        )
+        ##inference service
+        if models_count > 0 and failure_rate < 5:
+            inference_text = f"Inference service operational — {total_predictions} total predictions served"
+            inference_status = "Info"
+        elif failure_rate >= 5:
+            inference_text = f"Inference service degraded — failure rate at {failure_rate:.2f}%"
+            inference_status = "Warning"
+        else:
+            inference_text = "Inference service unavailable"
+            inference_status = "Error"
 
-        st.success("All critical services are operational.")
+        ###Final Merge
+        final_event = [
+            (model_status, model_text),
+            (db_st, db_text),
+            (inference_status, inference_text)
+        ]
+
+        system_events_card(final_event)
 
 #set the sidebar
 with st.sidebar:

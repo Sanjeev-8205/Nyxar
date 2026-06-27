@@ -363,7 +363,7 @@ def dataset_intelligence_card(rows="--", columns="--", file_size="--", model="Aw
 
 def prediction_distribution_card(state="empty", positive_count=0, neutral_count=0, negative_count=0, total_rows=0):
     if state == "empty":
-        st.markdown("""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">No batch results available</div><div style="height:210px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;"><div style="font-size:2rem;">📊</div><div style="margin-top:16px;color:white;font-weight:600;">Awaiting Dataset Upload</div><div style="margin-top:8px;color:#9CA3AF;font-size:0.9rem;max-width:240px;">Upload a dataset and start processing to generate sentiment distribution insights.</div></div></div>""", unsafe_allow_html=True)
+        st.markdown("""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Prediction Distribution</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">No batch results available</div><div style="height:210px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;"><div style="font-size:2rem;">📄</div><div style="margin-top:16px;color:white;font-weight:600;">Awaiting Dataset Upload</div><div style="margin-top:8px;color:#9CA3AF;font-size:0.9rem;max-width:240px;">Upload a dataset and start processing to generate sentiment distribution insights.</div></div></div>""", unsafe_allow_html=True)
 
     elif state == "completed":
         positive_pct = round((positive_count / total_rows) * 100, 1)
@@ -391,7 +391,7 @@ def processing_breakdown_card(
 ):
     
     if state == "empty":
-        st.markdown("""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Processing Breakdown</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Runtime distribution analysis</div><div style="height:210px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;"><div style="font-size:2rem;">⚡</div><div style="margin-top:16px;color:white;font-weight:600;">Awaiting Processing Results</div><div style="margin-top:8px;color:#9CA3AF;font-size:0.9rem;max-width:240px;">Complete a batch job to analyze execution bottlenecks.</div></div></div>""", unsafe_allow_html=True)
+        st.markdown("""<div style="padding:20px;border-radius:12px;border:1px solid rgba(148,163,184,0.15);background:linear-gradient(135deg,rgba(15,23,42,0.85),rgba(2,6,23,0.95));min-height:340px;"><div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;color:white;">Processing Breakdown</div><div style="color:#9CA3AF;font-size:0.92rem;margin-bottom:1.5rem;">Runtime distribution analysis</div><div style="height:210px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;"><div style="font-size:2rem;">🧩</div><div style="margin-top:16px;color:white;font-weight:600;">Awaiting Processing Results</div><div style="margin-top:8px;color:#9CA3AF;font-size:0.9rem;max-width:240px;">Complete a batch job to analyze execution bottlenecks.</div></div></div>""", unsafe_allow_html=True)
         return
 
     total = ml_processing_time + db_time + overhead_time
@@ -565,3 +565,39 @@ def render_confidence_assessment(assessment):
     }.get(evidence, "#22C55E")
 
     st.markdown(f"""<div style="background:linear-gradient(135deg,rgba(10,20,45,0.95),rgba(2,8,25,0.95));border:1px solid rgba(255,255,255,0.06);border-left:4px solid {confidence_color};border-radius:20px;padding:1.5rem;margin-bottom:1rem;"><div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;"><div style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.05);color:{confidence_color};font-size:0.75rem;font-weight:600;">{confidence} Confidence</div><div style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.05);color:{evidence_color};font-size:0.75rem;font-weight:600;">{evidence} Evidence</div></div><div style="color:#F3F4F6;font-size:1.4rem;font-weight:700;margin-bottom:0.8rem;">Confidence Assessment</div><div style="color:#9CA3AF;font-size:0.95rem;line-height:1.8;">{assessment['confidence_rationale']}</div></div>""", unsafe_allow_html=True)
+
+def system_events_card(events):
+    colors = {
+        "Success": "#22C55E",
+        "Info": "#3B82F6",
+        "Warning": "#F59E0B",
+        "Error": "#EF4444",
+    }
+
+    rows = ""
+
+    for i, (status, text) in enumerate(events):
+        border = ""
+        if i != len(events) - 1:
+            border = "border-bottom:1px solid rgba(255,255,255,0.06);"
+
+        color = colors.get(status, '#6B7280')
+        rows += f"""<div style="display:grid;grid-template-columns:32px 1fr;align-items:center;gap:10px;padding:14px 4px;{border}"><div style="display:flex;justify-content:center;align-items:center;"><div style="width:12px;height:12px;border-radius:50%;background:{color};box-shadow:0 0 8px {color},0 0 16px {color}40;"></div></div><div style="color:#F8FAFC;font-size:1rem;font-weight:450;">{text}</div></div>"""
+
+    st.markdown(f"""<div style="padding:20px;border-radius:18px;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(180deg,rgba(17,24,39,0.96),rgba(8,12,24,0.96));box-shadow:0 4px 20px rgba(0,0,0,0.25);"><div style="font-size:1.3rem;font-weight:650;color:white;margin-bottom:4px;">System Events</div><div style="color:#94A3B8;font-size:0.9rem;margin-bottom:14px;">Recent platform activity</div>{rows}</div>""", unsafe_allow_html=True)
+
+def platform_status_bar(all_healthy,db_status, models_count, failure_rate):
+    if all_healthy:
+        st.markdown('<div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.4);border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;"><div style="width:12px;height:12px;border-radius:50%;background:#10B981;box-shadow:0 0 8px #10B981,0 0 16px rgba(16,185,129,0.5);flex-shrink:0;"></div><div><div style="color:#10B981;font-weight:600;font-size:0.95rem;letter-spacing:0.5px;">ALL SYSTEMS OPERATIONAL</div><div style="color:#6EE7B7;font-size:0.82rem;margin-top:2px;">Database connected · 3/3 models loaded · Failure rate nominal</div></div></div>', unsafe_allow_html=True)
+
+    elif db_status != "connected":
+        st.markdown('<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.4);border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;"><div style="width:12px;height:12px;border-radius:50%;background:#EF4444;box-shadow:0 0 8px #EF4444,0 0 16px rgba(239,68,68,0.5);flex-shrink:0;"></div><div><div style="color:#EF4444;font-weight:600;font-size:0.95rem;letter-spacing:0.5px;">CRITICAL — DATABASE UNREACHABLE</div><div style="color:#FCA5A5;font-size:0.82rem;margin-top:2px;">Inference logging and analytics are unavailable</div></div></div>', unsafe_allow_html=True)
+
+    elif models_count == 0:
+        st.markdown('<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.4);border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;"><div style="width:12px;height:12px;border-radius:50%;background:#EF4444;box-shadow:0 0 8px #EF4444,0 0 16px rgba(239,68,68,0.5);flex-shrink:0;"></div><div><div style="color:#EF4444;font-weight:600;font-size:0.95rem;letter-spacing:0.5px;">CRITICAL — NO MODELS LOADED</div><div style="color:#FCA5A5;font-size:0.82rem;margin-top:2px;">Inference service is unavailable</div></div></div>', unsafe_allow_html=True)
+
+    elif models_count < 3:
+        st.markdown(f'<div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.4);border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;"><div style="width:12px;height:12px;border-radius:50%;background:#F59E0B;box-shadow:0 0 8px #F59E0B,0 0 16px rgba(245,158,11,0.5);flex-shrink:0;"></div><div><div style="color:#F59E0B;font-weight:600;font-size:0.95rem;letter-spacing:0.5px;">DEGRADED — PARTIAL MODEL AVAILABILITY</div><div style="color:#FCD34D;font-size:0.82rem;margin-top:2px;">{models_count}/3 models loaded · Some inference engines unavailable</div></div></div>', unsafe_allow_html=True)
+
+    elif failure_rate >= 5:
+        st.markdown(f'<div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.4);border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;"><div style="width:12px;height:12px;border-radius:50%;background:#F59E0B;box-shadow:0 0 8px #F59E0B,0 0 16px rgba(245,158,11,0.5);flex-shrink:0;"></div><div><div style="color:#F59E0B;font-weight:600;font-size:0.95rem;letter-spacing:0.5px;">DEGRADED — ELEVATED FAILURE RATE</div><div style="color:#FCD34D;font-size:0.82rem;margin-top:2px;">Failure rate at {failure_rate:.2f}% · Investigate recent inference errors</div></div></div>', unsafe_allow_html=True)
