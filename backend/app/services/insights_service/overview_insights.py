@@ -9,7 +9,6 @@ from app.services.metrics_service.inference_metrics_service import get_inference
 from app.services.metrics_service.advanced_metrics_service import get_latency_and_throughput_shifts
 from app.services.metrics_service.health_metrics_service import get_ram_usage, get_cpu_usage, get_uptime, db_health_check
 
-from app.core.database import SessionLocal
 from models.overview_insights_model import OverviewInsights
 from app.core.settings import get_settings
 
@@ -110,7 +109,8 @@ def build_prompt(prompt, data):
     return template.format(data=json.dumps(data, indent=2))
 
 def get_insights(prompt):
-    db=SessionLocal()
+    from app.core import database
+    db=database.SessionLocal()
 
     #-------------------All the necessary metrics for overview_insights------------------#
     inference_metrics = get_inference_metrics(db)
@@ -212,7 +212,8 @@ def generate_and_save_insights():
     db=None
 
     try:
-        db=SessionLocal()
+        from app.core import database
+        db=database.SessionLocal()
         result = get_insights(SYSTEM_INSIGHTS_PROMPT)
 
         insight = OverviewInsights(
@@ -234,8 +235,10 @@ def generate_and_save_insights():
         print("Insights saved successfully.")
 
     except Exception as e:
-        db.rollback()
+        if db:
+            db.rollback()
         print(f"Failed to save insights: {e}")
 
     finally:
-        db.close()
+        if db:
+            db.close()
