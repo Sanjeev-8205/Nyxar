@@ -2,7 +2,6 @@ import io, base64, os
 import pytest
 from pathlib import Path
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 os.environ["TESTING"] = "true"
@@ -11,34 +10,31 @@ if not os.getenv("GITHUB_ACTIONS"):
 
 from app.main import app
 from models.batch_job_model import BatchJob
-from app.core.database import Base
+from app.core.database import Base, init_db
 from app.core.dependencies import get_db
-from app.core.settings import get_settings
 from fastapi.testclient import TestClient
 
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_database():
-    settings = get_settings()
-    _engine = create_engine(settings.DATABASE_URL)
-    Base.metadata.drop_all(bind=_engine)
-    Base.metadata.create_all(bind=_engine)
+    init_db()
+    from app.core.database import engine
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
     yield
-    Base.metadata.drop_all(bind=_engine)
-    _engine.dispose()
+    Base.metadata.drop_all(bind=engine)
+    engine.dispose()
 
 
 @pytest.fixture(scope="function")
 def db():
-    settings = get_settings()
-    _engine = create_engine(settings.DATABASE_URL)
-    Session = sessionmaker(bind=_engine)
+    from app.core.database import engine
+    Session = sessionmaker(bind=engine)
     session = Session()
     try:
         yield session
     finally:
         session.close()
-        _engine.dispose()
 
 
 @pytest.fixture(scope="function")
