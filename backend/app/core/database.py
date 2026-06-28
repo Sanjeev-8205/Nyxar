@@ -19,11 +19,8 @@ def init_db():
 
     try:
         settings = get_settings()
-        engine = create_engine(
-            settings.DATABASE_URL,
-            pool_pre_ping=True,
-            pool_recycle=300
-        )
+        db_url = settings.DATABASE_URL.replace("postgresql://", "postgresql+pg8000://", 1)
+        engine = create_engine(db_url, pool_pre_ping=True, pool_recycle=300)
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     except Exception as db_init_failed:
         logger.critical(
