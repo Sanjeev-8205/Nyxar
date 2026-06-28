@@ -4,7 +4,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 os.environ["TESTING"] = "true"
-load_dotenv(Path(__file__).resolve().parents[2] / ".env.test", override=True)
+if not os.getenv("GITHUB_ACTIONS"):
+    load_dotenv(Path(__file__).resolve().parents[2] / ".env.test", override=True)
 
 from app.main import app
 from models.batch_job_model import BatchJob
