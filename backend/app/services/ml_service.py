@@ -8,8 +8,6 @@ import structlog
 from scipy.special import softmax
 import numpy as np
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-import torch
-torch.set_num_threads(1)
 from fastapi import HTTPException
 
 logger=structlog.get_logger()
