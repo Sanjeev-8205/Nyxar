@@ -13,7 +13,7 @@ from app.main import app
 from models.batch_job_model import BatchJob
 from app.core.database import Base
 from app.core.dependencies import get_db
-from app.core.config import get_settings
+from app.core.settings import get_settings
 from fastapi.testclient import TestClient
 
 
