@@ -1,10 +1,11 @@
 from app.core.model_registry import models
+from fastapi import HTTPException
 
 loaded_models={}
 
 def get_model(name):
     if name not in models:
-        raise ValueError(f"Model '{name}' not found")
+        raise HTTPException(status_code=422, detail="Invalid model")
 
     if name not in loaded_models:
         print(f"Loading {name}....")
