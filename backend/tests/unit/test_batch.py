@@ -12,7 +12,8 @@ def test_batch_upload_success(mock_process, client, mock_db):
     file = io.BytesIO(csv_content)
 
     response = client.post(
-        "/batch/upload?model=roberta",
+        "/batch/upload",
+        data={"model":"RoBERTa Transformer"},
         files={"file": ("test.csv", file, "text/csv")},
         headers=HEADERS
     )
@@ -26,7 +27,8 @@ def test_batch_upload_success(mock_process, client, mock_db):
 def test_batch_upload_non_csv(client):
     file = io.BytesIO(b"some content")
     response = client.post(
-        "/batch/upload?model=roberta",
+        "/batch/upload",
+        data={"model":"RoBERTa Transformer"},
         files={"file": ("test.txt", file, "text/plain")},
         headers=HEADERS
     )
@@ -36,7 +38,8 @@ def test_batch_upload_missing_text_column(client):
     csv_content = b"review\nI love this\nTerrible"
     file = io.BytesIO(csv_content)
     response = client.post(
-        "/batch/upload?model=roberta",
+        "/batch/upload",
+        data={"model":"RoBERTa Transformer"},
         files={"file": ("test.csv", file, "text/csv")},
         headers=HEADERS
     )
