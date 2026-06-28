@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, BackgroundTasks, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, BackgroundTasks, HTTPException, Depends, Form
 from models.batch_job_model import BatchJob
 from models.batch_result_model import BatchResult
 from sqlalchemy.orm import Session
@@ -20,7 +20,7 @@ router = APIRouter()
 @router.post("/batch/upload")
 async def upload_batch_file(
     background_tasks: BackgroundTasks,
-    model: str,
+    model: str = Form(...),
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     _:bool=Depends(verify_api_key)
