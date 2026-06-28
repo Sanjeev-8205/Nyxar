@@ -9,8 +9,9 @@ def textProcess_lr(text):
     return [" ".join(text)]
 
 def textProcess_bilstm(text):
-    text=text.lower()
-    text=re.sub(r'[^a-z0-9\s]', "", text)
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9\s]+", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
     return text
 
 def textPreprocess_RoBERTa(text):
