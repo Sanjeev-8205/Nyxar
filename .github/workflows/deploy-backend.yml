@@ -1,4 +1,4 @@
-name: "Deploy Backend to HF Spaces"
+name: Deploy Backend to HF Spaces
 
 on:
   workflow_dispatch:
@@ -10,34 +10,49 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      TESTING: "true"
+      PROTECT_API_KEY: "test-key"
+      GEMINI_API_KEY: "test-key"
+      GROQ_API_KEY: "test-key"
+      PROMETHEUS_METRICS_USERNAME: "test-name"
+      PROMETHEUS_METRICS_PASSWORD: "test-pass"
+      USE_MOCK_LLM: "true"
+
     steps:
       - name: Checkout monorepo
         uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
           cache-dependency-path: |
             backend/requirements-ci.txt
             backend/requirements-test.txt
-      
+
       - name: Install dependencies
+        working-directory: backend
         run: |
-          cd backend
           pip install -r requirements-ci.txt
           pip install -r requirements-test.txt
-      
-      - name: Run tests
+
+      - name: Run unit tests
+        working-directory: backend
         env:
-          TESTING: "true"
-          PROTECT_API_KEY: "test-key"
+          DATABASE_URL: "sqlite:///:memory:"
         run: |
-          cd backend
-          pytest tests/ -v
+          pytest tests/unit -v
+
+      - name: Run integration tests
+        working-directory: backend
+        env:
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+        run: |
+          pytest tests/integration -v
 
   deploy:
     needs: test
@@ -48,27 +63,32 @@ jobs:
         uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
-      
+
       - name: Clone HF Spaces repo
         env:
-          HF_TOKEN: ${{secrets.HF_TOKEN}}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git clone https://Sanjeev2501:$HF_TOKEN@huggingface.co/spaces/Sanjeev2501/nyxar hf-space
-      
+
       - name: Sync backend/ to HF Spaces root
         run: |
           rsync -av --delete \
             --exclude='.git' \
             backend/ hf-space/
-        
+
       - name: Commit and push to HF Spaces
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           cd hf-space
+
           git config user.email "sanjeev.820525@gmail.com"
           git config user.name "Sanjeev2501"
+
           git add .
+
           COMMIT_MSG=$(git -C "$GITHUB_WORKSPACE" log -1 --pretty=%s ${{ github.sha }})
+
           git diff --cached --quiet || git commit -m "$COMMIT_MSG"
+
           git push
