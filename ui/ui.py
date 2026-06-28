@@ -51,7 +51,6 @@ model_list = get_models()
 
 #dashboard_metrics
 
-@st.cache_data(ttl=15)
 def get_dashboard_metrics():
 
     empty_dashboard = {
@@ -1540,7 +1539,7 @@ with st.sidebar:
     st.markdown('<div style="font-size:0.7rem;font-weight:600;color:#475569;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Platform</div>', unsafe_allow_html=True)
 
     page = st.radio(
-        "",
+        "Label",
         [
             "Overview",
             "Live Inference",
@@ -1548,7 +1547,7 @@ with st.sidebar:
             "AI Reports",
             "Observability"
         ],
-        index=0)
+        index=0, label_visibility='collapsed')
     
     sidebar_footer()
 
