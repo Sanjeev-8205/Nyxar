@@ -34,6 +34,9 @@ jobs:
             backend/requirements-ci.txt
             backend/requirements-test.txt
 
+      - name: Clear pip cache
+        run: pip cache purge
+
       - name: Install PostgreSQL client libs
         run: sudo apt-get install -y libpq-dev
 
@@ -42,6 +45,7 @@ jobs:
         run: |
           pip install -r requirements-ci.txt
           pip install -r requirements-test.txt
+          python -c "import psycopg2; print(psycopg2.__file__)"
 
       - name: Run unit tests
         working-directory: backend
