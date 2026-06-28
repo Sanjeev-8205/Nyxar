@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base
-import structlog
+import structlog, re
 
 logger = structlog.get_logger()
 
@@ -20,6 +20,7 @@ def init_db():
     try:
         settings = get_settings()
         db_url = settings.DATABASE_URL.replace("postgresql://", "postgresql+pg8000://", 1)
+        db_url = re.sub(r'\?.*$', '', db_url)
         engine = create_engine(db_url, pool_pre_ping=True, pool_recycle=300)
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     except Exception as db_init_failed:
