@@ -169,11 +169,12 @@ def predict(text, model_name):
 
         start = time.perf_counter()
         logger.debug("inference_model_started")
+        print(type(inputs["input_ids"]), inputs["input_ids"].dtype)
         outputs = session.run(
             ["logits"],
             {
-                "input_ids": inputs["input_ids"],
-                "attention_mask": inputs["attention_mask"]
+                "input_ids": inputs["input_ids"].astype(np.int64),
+                "attention_mask": inputs["attention_mask"].astype(np.int64)
             }
         )
 
@@ -308,8 +309,8 @@ def predict_batch(texts, model_name):
                 outputs = session.run(
                     ["logits"],
                     {
-                        "input_ids": inputs["input_ids"],
-                        "attention_mask": inputs["attention_mask"]
+                        "input_ids": inputs["input_ids"].astype(np.int64),
+                        "attention_mask": inputs["attention_mask"].astype(np.int64)
                     }
                 )
                 batch_probs = softmax(outputs[0], axis=1)
