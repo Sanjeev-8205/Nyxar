@@ -5,17 +5,14 @@ from app.core.preprocessing import textProcess_lr, textProcess_bilstm, textPrepr
 import time
 from app.core.settings import get_settings
 import structlog
+from scipy.special import softmax
+import numpy as np
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+import torch
+torch.set_num_threads(1)
+from fastapi import HTTPException
 
 logger=structlog.get_logger()
-
-settings=get_settings()
-if not settings.TESTING:
-    from tensorflow.keras.preprocessing.sequence import pad_sequences
-    import numpy as np
-    import torch
-    import onnxruntime as ort
-    from scipy.special import softmax
-    torch.set_num_threads(1)
 
 class EmptyTokenSequenceError(Exception):
     pass
@@ -23,7 +20,7 @@ class EmptyTokenSequenceError(Exception):
 def predict(text, model_name):
 
     if model_name not in models:
-        raise ValueError(f"Model '{model_name}' not available in deployment!")
+        raise HTTPException(status_code=422, detail="Invalid model")
     pipeline = get_model(model_name)
     model_type = models[model_name]["type"]
 
@@ -78,7 +75,7 @@ def predict(text, model_name):
         text = textProcess_bilstm(text)
         trace.append(
             {
-                "step": "Text Prerocessing",
+                "step": "Text Preprocessing",
                 "duration_ms": round((time.perf_counter() - start)*1000, 1)
             }
         )
@@ -104,7 +101,7 @@ def predict(text, model_name):
                 processed_length=len(seq[0])
             )
             raise EmptyTokenSequenceError(
-                "Only symbols or punctuation were detected. Please enter text containing at least one letter or number."
+                "No supported alphanumeric English text remained after preprocessing. Please enter text containing at least one english letter or number."
             )
 
         #Sequence Padding
@@ -145,7 +142,7 @@ def predict(text, model_name):
         text = textPreprocess_RoBERTa(text)
         trace.append(
             {
-                "step": "Text Prerocessing",
+                "step": "Text Preprocessing",
                 "duration_ms": round((time.perf_counter() - start)*1000, 1)
             }
         )
