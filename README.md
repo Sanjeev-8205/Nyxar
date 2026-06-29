@@ -164,7 +164,24 @@ All metrics sourced from `metrics/*.json`, evaluated on a held-out test set.
 │   ├── ui.py               # Main application, all page rendering
 │   ├── components.py       # Reusable HTML/CSS component functions
 │   └── styles.py           # Global CSS injection
-├── tests/                  # pytest test suite
+├── tests/
+│   ├── conftest.py         # Shared fixtures (root level)
+│   ├── unit/               # 16 tests — mocked models, no DB
+│   │   ├── conftest.py
+│   │   ├── test_batch.py
+│   │   ├── test_dashboard.py
+│   │   ├── test_health.py
+│   │   ├── test_inference.py
+│   │   ├── test_llm_summary.py
+│   │   └── test_overview_insights.py
+│   └── integration/        # 42 tests — real test DB, full request/response cycle
+│       ├── conftest.py
+│       ├── test_auth.py
+│       ├── test_predict_edge_cases.py
+│       ├── test_error_paths.py
+│       ├── test_predict_response.py
+│       ├── response_contract_tests.py
+│       └── test_metrics.py
 ├── Dockerfile              # Backend container definition
 ├── requirements.txt        # Full dependency list
 ├── requirements-ci.txt     # CI-only dependencies (ML packages stripped)
@@ -221,11 +238,30 @@ Deploys are triggered by pushing a `v*` tag or via manual workflow dispatch in G
 
 ```bash
 # to deploy
-git tag v1.1.0
-git push origin v1.1.0
+git tag v1.0.0
+git push origin v1.0.0
 ```
 
 The pipeline runs the full test suite before deploying. A failing test blocks the deploy.
+
+---
+
+## Testing
+
+The suite is split into two layers:
+
+| Layer | Location | Covers | Database |
+|---|---|---|---|
+| Unit | `tests/unit/` | ML/batch/dashboard/insights logic with mocked models | None — `MagicMock` / `dependency_overrides` |
+| Integration | `tests/integration/` | Auth, edge-case inputs, error paths, response contracts, Prometheus metrics — full request/response cycle against the real app | Dedicated test database, separate from production |
+
+58 tests total (16 unit + 42 integration). Integration tests hit their own Postgres instance via `TEST_DATABASE_URL`, so they never touch production data. Each layer has its own `conftest.py`, plus a root `tests/conftest.py` for fixtures shared across both.
+
+```bash
+pytest tests/unit -v          # fast, no DB
+pytest tests/integration -v   # needs TEST_DATABASE_URL set
+pytest tests/ -v              # full suite (CI default)
+```
 
 ---
 

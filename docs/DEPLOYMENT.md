@@ -20,7 +20,6 @@ The backend runs as a Docker container on Hugging Face Spaces. The `Dockerfile` 
 ```
 Base image:     python:3.11-slim
 PyTorch:        CPU-only wheel (torch==2.10.0+cpu)
-spaCy model:    en_core_web_sm (downloaded during build)
 Port:           7860 (HF Spaces standard)
 Entrypoint:     uvicorn app.main:app --host 0.0.0.0 --port 7860
 ```
@@ -63,7 +62,7 @@ test job:
   ├── Checkout monorepo
   ├── Set up Python 3.11
   ├── Install requirements-ci.txt + requirements-test.txt
-  └── pytest tests/ -v  (TESTING=true, PROTECT_API_KEY=test-key)
+  └── pytest tests/ -v  (TESTING=true, PROTECT_API_KEY=test-key, TEST_DATABASE_URL=<test-db>)
 
 deploy job (needs: test):
   ├── Checkout monorepo
@@ -72,6 +71,8 @@ deploy job (needs: test):
   ├── Commit with message from github.sha
   └── Push to HF Spaces
 ```
+
+`tests/unit/` runs against mocked models with no database. `tests/integration/` exercises real request/response flows — auth, validation, error paths, response contracts, Prometheus auth — against a dedicated test database (`TEST_DATABASE_URL`), kept separate from the production Neon instance the deployed backend uses. Both layers run in the same CI step; a failure in either blocks the deploy job.
 
 **Commit message on HF Spaces:** The deploy commit message is derived from the GitHub commit that triggered the workflow using `git log -1 --pretty=%s ${{ github.sha }}`. This works correctly for tag pushes, branch pushes, and manual dispatch — unlike `github.event.head_commit.message` which is unpopulated for tag-triggered workflows.
 
@@ -105,6 +106,7 @@ Each repo contains the model artifacts and any required tokenizer or vectorizer 
 | `PROMETHEUS_METRICS_USERNAME` | `prometheus_metrics_routes.py` | Metrics endpoint Basic Auth |
 | `PROMETHEUS_METRICS_PASSWORD` | `prometheus_metrics_routes.py` | Metrics endpoint Basic Auth |
 | `PROTECT_API_KEY` | `app/core/security.py` | API key for all non-health endpoints |
+| `TEST_DATABASE_URL` | `tests/integration/conftest.py` | Dedicated test database connection string, used only by integration tests — kept separate from the production Neon database |
 
 All variables are managed as HF Spaces Secrets and never committed to the repository. The `PROTECT_API_KEY` is stored in plaintext in HF Spaces Secrets; comparison in the application uses `secrets.compare_digest` to prevent timing attacks.
 
