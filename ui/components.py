@@ -111,9 +111,8 @@ def subtitle_subtext(text):
     </div>
     """, unsafe_allow_html=True)
 
-def chart_container(fig, title, subtitle=None, height=350):
+def chart_container(fig, title, subtitle=None, height=350, key=None):
     fig.update_layout(height = height)
-
     with st.container(border=True):
 
         st.markdown(f"""
@@ -138,9 +137,10 @@ def chart_container(fig, title, subtitle=None, height=350):
             </div>
             """, unsafe_allow_html=True)
 
+        key_= key
         st.plotly_chart(
             fig,
-            use_container_width=True
+            use_container_width=True, key=key
         )
 
 def mini_card(title, value):

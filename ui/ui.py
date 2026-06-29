@@ -3,6 +3,7 @@ import requests
 import plotly.express as px
 import pandas as pd
 from streamlit_autorefresh import st_autorefresh
+from plotly import graph_objects as go
 import time
 from collections import Counter
 from datetime import datetime
@@ -277,11 +278,26 @@ def render_overview():
                     y = "avg_latency",
                     markers = True
                 )
-
-                chart_container(fig_latency_trends, "Latency Trends Over Time")
-            
+                fig_latency_trends.update_layout(
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)"
+                )
+                
             else:
-                st.info("No data yet.")
+                fig_latency_trends = go.Figure()
+                fig_latency_trends.update_layout(
+                    height=400,
+                    xaxis={"title": "Time", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    yaxis={"title": "Average Latency", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    margin=dict(l=20, r=20, t=20, b=20)
+                )
+            
+
+            chart_container(fig_latency_trends, "Latency Trends Over Time", key="LT")
+
 
         platform_status = requests.get(f"{BASE_URL}/platform_status", headers=headers)
 
@@ -310,10 +326,24 @@ def render_overview():
                     markers = True
                 )
 
-                chart_container(fig_rph, "Requests Per Hour")
-            
+                fig_rph.update_layout(
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)"
+                )
+
             else:
-                st.info("You have not made any predictions yet. Make predictions to view the results.")
+                fig_rph = go.Figure()
+                fig_rph.update_layout(
+                    height=400,
+                    xaxis={"title": "Hour", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    yaxis={"title": "No. of Requests", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    margin=dict(l=20, r=20, t=20, b=20)
+                )
+
+            chart_container(fig_rph, "Requests Per Hour", key="RPH")
 
         with t3:
             #Throughput Per Hour
@@ -329,7 +359,23 @@ def render_overview():
                     markers = True
                 )
 
-                chart_container(fig_tph, "Throughput Per Hour")
+                fig_latency_trends.update_layout(
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)"
+                )
+            
+            else:
+                fig_tph = go.Figure()
+                fig_tph.update_layout(
+                    xaxis={"title": "Hour", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    yaxis={"title": "Throughput", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    margin=dict(l=20, r=20, t=20, b=20)
+                )
+
+                chart_container(fig_tph, "Throughput Per Hour", key="TPH")
 
     with ri_col:
         
@@ -419,7 +465,7 @@ def render_live_inference():
                         st.session_state.prediction_result = result
 
                         #clear old dashboarb cache
-                        get_dashboard_metrics.clear()
+                        del st.session_state["dashboard_metrics"]
                         st.session_state.dashboard_metrics = get_dashboard_metrics()
                         dashboard_metrics = st.session_state.dashboard_metrics
                 
@@ -1144,17 +1190,33 @@ def render_observability():
             sentiment_df = pd.DataFrame(
                 {
                     "Sentiment": sentiment_distribution.keys(),
-                    "Count": sentiment_distribution.values()
+                    "Frequency": sentiment_distribution.values()
                 }
             )
 
-            fig_sentiment = px.pie(
-                sentiment_df,
-                names = "Sentiment",
-                values = "Count"
-            )
+            if not sentiment_df.empty and sentiment_df["Frequency"].sum() > 0:
+                fig_sentiment = px.pie(
+                    sentiment_df,
+                    names = "Sentiment",
+                    values = "Frequency"
+                )
 
-            chart_container(fig_sentiment, "Sentiment Distribution")
+                fig_sentiment.update_layout(
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                )
+            
+            else:
+                fig_sentiment = go.Figure()
+                fig_sentiment.update_layout(
+                    xaxis={"title": "Sentiment", "visible": False},
+                    yaxis={"title": "Frequency", "visible": False},
+                    annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper", "x": 0.5, "y": 0.5}],
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)"
+                )
+
+            chart_container(fig_sentiment, "Sentiment Distribution", key="SD")
 
             #Model Usage Distribution
             models_ = dashboard_metrics["analytics"]["model_usage_distribution"]
@@ -1168,10 +1230,25 @@ def render_observability():
                     y = "usage"
                 )
 
-                chart_container(fig_model_usage, "Model Usage Distribution")
+                fig_model_usage.update_layout(
+                    xaxis={"title": "Model"},
+                    yaxis={"title":"Usage"},
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                )
             
             else:
-                st.info("You have not made any predictions yet. Make predictions to view the results.")
+                fig_model_usage = go.Figure()
+                fig_model_usage.update_layout(
+                    xaxis={"title": "Model", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    yaxis={"title": "Usage", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    margin=dict(l=20, r=20, t=20, b=20)
+                )
+
+            chart_container(fig_model_usage, "Model Usage Distribution", key="MSD")
 
         with col2:
             #Prediction Over Time
@@ -1187,10 +1264,25 @@ def render_observability():
                     markers = True
                 )
 
-                chart_container(fig_predictions, "Predictions Per Day")
+                fig_predictions.update_layout(
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    xaxis={"title": "Day"},
+                    yaxis={"title": "Predictions"}
+                )
             
             else:
-                st.info("You have not made any predictions yet. Make predictions to view the results.")
+                fig_predictions = go.Figure()
+                fig_predictions.update_layout(
+                    xaxis={"title": "Day", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    yaxis={"title": "Predictions", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    margin=dict(l=20, r=20, t=20, b=20)
+                )
+
+            chart_container(fig_predictions, "Predictions Per Day", key="PPD")
 
             #Confidence distribution
             confidence_ = dashboard_metrics["analytics"]["confidence_distribution"]
@@ -1201,13 +1293,28 @@ def render_observability():
                 fig_confidence_distributions = px.bar(
                     confidence_distribution,
                     x = "Confidence",
-                    y = "Count"
+                    y = "Frequency"
                 )
 
-                chart_container(fig_confidence_distributions, "Confidence Distribution")
+                fig_confidence_distribution.update_layout(
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    xaxis={"title": "Confidence"},
+                    yaxis={"title": "Frequency"}
+                )
             
             else:
-                st.info("You have not made any predictions yet. Make predictions to view the results.")
+                fig_confidence_distribution = go.Figure()
+                fig_confidence_distribution.update_layout(
+                    xaxis={"title": "Confidence", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    yaxis={"title": "Frequency", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    margin=dict(l=20, r=20, t=20, b=20)
+                )
+
+            chart_container(fig_confidence_distribution, "Confidence Distribution", key="CD")
 
     with obs_tab2:
         subtitle("Advanced ML Metrics")
@@ -1259,10 +1366,25 @@ def render_observability():
                     y = "avg_latency"
                 )
 
-                chart_container(fig_avg_latency, "Average Latency Per Model")
+                fig_avg_latency.update_layout(
+                        paper_bgcolor="rgba(2,6,23,0.95)",
+                        plot_bgcolor="rgba(2,6,23,0.95)",
+                        xaxis={"title": "Model"},
+                        yaxis={"title": "Average Latency"}
+                    )
             
             else:
-                st.info("You have not made any predictions yet. Make predictions to view the results.")
+                fig_avg_latency = go.Figure()
+                fig_avg_latency.update_layout(
+                    xaxis={"title": "Model", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    yaxis={"title": "Average Latency", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    margin=dict(l=20, r=20, t=20, b=20)
+                )
+
+            chart_container(fig_avg_latency, "Average Latency Per Model", key="ALPM")
 
         with col_2:
             #Model Accuracy
@@ -1274,10 +1396,26 @@ def render_observability():
                     y = "accuracy"
                 )
 
-                chart_container(fig_model_accuracy, "Model Accuracy Comparison")
+                fig_model_accuracy.update_layout(
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    xaxis={"title": "Model"},
+                    yaxis={"title": "Accuracy"}
+                )
 
             else:
-                st.info("You have not made any predictions yet. Make predictions to view the results.")
+                fig_model_accuracy = go.Figure()
+                fig_model_accuracy.update_layout(
+                    xaxis={"title": "Model", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    yaxis={"title": "Accuracy", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
+                    paper_bgcolor="rgba(2,6,23,0.95)",
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    margin=dict(l=20, r=20, t=20, b=20)
+                )
+            
+
+            chart_container(fig_model_accuracy, "Model Accuracy Comparison", key="MAC")
 
         #Drift indicators
         drift_indicators = dashboard_metrics["advanced"]["drift_indicators"]
@@ -1314,17 +1452,39 @@ def render_observability():
             for metric, value in rolling_data.items():
                 if "text" in metric:
                     title = f"Input Length Trends"
+                    key_="ILT"
+                    x_title = "Time"
+                    y_title = "Input Length"
                 elif "sentiment" in metric:
                     title = f"Sentiment Trends"
+                    key_="ST"
+                    x_title = "Time"
+                    y_title = "Sentiment Score"
                 else:
                     title = f"Model Confidence Trends"
+                    key_="MCT"
+                    x_title = "Time"
+                    y_title = "Confidence Score"
 
-                fig_rolling = px.line(
-                    x = time_stamp,
-                    y = value
-                )
+                if time_stamp and value:
+                    fig_rolling = px.line(
+                        pd.DataFrame({"time": time_stamp, "value": value}),
+                        x="time",
+                        y="value"
+                    )
 
-                chart_container(fig_rolling, title)
+                else:
+                    fig_rolling = go.Figure()
+                    fig_rolling.update_layout(
+                        xaxis={"title": x_title, "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                        yaxis={"title": y_title, "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                        annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
+                        paper_bgcolor="rgba(2,6,23,0.95)",
+                        plot_bgcolor="rgba(2,6,23,0.95)",
+                        margin=dict(l=20, r=20, t=20, b=20)
+                    )
+
+                chart_container(fig_rolling, title, key=key_)
 
     with obs_tab3:
         logs_df = pd.DataFrame(dashboard_metrics["logs"])
