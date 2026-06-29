@@ -1,4 +1,4 @@
-from app.core.database import SessionLocal
+from app.core import database
 from app.services.metrics_service.inference_metrics_service import get_inference_metrics, get_inference_row_metrics
 import app.services.metrics_service.analytics_metrics_service as analytics_ms
 import app.services.metrics_service.health_metrics_service as health_ms
@@ -13,7 +13,7 @@ class DashboardMetricsError(Exception):
     pass
 
 def dashboard_metrics_aggregator():
-    db = SessionLocal()
+    db = database.SessionLocal()
 
     try:
         return {

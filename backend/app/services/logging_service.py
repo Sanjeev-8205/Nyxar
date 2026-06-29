@@ -1,4 +1,4 @@
-from app.core.database import SessionLocal
+from app.core import database
 from models.log_models import Log
 import time
 from app.core import prometheus_metrics as pm
@@ -7,7 +7,7 @@ import structlog
 logger = structlog.get_logger()
 
 def log_predictions(text, prediction, confidence, prob, model, latency, status, request_id=None):
-    db=SessionLocal()
+    db=database.SessionLocal()
 
     try:
         db_start_time = time.perf_counter()
@@ -27,6 +27,17 @@ def log_predictions(text, prediction, confidence, prob, model, latency, status, 
         db.commit()
         pm.LATENCY_BREAKDOWN.labels(latency_type = "DB_write").observe(time.perf_counter() - db_start_time)
         logger.info("inference_results_saved", request_id=request_id, prediction=prediction, db_write_duration_ms=round((time.perf_counter() - db_start_time) * 1000, 4))
+
+    except Exception as e:
+        logger.error(
+            "inference_db_write_failed",
+            request_id=request_id,
+            prediction=prediction,
+            error=str(e),
+            exc_info=True
+        )
+        
+        db.rollback()
 
     finally:
         db.close()
