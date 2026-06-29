@@ -1,7 +1,7 @@
 from models.log_models import Log
 from models.batch_job_model import BatchJob
 from datetime import datetime, UTC
-from sqlalchemy import func, case
+from sqlalchemy import func, case, text
 
 def get_sentiment_distribution(db):
     sentiment_distribution = db.query(
@@ -21,36 +21,50 @@ def get_sentiment_distribution(db):
     }
 
 def get_predictions_over_time(db):
-    predictions_per_day = db.query(
-        func.date_trunc("day", Log.timestamp).label("day"),
-        func.count(Log.id).label("count")
-    ).group_by(func.date_trunc("day", Log.timestamp)).order_by(
-        func.date_trunc("day", Log.timestamp)
-    ).all()
 
-    predictions_per_hour_each_day = db.query(
-        func.date_trunc("hour", Log.timestamp).label("hour"),
-        func.count(Log.id).label("count")
-    ).group_by(func.date_trunc("hour", Log.timestamp)).order_by(
-        func.date_trunc("hour", Log.timestamp)
-    ).all()
+    from sqlalchemy import text
 
-    prediction_per_day = []
-    for row in predictions_per_day:
-        prediction_per_day.append({
-            "day": row[0],
-            "count": row[1]
-        })
-    
-    prediction_per_hour_each_day = []
-    for row in predictions_per_hour_each_day:
-        prediction_per_hour_each_day.append({
-            "hour": row[0],
-            "count": row[1]
-        })
 
-    prediction_per_day.sort(key = lambda x: x["day"], reverse=False)
-    prediction_per_hour_each_day.sort(key = lambda x: x["hour"], reverse=False)
+def get_predictions_over_time(db):
+    # Daily predictions
+    daily_results = db.execute(
+        text("""
+            SELECT
+                DATE(timestamp) AS day,
+                COUNT(id) AS count
+            FROM logs
+            GROUP BY DATE(timestamp)
+            ORDER BY DATE(timestamp)
+        """)
+    ).mappings().all()
+
+    # Hourly predictions
+    hourly_results = db.execute(
+        text("""
+            SELECT
+                date_trunc('hour', timestamp) AS hour,
+                COUNT(id) AS count
+            FROM logs
+            GROUP BY date_trunc('hour', timestamp)
+            ORDER BY date_trunc('hour', timestamp)
+        """)
+    ).mappings().all()
+
+    prediction_per_day = [
+        {
+            "day": row["day"],
+            "count": row["count"]
+        }
+        for row in daily_results
+    ]
+
+    prediction_per_hour_each_day = [
+        {
+            "hour": row["hour"],
+            "count": row["count"]
+        }
+        for row in hourly_results
+    ]
 
     return [prediction_per_day, prediction_per_hour_each_day]
 
@@ -103,31 +117,30 @@ def get_latency_trends(db):
     return [latencies_hour_of_day, latencies_over_time] 
 
 def get_confidence_distribution(db):
-    max_conf = func.greatest(
-        Log.negative, Log.neutral, Log.positive
-    )
+    query = text("""
+        SELECT
+            CASE
+                WHEN GREATEST(negative, neutral, positive) < 0.2 THEN '0-20'
+                WHEN GREATEST(negative, neutral, positive) < 0.4 THEN '20-40'
+                WHEN GREATEST(negative, neutral, positive) < 0.6 THEN '40-60'
+                WHEN GREATEST(negative, neutral, positive) < 0.8 THEN '60-80'
+                ELSE '80-100'
+            END AS confidence_bucket,
+            COUNT(*) AS count
+        FROM logs
+        GROUP BY confidence_bucket
+        ORDER BY confidence_bucket;
+    """)
 
-    bucket = case(
-        (max_conf<0.2, "0-20"),
-        (max_conf<0.4, "20-40"),
-        (max_conf<0.6, "40-60"),
-        (max_conf<0.8, "60-80"),
-        else_="80-100"
-    ).label("confidence_bucket")
+    rows = db.execute(query).mappings().all()
 
-    bucket_grouping = db.query(
-        bucket,
-        func.count(Log.id).label("count")
-    ).group_by(bucket).all()
-
-    results = []
-    for bucket, count in bucket_grouping:
-        results.append({
-            "Confidence": bucket,
-            "Count": count
-        })
-
-    return results
+    return [
+        {
+            "Confidence": row["confidence_bucket"],
+            "Count": row["count"],
+        }
+        for row in rows
+    ]
 
 def get_recent_activity_feed(db):
     recent_activity = db.query(
@@ -184,22 +197,25 @@ def get_recent_activity_feed(db):
     return results
 
 def get_throughput_per_hour(db):
-    throughput = db.query(
-        func.date_trunc("hour", Log.timestamp).label("hour"),
-        case((func.avg(Log.latency) > 0, 1 / func.avg(Log.latency)), else_=0).label("throughput")
-    ).group_by(
-        func.date_trunc("hour", Log.timestamp)
-    ).order_by(
-        func.date_trunc("hour", Log.timestamp)
-    ).all()
+    query = text("""
+        SELECT
+            date_trunc('hour', timestamp) AS hour,
+            CASE
+                WHEN AVG(latency) > 0
+                THEN 1.0 / AVG(latency)
+                ELSE 0
+            END AS throughput
+        FROM logs
+        GROUP BY date_trunc('hour', timestamp)
+        ORDER BY date_trunc('hour', timestamp);
+    """)
 
-    tph = []
-    for row in throughput:
-        tph.append({
-            "hour": row[0],
-            "throughput": row[1]
-        })
+    rows = db.execute(query).mappings().all()
 
-    tph.sort(key = lambda x: x["hour"], reverse=False)
-
-    return tph
+    return [
+        {
+            "hour": row["hour"],
+            "throughput": float(row["throughput"])
+        }
+        for row in rows
+    ]
