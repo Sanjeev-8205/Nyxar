@@ -2,6 +2,7 @@ from app.core.model_loader import get_model
 from app.core.model_registry import models
 from app.core import prometheus_metrics as pm
 from app.core.settings import get_settings
+import numpy as np
 
 settings=get_settings()
 if not settings.TESTING:
@@ -45,8 +46,8 @@ def warmup():
                 m["session"].run(
                     ["logits"],
                     {
-                        "input_ids": inputs["input_ids"],
-                        "attention_mask": inputs["attention_mask"]
+                        "input_ids": inputs["input_ids"].astype(np.int64),
+                        "attention_mask": inputs["attention_mask"].astype(np.int64)
                     }
                 )
 
