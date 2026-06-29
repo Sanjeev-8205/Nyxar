@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import insert
-from app.core.database import SessionLocal
+from app.core import database
 from models.batch_job_model import BatchJob
 from models.batch_result_model import BatchResult
 from app.services.ml_service import predict_batch
@@ -12,7 +12,7 @@ import time
 from datetime import datetime, UTC
 
 def process_batch_job(job_id: int, file_path: str, model:str):
-    db = SessionLocal()
+    db = database.SessionLocal()
 
     try:
         job = db.query(BatchJob).filter(BatchJob.id == job_id).first()
