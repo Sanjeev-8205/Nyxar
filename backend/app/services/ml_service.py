@@ -5,7 +5,6 @@ from app.core.preprocessing import textProcess_lr, textProcess_bilstm, textPrepr
 import time
 from app.core.settings import get_settings
 import structlog
-from scipy.special import softmax
 import numpy as np
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from fastapi import HTTPException
@@ -14,6 +13,12 @@ logger=structlog.get_logger()
 
 class EmptyTokenSequenceError(Exception):
     pass
+
+def softmax(x, axis=-1):
+    x = np.asarray(x, dtype=np.float64)
+    x = x - np.max(x, axis=axis, keepdims=True)
+    exp_x = np.exp(x)
+    return exp_x / np.sum(exp_x, axis=axis, keepdims=True)
 
 def predict(text, model_name):
 

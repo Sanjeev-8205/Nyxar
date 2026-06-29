@@ -8,13 +8,18 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from datetime import datetime
 import time
 import tqdm
-from scipy.special import softmax
 
 from app.core.preprocessing import preprocess_batch_lr, textProcess_bilstm, textPreprocess_RoBERTa
 
 BASE_DIR = Path(__file__).resolve().parent
 METRICS_DIR = BASE_DIR / "metrics"
 METRICS_DIR.mkdir(exist_ok=True)
+
+def softmax(x, axis=-1):
+    x = np.asarray(x, dtype=np.float64)
+    x = x - np.max(x, axis=axis, keepdims=True)
+    exp_x = np.exp(x)
+    return exp_x / np.sum(exp_x, axis=axis, keepdims=True)
 
 def predict_batch(text, model_name):
     pipeline=models[model_name]["loader"]()
