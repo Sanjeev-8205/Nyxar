@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.core.database import SessionLocal
+from app.core import database
 from sqlalchemy import text
 
 from app.core.security import verify_api_key
@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.get("/db_status")
 def db_status_check(_:bool=Depends(verify_api_key)):
-    db = SessionLocal()
+    db = database.SessionLocal()
 
     try:
         db.execute(text("SELECT 1"))
