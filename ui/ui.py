@@ -46,7 +46,7 @@ def get_models():
     try:
         return requests.get(f"{BASE_URL}/models", headers=headers, timeout=30).json()
     except:
-        return ["Backend not available!"]
+        return ["Models not available!"]
     
 model_list = get_models()
 
@@ -280,15 +280,16 @@ def render_overview():
                 )
                 fig_latency_trends.update_layout(
                     paper_bgcolor="rgba(2,6,23,0.95)",
-                    plot_bgcolor="rgba(2,6,23,0.95)"
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    xaxis={"title": "Time"},
+                    yaxis={"title": "Average Latency"}
                 )
                 
             else:
                 fig_latency_trends = go.Figure()
                 fig_latency_trends.update_layout(
-                    height=400,
-                    xaxis={"title": "Time", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
-                    yaxis={"title": "Average Latency", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    xaxis={"title": "Time", "visible": True},
+                    yaxis={"title": "Average Latency", "visible": True},
                     annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
                     paper_bgcolor="rgba(2,6,23,0.95)",
                     plot_bgcolor="rgba(2,6,23,0.95)",
@@ -328,15 +329,17 @@ def render_overview():
 
                 fig_rph.update_layout(
                     paper_bgcolor="rgba(2,6,23,0.95)",
-                    plot_bgcolor="rgba(2,6,23,0.95)"
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    xaxis={"title": "Hour"},
+                    yaxis={"title": "No. of Requests"}
                 )
 
             else:
                 fig_rph = go.Figure()
                 fig_rph.update_layout(
                     height=400,
-                    xaxis={"title": "Hour", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
-                    yaxis={"title": "No. of Requests", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    xaxis={"title": "Hour", "visible": True},
+                    yaxis={"title": "No. of Requests", "visible": True},
                     annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
                     paper_bgcolor="rgba(2,6,23,0.95)",
                     plot_bgcolor="rgba(2,6,23,0.95)",
@@ -359,23 +362,25 @@ def render_overview():
                     markers = True
                 )
 
-                fig_latency_trends.update_layout(
+                fig_tph.update_layout(
                     paper_bgcolor="rgba(2,6,23,0.95)",
-                    plot_bgcolor="rgba(2,6,23,0.95)"
+                    plot_bgcolor="rgba(2,6,23,0.95)",
+                    xaxis={"title": "Hour"},
+                    yaxis={"title": "Throughput"}
                 )
             
             else:
                 fig_tph = go.Figure()
                 fig_tph.update_layout(
-                    xaxis={"title": "Hour", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
-                    yaxis={"title": "Throughput", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    xaxis={"title": "Hour", "visible": True},
+                    yaxis={"title": "Throughput", "visible": True},
                     annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
                     paper_bgcolor="rgba(2,6,23,0.95)",
                     plot_bgcolor="rgba(2,6,23,0.95)",
                     margin=dict(l=20, r=20, t=20, b=20)
                 )
 
-                chart_container(fig_tph, "Throughput Per Hour", key="TPH")
+            chart_container(fig_tph, "Throughput Per Hour", key="TPH")
 
     with ri_col:
         
@@ -708,7 +713,7 @@ def render_batch_processing():
 
                 response = requests.post(
                     f"{BASE_URL}/batch/upload",
-                    params={"model": selected_model},
+                    data={"model": selected_model},
                     headers=headers,
                     files={
                         "file":(
@@ -1240,8 +1245,8 @@ def render_observability():
             else:
                 fig_model_usage = go.Figure()
                 fig_model_usage.update_layout(
-                    xaxis={"title": "Model", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
-                    yaxis={"title": "Usage", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    xaxis={"title": "Model", "visible": True},
+                    yaxis={"title": "Usage", "visible": True},
                     annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
                     paper_bgcolor="rgba(2,6,23,0.95)",
                     plot_bgcolor="rgba(2,6,23,0.95)",
@@ -1274,8 +1279,8 @@ def render_observability():
             else:
                 fig_predictions = go.Figure()
                 fig_predictions.update_layout(
-                    xaxis={"title": "Day", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
-                    yaxis={"title": "Predictions", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    xaxis={"title": "Day", "visible": True},
+                    yaxis={"title": "Predictions", "visible": True},
                     annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
                     paper_bgcolor="rgba(2,6,23,0.95)",
                     plot_bgcolor="rgba(2,6,23,0.95)",
@@ -1290,10 +1295,10 @@ def render_observability():
             confidence_distribution = pd.DataFrame(confidence_)
 
             if not confidence_distribution.empty:
-                fig_confidence_distributions = px.bar(
+                fig_confidence_distribution = px.bar(
                     confidence_distribution,
                     x = "Confidence",
-                    y = "Frequency"
+                    y = "Count"
                 )
 
                 fig_confidence_distribution.update_layout(
@@ -1306,8 +1311,8 @@ def render_observability():
             else:
                 fig_confidence_distribution = go.Figure()
                 fig_confidence_distribution.update_layout(
-                    xaxis={"title": "Confidence", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
-                    yaxis={"title": "Frequency", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    xaxis={"title": "Confidence", "visible": True},
+                    yaxis={"title": "Frequency", "visible": True},
                     annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
                     paper_bgcolor="rgba(2,6,23,0.95)",
                     plot_bgcolor="rgba(2,6,23,0.95)",
@@ -1376,8 +1381,8 @@ def render_observability():
             else:
                 fig_avg_latency = go.Figure()
                 fig_avg_latency.update_layout(
-                    xaxis={"title": "Model", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
-                    yaxis={"title": "Average Latency", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    xaxis={"title": "Model", "visible": True},
+                    yaxis={"title": "Average Latency", "visible": True},
                     annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
                     paper_bgcolor="rgba(2,6,23,0.95)",
                     plot_bgcolor="rgba(2,6,23,0.95)",
@@ -1406,8 +1411,8 @@ def render_observability():
             else:
                 fig_model_accuracy = go.Figure()
                 fig_model_accuracy.update_layout(
-                    xaxis={"title": "Model", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
-                    yaxis={"title": "Accuracy", "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                    xaxis={"title": "Model", "visible": True},
+                    yaxis={"title": "Accuracy", "visible": True},
                     annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
                     paper_bgcolor="rgba(2,6,23,0.95)",
                     plot_bgcolor="rgba(2,6,23,0.95)",
@@ -1476,8 +1481,8 @@ def render_observability():
                 else:
                     fig_rolling = go.Figure()
                     fig_rolling.update_layout(
-                        xaxis={"title": x_title, "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
-                        yaxis={"title": y_title, "visible": True, "showgrid": False, "zeroline": False, "showline": True, "linecolor": "white"},
+                        xaxis={"title": x_title, "visible": True},
+                        yaxis={"title": y_title, "visible": True},
                         annotations=[{"text": "No data available", "showarrow": False, "font": {"size": 24}, "xref": "paper", "yref": "paper"}],
                         paper_bgcolor="rgba(2,6,23,0.95)",
                         plot_bgcolor="rgba(2,6,23,0.95)",
